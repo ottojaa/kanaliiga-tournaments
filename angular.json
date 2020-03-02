@@ -17,6 +17,8 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "baseHref": "/~ottojaa/dist/kanaliiga-stats/",
+            "deployUrl": "/~ottojaa/dist/kanaliiga-stats/",
             "outputPath": "dist/kanaliiga-stats",
             "index": "src/index.html",
             "main": "src/main.ts",

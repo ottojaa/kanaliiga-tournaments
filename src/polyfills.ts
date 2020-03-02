@@ -57,9 +57,10 @@
  */
 (window as any).global = window;
 global.Buffer = global.Buffer || require('buffer').Buffer;
-(window as any).process = {
+
+/* (window as any).process = {
   version: '',
-};
+}; */
 import 'zone.js/dist/zone'; // Included with Angular CLI.
 
 /***************************************************************************************************
