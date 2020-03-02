@@ -1,0 +1,207 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+mat-card {
+  margin: 5px;
+  min-width: 230px;
+}
+
+.icon {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.progress {
+  height: 20px;
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.group {
+  margin-bottom: 50px;
+}
+
+.winner-column {
+  font-weight: bolder;
+  -webkit-font-smoothing: antialiased;
+}
+
+mat-icon {
+  font-family: 'Material Icons';
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  height: 20px;
+  margin-bottom: 0;
+}
+
+.winner-column::before {
+  content: '';
+  display: inline-block;
+  background: #8bc34a;
+  width: 6px;
+  margin-right: 3px;
+  height: 100%;
+}
+.loser-column::before {
+  content: '';
+  display: inline-block;
+  background: #f44336;
+  width: 6px;
+  margin-right: 3px;
+  height: 100%;
+}
+
+.name {
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+
+.opponent {
+  margin: 0px;
+}
+
+.match-score {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.top {
+  padding-top: 20px;
+  display: flex;
+  margin: auto;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: space-evenly;
+}
+
+mat-card-subtitle {
+  text-align: center;
+}
+
+mat-card:not(:last-child)::before {
+  content: '';
+  border-left: 4px solid #040300;
+  position: absolute;
+  top: 93%;
+  bottom: 0;
+  height: 7%;
+  left: 50%;
+  z-index: -1;
+  -webkit-transform: translateY(10px);
+  transform: translateY(10px);
+}
+
+.divider {
+  display: flex;
+  height: 50px;
+  width: 60%;
+  max-width: 250px;
+  margin: auto;
+  justify-content: center;
+  align-items: center;
+}
+
+.mat-card-header .mat-card-title {
+  padding: 10px;
+  margin: 0;
+  font-size: 13px;
+}
+
+li {
+  list-style: circle;
+}
+
+.font {
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  text-align: center !important;
+}
+
+.mat-expansion-panel-header-description {
+  display: flex;
+  justify-content: flex-end;
+}
+
+::ng-deep .mat-card-header-text {
+  width: 100%;
+  margin: 0px;
+}
+
+br {
+  content: '\A';
+  display: contents;
+  white-space: pre;
+}
+
+.mat-expansion-panel-header-title {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+mat-card-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+mat-grid-tile {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+mat-progress-bar {
+  margin-top: 8px;
+}
+
+.column {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  flex-wrap: wrap;
+}
+
+.row {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.loser {
+  color: #f44336;
+}
+* {
+  font-family: 'Open Sans';
+}
+
+.winner {
+  color: #8bc34a;
+  font-weight: bolder;
+  font-size: 14px;
+}
+
+.wrapper {
+  display: flex;
+  margin-top: 30px !important;
+  width: 30%;
+  flex-direction: row;
+}
+
+.replay-found {
+  color: #8bc34a;
+}

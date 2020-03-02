@@ -1,0 +1,84 @@
+figure {
+  align-items: start !important;
+}
+
+* {
+  font-family: 'Open Sans';
+}
+
+mat-grid-tile {
+  align-items: start !important;
+  margin: 0 10px 10px 10px;
+}
+
+.flex-container {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+}
+
+.tournament {
+  flex-grow: 1;
+  max-width: 30%;
+  align-items: center;
+  flex-basis: 500px;
+  min-width: 45%;
+  margin: 10px;
+}
+
+mat-expansion-panel {
+  padding: 25px;
+}
+
+.link {
+  cursor: pointer;
+}
+.mat-expansion-panel-spacing {
+  margin: 0;
+}
+.flex-container {
+  background: white;
+}
+
+.avatar {
+  width: 30px;
+  margin-right: 20px;
+}
+
+p.effect-underline:after {
+  content: '';
+  position: absolute;
+  left: 2%;
+  display: inline-block;
+  height: 1em;
+  width: 60%;
+  border-bottom: 1px solid;
+  margin-top: 10px;
+  opacity: 0;
+  -webkit-transition: opacity 0.35s, -webkit-transform 0.35s;
+  transition: opacity 0.35s, transform 0.35s;
+  -webkit-transform: scale(0, 1);
+  transform: scale(0, 1);
+}
+
+p.effect-underline:hover:after {
+  opacity: 1;
+  -webkit-transform: scale(1);
+  transform: scale(1);
+}
+
+mat-panel-title,
+mat-panel-description {
+  align-items: center;
+}
+
+.container {
+  padding: 24px;
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.participant {
+  width: 50%;
+}

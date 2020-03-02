@@ -1,0 +1,72 @@
+.dropzone {
+  height: 30px;
+  border: none;
+}
+
+.center {
+  height: auto;
+}
+
+.content {
+  height: 50px;
+}
+
+table {
+  font-family: "Open Sans";
+}
+
+.button {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mat-expansion-panel:not([class*="mat-elevation-z"]) {
+  box-shadow: none;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.mat-dialog-actions {
+  justify-content: flex-end;
+}
+
+::ng-deep.mat-expansion-panel-body {
+  padding: 0 24px !important;
+}
+
+.upload-button {
+  width: 100%;
+  padding: 20px;
+}
+
+.data-table {
+  animation: fadein 1s;
+  overflow: auto;
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 500px;
+  }
+}
+
+th.mat-sort-header-sorted {
+  color: black;
+}
+
+.dialog-content {
+  height: 250px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

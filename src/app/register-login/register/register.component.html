@@ -1,0 +1,71 @@
+<mat-progress-bar [ngClass]="loading ? 'show' : 'hide'" mode="indeterminate" color="accent"></mat-progress-bar>
+
+<button mat-icon-button (click)="closeDialog()" style="float: right;" aria-label="close">
+  <mat-icon>close</mat-icon>
+</button>
+<mat-vertical-stepper [linear]="true" #stepper>
+  <!-- First step -->
+
+  <mat-step [stepControl]="firstFormGroup" [editable]="false">
+    <form [formGroup]="firstFormGroup">
+      <ng-template matStepLabel>Enter your email address</ng-template>
+      <mat-form-field style="width: 50%;">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="mailCtrl" required [(ngModel)]="email" />
+        <mat-error *ngIf="firstFormGroup.get('mailCtrl').hasError('email')">
+          Please enter a valid email address.
+        </mat-error>
+      </mat-form-field>
+      <div>
+        <button mat-button [disabled]="firstStepHasErrors() || !email" (click)="checkEmail(stepper)">Next</button>
+      </div>
+    </form>
+  </mat-step>
+
+  <!-- Second step -->
+
+  <mat-step [stepControl]="secondFormGroup" [editable]="false">
+    <form [formGroup]="secondFormGroup">
+      <ng-template matStepLabel>Fill out your address</ng-template>
+      <mat-form-field>
+        <mat-label>Username</mat-label>
+        <input matInput formControlName="nameCtrl" required [(ngModel)]="username" />
+        <mat-error *ngIf="secondFormGroup.get('nameCtrl').hasError('required')">
+          Username is required
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field style="margin-left: 5px;">
+        <mat-label>Password</mat-label>
+        <input type="password" matInput formControlName="passwordCtrl" required [(ngModel)]="password" />
+        <mat-error *ngIf="secondFormGroup.get('passwordCtrl').hasError('required')">
+          Password is required
+        </mat-error>
+        <mat-error *ngIf="secondFormGroup.get('passwordCtrl').hasError('minlength')">
+          Password must be at least 6 characters
+        </mat-error>
+      </mat-form-field>
+      <div>
+        <button
+          mat-button
+          [disabled]="secondStepHasErrors() || !username || password?.length < 6"
+          (click)="register(stepper)"
+        >
+          Next
+        </button>
+      </div>
+    </form>
+  </mat-step>
+
+  <!-- Third step -->
+
+  <mat-step>
+    <ng-template matStepLabel>Done</ng-template>
+    <div class="success">
+      <p>Success!</p>
+      <div>
+        <button mat-button matStepperPrevious></button>
+        <button mat-button (click)="closeDialog(true)">Close and login</button>
+      </div>
+    </div>
+  </mat-step>
+</mat-vertical-stepper>

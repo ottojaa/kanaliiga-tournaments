@@ -1,0 +1,263 @@
+import { Component, OnInit, Inject } from '@angular/core';
+import { RLParser } from '../../../utilities/replay-parser/rl-replay-parser';
+import { Subject, of } from 'rxjs';
+import { ToornamentsService } from 'src/app/toornaments.service';
+import * as moment from 'moment';
+import { MatDialogRef, MAT_DIALOG_DATA, MatSnackBar } from '@angular/material';
+import { take, delay } from 'rxjs/operators';
+import { Animations } from 'src/app/utilities/animations';
+import { Faceoff, Player, Match, Team } from 'src/app/interfaces/faceoff';
+import { FaceoffService } from 'src/app/faceoff.service';
+/**
+ * Component for rocket league replay parser + drag and drop functionality.
+ */
+@Component({
+  selector: 'app-drag-and-drop',
+  templateUrl: './drag-and-drop.component.html',
+  styleUrls: ['./drag-and-drop.component.scss'],
+  animations: [Animations.elementAnimations()],
+})
+export class DragAndDropComponent implements OnInit {
+  files: any;
+  replays: Buffer[];
+  matchId: string;
+  stageId: string;
+  error: string;
+  participants: any;
+  matchNumber: number;
+  // Array used for ngFor match # column
+  games: number[];
+
+  // Emit every time a replay is done being parsed to JSON
+  onParse$ = new Subject<Match>();
+
+  // Array containing all the values shown in the UI
+  matches: Match[] = [];
+
+  loading = true;
+
+  constructor(
+    private faceoffService: FaceoffService,
+    public dialogRef: MatDialogRef<any>,
+    public snackbar: MatSnackBar,
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {}
+
+  // TODO: refactor this to be clearer. Also upload replays along the match data
+  ngOnInit(): void {
+    this.files = this.data.files;
+    this.matchId = this.data.matchId;
+    this.participants = this.data.participants;
+    this.stageId = this.data.stageId;
+
+    this.games = Array.from(Array(this.matchNumber || this.files.length).keys());
+    this.replayParser(this.files);
+    this.onParse$.subscribe(data => {
+      this.matches = [...this.matches, data];
+      if (this.matches.length >= this.files.length) {
+        this.upload();
+      }
+    });
+  }
+
+  /**
+   * Basically creates a container for all of the data that we want to store in the database.
+   * @param matches all of the played matches and their respective data
+   */
+  createFaceoffEntity(matches: Match[]): Faceoff {
+    // Matches have exact time data that we can use to get correct match order
+    matches.sort((a, b) => {
+      const dateA: any = new Date(a.date);
+      const dateB: any = new Date(b.date);
+      return dateA - dateB;
+    });
+
+    // For future database indexing, it's important that we have also have participant data
+    const faceOff = {
+      matchId: this.matchId,
+      stageId: this.stageId,
+      participants: this.participants,
+      date: matches[0].date,
+      matches: matches,
+    };
+    return faceOff;
+  }
+
+  /**
+   * Turns binary file arrays to JSON that will be shown in the faceoff-component
+   * @param files binary replay files
+   */
+  replayParser(files: any): void {
+    const replayParser = new RLParser();
+    files.forEach((fileObject: any, index: number) => {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const event: any = e.target;
+        const buffer = Buffer.from(event.result);
+        const result = replayParser.RocketLeagueParser.parse(buffer);
+        this.prettifyReplayJSON(result.properties, index);
+      };
+      reader.readAsArrayBuffer(fileObject.file);
+    });
+  }
+
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+
+  // Mock upload process for now
+  upload(): void {
+    this.loading = true;
+    const faceoff = this.createFaceoffEntity(this.matches);
+    console.log(faceoff);
+    this.faceoffService
+      .uploadFaceOff(faceoff)
+      .pipe(take(1))
+      .subscribe(
+        data => {
+          this.dialogRef.close(data);
+        },
+        err => {
+          this.error = err.error.message;
+        }
+      );
+  }
+
+  /**
+   * Because the RLParser class gives us a pretty unusable format of JSON, we need to prettify it in order to show it on template
+   * @param properties all of the properties that the parser class gives us
+   * @param index index of the file
+   */
+  prettifyReplayJSON(properties: any, index: number): any {
+    try {
+      // Get team objects
+      const teamScores = this.getTeamScores(properties);
+
+      // Get player stats and assign them under the correct teams
+      const playerStats = this.getPlayerStats(properties, teamScores);
+
+      // Then get date from the properties, which can be used to sort the games
+      const dateIndex = properties.findIndex(property => property.name === 'Date');
+      const date = moment(properties[dateIndex].more.details.value, 'YYYY-MM-DD HH-mm-ss').toISOString();
+
+      // Construct a match object that will be shown in the template
+      const match = { matchIndex: index, date: date, teams: playerStats };
+      this.onParse$.next(match);
+    } catch (err) {
+      this.loading = false;
+
+      console.error('Error constructing replay JSON, file:', this.files[index], err);
+    }
+  }
+
+  /**
+   * We cherrypick only the useful data from the replay file and reconstruct a new array of teams with only the relevant data,
+   * under which the players will subsequently be added.
+   */
+  getTeamScores(properties: any): Team[] {
+    // If the parsed replay header does not have teamXscore, then that team didn't score any goals
+    let team_one_score = 0;
+    let team_two_score = 0;
+    const team_one_score_index = properties.findIndex(file => file.name === 'Team0Score');
+    if (team_one_score_index > -1) {
+      team_one_score = properties[team_one_score_index].more.details.value;
+    }
+
+    const team_two_score_index = properties.findIndex(file => file.name === 'Team1Score');
+    if (team_two_score_index > -1) {
+      team_two_score = properties[team_two_score_index].more.details.value;
+    }
+    const team_one_result = team_one_score > team_two_score ? 'win' : 'loss';
+    const team_two_result = team_two_score > team_one_score ? 'win' : 'loss';
+
+    const teamNames = this.getTeamNames(team_one_result, team_two_result);
+
+    const teams = [
+      {
+        score: team_one_score,
+        teamId: 0,
+        name: teamNames.team_one.participant.name,
+        result: team_one_result,
+        players: [],
+      },
+      {
+        score: team_two_score,
+        teamId: 1,
+        result: team_two_result,
+        name: teamNames.team_two.participant.name,
+        players: [],
+      },
+    ];
+    return teams;
+  }
+
+  getTeamNames(teamOneResult: string, teamTwoResult: string): any {
+    let team_one;
+    let team_two;
+    const checkForSweep = this.participants.some(participant => participant.score === 3);
+    if (checkForSweep) {
+      team_one = this.participants.find(participant => participant.result === teamOneResult);
+      team_two = this.participants.find(participant => participant.result === teamTwoResult);
+    } else {
+      if (teamOneResult === 'loss') {
+        team_one = this.participants.find(participant => participant.score === 1);
+        team_two = this.participants.find(participant => participant.score === 2);
+      } else if (teamTwoResult === 'loss') {
+        team_one = this.participants.find(participant => participant.score === 1);
+        team_two = this.participants.find(participant => participant.score === 2);
+      }
+    }
+    return { team_one, team_two };
+  }
+
+  /**
+   * Create a player object with all of the relevant data that we want to show in the UI
+   * @param properties Replay file's parsed properties
+   * @param teams Toornaments teams
+   */
+  getPlayerStats(properties: any, teams: Team[]): Team[] {
+    const player_stats_index = properties.findIndex(prop => prop.name === 'PlayerStats');
+    const player_stats = properties[player_stats_index].more.details.array;
+
+    const arr = [];
+    player_stats.forEach((stat: any) => {
+      const player: Player | any = {};
+      player.team = this.findElementWithName('Team', stat);
+      player.name = this.findElementWithName('Name', stat);
+      player.score = this.findElementWithName('Score', stat);
+      player.goals = this.findElementWithName('Goals', stat);
+      player.assists = this.findElementWithName('Assists', stat);
+      player.saves = this.findElementWithName('Saves', stat);
+      player.shots = this.findElementWithName('Shots', stat);
+      arr.push(player);
+    });
+
+    teams = this.getTeamPlayers(0, arr, teams);
+    teams = this.getTeamPlayers(1, arr, teams);
+
+    return teams;
+  }
+
+  /**
+   * Assign the correct teams for players, accumulates player goals and compares to the match result
+   * @param teamIndex first or second team index
+   * @param arr player array
+   * @param teams teams array
+   */
+  getTeamPlayers(teamIndex: 0 | 1, arr: any[], teams: any): any {
+    const team_one = arr.filter(player => player.team === teamIndex);
+    const team_one_score = team_one.reduce((x, player) => x + player.goals, 0);
+    const team_one_index = teams.findIndex(team => team.score === team_one_score);
+
+    team_one.map(player => {
+      player = player;
+      player.teamName = teams[team_one_index].name;
+    });
+    teams[team_one_index].players = team_one;
+    return teams;
+  }
+
+  findElementWithName(elName: string, player: any): any {
+    return player.part.find(el => el.name === elName).more.details.value;
+  }
+}

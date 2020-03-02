@@ -1,0 +1,37 @@
+@import "~@angular/material/theming";
+@import "./mixin.scss";
+
+// Primary theme
+@include mat-core();
+$mytheme-app-primary: mat-palette($mat-light-blue, 700, 600);
+$mytheme-app-accent: mat-palette($mat-pink, 600, 900, A100);
+$mytheme-app-warn: mat-palette($mat-deep-orange);
+$mytheme-app-success: mat-palette($mat-green, 500, 600);
+$mytheme-app-warning: mat-palette($mat-red, 500);
+$mytheme-app-theme: mat-light-theme($mytheme-app-primary, $mytheme-app-accent, $mytheme-app-warn);
+@include angular-material-theme($mytheme-app-theme);
+
+.accent-color {
+  color: mat-color($mytheme-app-primary) !important;
+}
+.warning-color {
+  background-color: mat-color($mytheme-app-warning) !important;
+  color: white;
+}
+.warning-red {
+  color: mat-color($mytheme-app-warning);
+}
+
+.success-green {
+  color: mat-color($mytheme-app-success);
+}
+// Secondary Theme
+.alt-theme {
+  $mytheme-alt-primary: mat-palette($mat-blue-grey, 500);
+  $mytheme-alt-accent: mat-palette($mat-pink, 500);
+  $mytheme-alt-warn: mat-palette($mat-deep-orange);
+  $mytheme-alt-theme: mat-light-theme($mytheme-alt-primary, $mytheme-alt-accent, $mytheme-alt-warn);
+  @include angular-material-theme($mytheme-alt-theme);
+}
+// Using the $theme variable from the pre-built theme you can call the theming function
+@include mytheme-sidemenu($mytheme-app-theme);

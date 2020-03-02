@@ -1,0 +1,12 @@
+<h4 mat-dialog-title style="text-align: center;">
+  {{ !error ? 'Uploading match data...' : 'Upload failed' }}
+</h4>
+<div mat-dialog-content class="dialog-content">
+  <div *ngIf="!error; else Error">
+    <mat-progress-spinner *ngIf="!error" @slideInOut color="warn" mode="indeterminate" diameter="40">
+    </mat-progress-spinner>
+  </div>
+  <ng-template #Error>
+    <h5>{{ error }}</h5>
+  </ng-template>
+</div>

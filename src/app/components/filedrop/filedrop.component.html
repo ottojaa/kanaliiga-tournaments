@@ -1,0 +1,67 @@
+<mat-expansion-panel [expanded]="expanded" [@.disabled]="animationsDisabled">
+  <mat-expansion-panel-header style="display: none" [collapsedHeight]="'0px'">
+    <mat-panel-description> </mat-panel-description>
+  </mat-expansion-panel-header>
+
+  <div class="center">
+    <ngx-file-drop
+      *ngIf="user && (user.role === 'ADMIN' || user.role === 'MAINTAINER') && !dataExists"
+      dropZoneClassName="dropzone"
+      contentClassName="content"
+      multiple="true"
+      (onFileDrop)="dropped($event)"
+      (onFileOver)="fileOver($event)"
+      (onFileLeave)="fileLeave($event)"
+    >
+      <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+        <button
+          mat-button
+          type="button"
+          style="font-weight: 400"
+          color="warn"
+          class="upload-button"
+          (click)="openFileSelector()"
+        >
+          Drag and drop replays
+        </button>
+      </ng-template>
+    </ngx-file-drop>
+    <div class="actions" *ngIf="!dataSource.length">
+      <button *ngIf="canSeeDeleteButton()" mat-icon-button (click)="confirmDelete()" matTooltip="Delete this faceoff">
+        <mat-icon>delete</mat-icon>
+      </button>
+      <button *ngIf="!dataExists" class="warning-red" mat-icon-button matTooltip="No data found for this match yet">
+        <mat-icon>not_interested</mat-icon>
+      </button>
+
+      <button *ngIf="dataExists" (click)="goToFaceoff(matchId)" mat-icon-button matTooltip="View faceoff stats">
+        <mat-icon>arrow_forward</mat-icon>
+      </button>
+    </div>
+    <div *ngIf="dataSource.length" id="data-table">
+      <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 data-table">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Name</th>
+          <td mat-cell *matCellDef="let element">
+            <h5 style="margin-right: 20px;">{{ element.name }}</h5>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="delete">
+          <th mat-header-cell *matHeaderCellDef>Delete</th>
+          <td mat-cell *matCellDef="let element; let i = index">
+            <mat-icon style="cursor: pointer" (click)="onDeleteFile(i)" aria-hidden="false" aria-label="delete"
+              >close</mat-icon
+            >
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </div>
+    <div *ngIf="dataSource.length" class="button">
+      <button color="warn" mat-flat-button (click)="openDialog()" [disabled]="">Upload replays</button>
+    </div>
+  </div>
+</mat-expansion-panel>

@@ -1,0 +1,12 @@
+.index {
+  z-index: -1 !important;
+}
+
+.elevation {
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
+  display: block;
+  overflow: hidden;
+}

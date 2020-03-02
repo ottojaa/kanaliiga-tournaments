@@ -1,0 +1,24 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import "https://fonts.googleapis.com/icon?family=Material+Icons";
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: "Open Sans";
+}
+
+.mat-grid-tile .mat-figure {
+  justify-content: flex-start !important ;
+  align-items: flex-start !important;
+}
+
+.custom-dialog-container .mat-dialog-container {
+  padding: 0;
+}
+
+mat-tab-header {
+  padding-top: 20px;
+}

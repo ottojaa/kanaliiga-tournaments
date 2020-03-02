@@ -1,0 +1,103 @@
+<div class="container">
+  <!-- Dropdown for stage filtering -->
+
+  <div class="mat-elevation-z6" style="width: 100%;">
+    <div class="top">
+      <button mat-button (click)="navigateToStages()">
+        <mat-icon>keyboard_arrow_left</mat-icon>
+        Stages
+      </button>
+      <div>
+        <mat-form-field>
+          <mat-label>Select a stage</mat-label>
+          <mat-select [(value)]="selectedStage" (selectionChange)="onStageChange($event)">
+            <mat-option *ngFor="let stage of stages$ | async; let i = index" [value]="stage.id">{{
+              stage.name
+            }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field style="margin-left: 10px;">
+          <mat-label>Select a group</mat-label>
+          <mat-select [(value)]="selectedGroup" (selectionChange)="onGroupChange($event)">
+            <mat-option *ngFor="let group of groups; let i = index" [value]="group"> Group {{ i + 1 }} </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+
+  <mat-divider color="primary" style="width: 100%;"></mat-divider>
+
+  <!-- Container for all of the groups-->
+
+  <div class="progress">
+    <div *ngIf="!(currentStage$ | async); else filler" style="width: 100%;" @animatedOpacity>
+      <mat-progress-bar mode="indeterminate" color="warn" style="width: 100%; margin: 0"></mat-progress-bar>
+      <div style="margin-top: 30px !important; width: 80%; margin: auto;" *ngFor="let el of [0, 1, 2]">
+        <ngx-skeleton-loader
+          count="3"
+          appearance="line"
+          [theme]="{
+            padding: '10px'
+          }"
+        >
+        </ngx-skeleton-loader>
+      </div>
+    </div>
+
+    <ng-template #filler>
+      <div></div>
+    </ng-template>
+  </div>
+
+  <div class="row">
+    <div class="group" *ngFor="let group of currentStage$ | async; let i = index">
+      <div *ngIf="labels && labels.length" class="divider" color="primary">
+        <h4 style="padding: 10px;">{{ getRoundLabel(group[0].round_id) }}</h4>
+      </div>
+      <div class="column" @animatedList>
+        <!-- Container for all of the matches inside a group -->
+
+        <mat-card class="mat-elevation-z4" *ngFor="let match of group; let j = index" @animatedItem>
+          <mat-card-header>
+            <mat-card-title *ngFor="let opponent of match.opponents">
+              <div class="match-score opponent">
+                <p class="name" [ngClass]="opponent.result === 'win' ? 'winner-column' : 'loser-column'">
+                  {{ opponent.participant.name }}
+                </p>
+                <p class="name" [ngClass]="opponent.result === 'win' ? 'winner' : 'loser'">
+                  {{ opponent.score }}
+                </p>
+              </div>
+            </mat-card-title>
+          </mat-card-header>
+
+          <!-- Bottom part of the faceoff-card -->
+
+          <mat-card-actions align="end" class="actions">
+            <button mat-icon-button (click)="onToggleExpand(match.id)">
+              <mat-icon
+                matTooltip="Match statistics up to date"
+                class="replay-found"
+                *ngIf="checkExistingData(match.id); else noData"
+                >check_circle</mat-icon
+              >
+              <ng-template #noData>
+                <mat-icon>keyboard_arrow_down</mat-icon>
+              </ng-template>
+            </button>
+          </mat-card-actions>
+          <app-filedrop
+            #fileDropComponent
+            [matchId]="match.id"
+            [stageId]="stageId"
+            [user]="getCurrentUser()"
+            [dataExists]="checkExistingData(match.id)"
+            [participants]="match.opponents"
+            (deleteSuccess)="onDeleteFaceoff($event)"
+          ></app-filedrop>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div>

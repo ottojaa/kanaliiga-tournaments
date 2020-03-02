@@ -1,0 +1,48 @@
+<mat-progress-bar [ngClass]="loading ? 'show' : 'hide'" mode="indeterminate" color="accent"></mat-progress-bar>
+<mat-card>
+  <mat-card-content>
+    <!-- Normal login modal formgroup-->
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!otpNotConfirmed; else confirmOtp">
+      <h2>Log In</h2>
+      <mat-form-field class="full-width-input">
+        <input matInput placeholder="Email" formControlName="email" required [(ngModel)]="email" />
+        <mat-error *ngIf="!accountNotFound">
+          Please provide a valid email address
+        </mat-error>
+        <mat-error *ngIf="accountNotFound">
+          User with this email was not found.
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="full-width-input">
+        <input
+          matInput
+          type="password"
+          placeholder="Password"
+          formControlName="password"
+          required
+          [(ngModel)]="password"
+        />
+        <mat-error>
+          Please provide a valid password
+        </mat-error>
+      </mat-form-field>
+      <button mat-raised-button color="primary" [disabled]="!form.valid">Login</button>
+    </form>
+
+    <!-- First time logging in, the user is requested to confirm their OTP to guarantee it's a real email -->
+
+    <ng-template #confirmOtp>
+      <form [formGroup]="formOtp" (ngSubmit)="verifyOTP()">
+        <h2>Log In</h2>
+        <mat-form-field class="full-width-input">
+          <input matInput placeholder="Your one time password" formControlName="otp" required />
+          <mat-error *ngIf="otpInvalid">
+            The one time password you entered is incorrect.
+          </mat-error>
+        </mat-form-field>
+        <button mat-raised-button color="primary">Confirm</button>
+      </form>
+    </ng-template>
+  </mat-card-content>
+</mat-card>

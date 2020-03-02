@@ -1,0 +1,88 @@
+.data-table {
+  max-width: 90%;
+  min-width: 65%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+.name {
+  margin: 20px 5px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+}
+.match-score {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.loser {
+  color: #f44336;
+}
+.lose {
+  color: grey;
+}
+
+.winner {
+  color: #8bc34a;
+  font-weight: bolder;
+  font-size: 14px;
+}
+
+.win {
+  font-weight: 900;
+}
+
+.center {
+  width: 100%;
+  height: 90%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+.title {
+  font-family: "Open Sans";
+}
+
+.icon {
+  font-size: 70px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.container {
+  background: white;
+  display: flex;
+  justify-content: space-around;
+  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14),
+    0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.mat-table {
+  font-family: "Open Sans";
+}
+
+body .material-icons {
+  font-family: "Material Icons";
+}
+
+td.mat-cell:last-of-type {
+  margin-right: 20px;
+  font-size: 13px;
+  font-weight: bolder;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  position: absolute;
+  top: 4%;
+  right: 2%;
+}
+
+th.mat-sort-header-sorted {
+  color: black;
+}

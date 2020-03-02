@@ -1,0 +1,38 @@
+@import './../theme.scss';
+
+app-toolbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+}
+
+.app {
+  width: 100%;
+  position: absolute;
+  top: 56px;
+  bottom: 0;
+  right: 0;
+}
+
+.sidenav {
+  display: flex;
+  width: 13%;
+  flex-direction: column;
+  position: fixed;
+  top: 56px;
+  bottom: 0;
+  left: 0;
+  background: #303030;
+  color: white;
+}
+
+.toornament-logo {
+  position: fixed;
+  z-index: 10;
+  top: 91%;
+  right: 1%;
+  background: #292929;
+  border-radius: 5px;
+}

@@ -1,0 +1,34 @@
+<mat-toolbar color="primary">
+  <img
+    matListAvatar
+    class="avatar"
+    src="//www.kanaliiga.fi/wp-content/uploads/2019/05/kanaliiga-logo-100px.png"
+    alt="..."
+    routerLink="/tournaments"
+  />
+  <span>Kanaliiga Tournaments</span>
+  <span class="spacer"></span>
+  <a href="https://discord.gg/UFetjhv" style="display: flex; margin-top: 5px;">
+    <img
+      style="height: 40px; margin-right: 20px;"
+      href="https://discord.gg/UFetjhv"
+      src="../../../assets/Discord-Logo+Wordmark-White.png"
+    />
+  </a>
+  <div *ngIf="auth.currentUser$ | async; else signButtons">
+    <button mat-button [matMenuTriggerFor]="menu">
+      {{ (auth.currentUser$ | async).username }}<mat-icon class="icon">reorder</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item color="warn" (click)="logout()">Log out</button>
+      <button mat-menu-item>Profile</button>
+    </mat-menu>
+    <button mat-button></button>
+  </div>
+  <ng-template #signButtons>
+    <div>
+      <button mat-button (click)="openSignIn()">Sign in</button>
+      <button mat-button (click)="openSignUp()">Sign up</button>
+    </div>
+  </ng-template>
+</mat-toolbar>

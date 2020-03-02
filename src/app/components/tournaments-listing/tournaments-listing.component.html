@@ -1,0 +1,46 @@
+<div *ngIf="!(tournaments$ | async)">
+  <mat-progress-bar mode="indeterminate" color="warn"></mat-progress-bar>
+</div>
+
+<mat-accordion multi="true"
+  ><div class="flex-container">
+    <div *ngFor="let tournament of tournaments$ | async; let i = index" class="tournament">
+      <mat-expansion-panel [expanded]="false">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <img
+              matListAvatar
+              class="avatar"
+              src="//www.kanaliiga.fi/wp-content/uploads/2019/05/kanaliiga-logo-100px.png"
+              alt="..."
+            />
+            {{ tournament.name }}
+          </mat-panel-title>
+          <mat-panel-description> Status: {{ tournament.status }} </mat-panel-description>
+        </mat-expansion-panel-header>
+        <mat-list>
+          <mat-list-item>
+            <p matLine>Started: {{ tournament.scheduled_date_start | date: 'mediumDate' }}</p>
+            <p matLine>Ends: {{ tournament.scheduled_date_end | date: 'mediumDate' }}</p>
+          </mat-list-item>
+          <mat-list-item>
+            <p
+              class="link accent-color effect-underline"
+              matLine
+              routerLink="/tournaments/{{ tournament.id }}/stages"
+              routerLinkActive="active"
+            >
+              Go to tournament stages
+            </p>
+          </mat-list-item>
+        </mat-list>
+        <h3 style="margin-top: 10px; margin-left: 15px; margin-bottom: 0">Participants</h3>
+        <div class="container">
+          <div *ngFor="let participant of participants[i]; let i = index" class="participant">
+            <p style="font-weight:800; font-size: 12px; margin: 0">{{ participant.name }}</p>
+          </div>
+        </div>
+      </mat-expansion-panel>
+    </div>
+  </div>
+</mat-accordion>
