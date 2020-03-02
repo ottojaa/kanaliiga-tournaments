@@ -9,7 +9,7 @@
     "ng": "ng",
     "config": "ts-node ./set-env.ts",
     "start": "npm run config -- && node server.js",
-    "build": "npm run config -- --prod && ng build --prod",
+    "build": "npm run config -- && ng build --prod",
     "test": "npm run config && ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
