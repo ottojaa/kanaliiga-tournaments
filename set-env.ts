@@ -1,4 +1,4 @@
-import { writeFile } from 'fs';
+const fs = require('fs');
 require('dotenv').config({ path: __dirname + '/.env' });
 const environment = process.env.ENVIRONMENT;
 let apiURL: string;
@@ -16,7 +16,7 @@ export const environment = {
     playlist: '${process.env.PLAYLIST}',
     apiUrl: '${apiURL}'};`;
 
-writeFile(targetPath, envConfigFile, err => {
+fs.writeFile(targetPath, envConfigFile, err => {
   if (err) {
     console.log(err);
   }
