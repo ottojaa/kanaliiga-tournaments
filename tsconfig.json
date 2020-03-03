@@ -3,6 +3,7 @@
   "compilerOptions": {
     "baseUrl": "./",
     "allowJs": true,
+    "module": "esnext",
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
     "noImplicitAny": false,
@@ -16,8 +17,14 @@
     "typeRoots": ["node_modules/@types"],
     "lib": ["es2018", "dom"]
   },
+  "files": [
+    "src/main.ts",
+    "src/polyfills.ts"
+  ],
+  "include": [
+    "src/**/*.d.ts"
+  ],
   "types": ["node"],
-  "exclude": ["typings/browser.d.ts", "typings/browser", "node_modules", "scripts.js"],
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,
     "strictInjectionParameters": true

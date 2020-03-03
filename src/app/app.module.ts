@@ -48,8 +48,6 @@ import { LoginComponent } from './register-login/login/login.component';
 import { RegisterComponent } from './register-login/register/register.component';
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
 import { ConfirmDialogComponent } from './common/confirm-dialog/confirm-dialog.component';
-import { BreadcrumbModule } from 'angular-crumbs';
-import { FaceoffTableModule } from './components/faceoff-stats/faceoff-table/faceoff-table.module';
 import { FaceoffTableComponent } from './components/faceoff-stats/faceoff-table/faceoff-table.component';
 
 @NgModule({
@@ -75,7 +73,6 @@ import { FaceoffTableComponent } from './components/faceoff-stats/faceoff-table/
     BrowserModule,
     MatMenuModule,
     AppRoutingModule,
-    BreadcrumbModule,
     RouterModule,
     MatStepperModule,
     BrowserAnimationsModule,

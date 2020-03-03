@@ -3,7 +3,7 @@
 </div>
 
 <mat-accordion multi="true"
-  ><div class="flex-container">
+  ><div class="flex-container" fxLayoutAlign="center start">
     <div *ngFor="let tournament of tournaments$ | async; let i = index" class="tournament">
       <mat-expansion-panel [expanded]="false">
         <mat-expansion-panel-header>

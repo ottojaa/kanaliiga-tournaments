@@ -1,10 +1,13 @@
 .data-table {
   max-width: 90%;
-  min-width: 65%;
   margin-left: auto;
   margin-right: auto;
   margin-top: 50px;
   margin-bottom: 50px;
+}
+
+table {
+  table-layout: fixed;
 }
 .name {
   margin: 20px 5px;
@@ -45,7 +48,7 @@
 }
 
 .title {
-  font-family: "Open Sans";
+  font-family: 'Open Sans';
 }
 
 .icon {
@@ -63,11 +66,11 @@
 }
 
 .mat-table {
-  font-family: "Open Sans";
+  font-family: 'Open Sans';
 }
 
 body .material-icons {
-  font-family: "Material Icons";
+  font-family: 'Material Icons';
 }
 
 td.mat-cell:last-of-type {

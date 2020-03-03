@@ -9,6 +9,11 @@ mat-card {
   min-width: 230px;
 }
 
+.button-container {
+  max-width: 50%;
+  flex-wrap: wrap;
+}
+
 .icon {
   position: absolute;
   top: 0;
