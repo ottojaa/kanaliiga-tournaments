@@ -1,10 +1,10 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { RLParser } from '../../../utilities/replay-parser/rl-replay-parser';
-import { Subject, of } from 'rxjs';
-import { ToornamentsService } from 'src/app/toornaments.service';
+import { Subject } from 'rxjs';
+import { cloneDeep } from 'lodash';
 import * as moment from 'moment';
 import { MatDialogRef, MAT_DIALOG_DATA, MatSnackBar } from '@angular/material';
-import { take, delay } from 'rxjs/operators';
+import { take } from 'rxjs/operators';
 import { Animations } from 'src/app/utilities/animations';
 import { Faceoff, Player, Match, Team } from 'src/app/interfaces/faceoff';
 import { FaceoffService } from 'src/app/faceoff.service';
@@ -52,6 +52,7 @@ export class DragAndDropComponent implements OnInit {
 
     this.games = Array.from(Array(this.matchNumber || this.files.length).keys());
     this.replayParser(this.files);
+
     this.onParse$.subscribe(data => {
       this.matches = [...this.matches, data];
       if (this.matches.length >= this.files.length) {
@@ -80,6 +81,73 @@ export class DragAndDropComponent implements OnInit {
       date: matches[0].date,
       matches: matches,
     };
+
+    /**
+     * Get correct team names code ->
+     */
+
+    // First, gather the winning players' names to an array
+    const arr = [];
+    faceOff.matches.forEach(match => {
+      match.teams.forEach(team => {
+        if (team.result === 'win') {
+          team.players.forEach(player => {
+            arr.push(player.name);
+          });
+        }
+      });
+    });
+
+    // From toornament stats, get the team whose score is higher
+    const max = Math.max(this.participants[0].score, this.participants[1].score);
+    const teamIndex = this.participants.findIndex(participant => participant.score === max);
+
+    // We now have player's who had at least one win the whole faceoff in an array.
+    // Sort the array by name so we can count the duplicates
+    arr.sort();
+    let count = 0;
+    let curr = '';
+    let result = '';
+    for (let i = 0; i < arr.length; i++) {
+      if (curr === arr[i]) {
+        count += 1;
+        if (count === max - 1) {
+          result = arr[i];
+          break;
+        }
+      } else {
+        count = 0;
+      }
+      curr = arr[i];
+    }
+
+    const teamNameAssign = (index: number, participantIndex: number, teams: any) => {
+      const teamsCopy = cloneDeep(teams);
+      teamsCopy[index].name = this.participants[participantIndex].participant.name;
+      teamsCopy[index].players.forEach(player => {
+        player.teamName = this.participants[participantIndex].participant.name;
+      });
+      return teamsCopy;
+    };
+
+    // At this point we know who at least one of the winning team members is "result", so we can assign the
+    // winning team's (participants[teamIndex] name to that player's team, and the other to the loser's team.)
+    faceOff.matches.forEach(match => {
+      match.teams.forEach((team, index) => {
+        for (let i = 0; i < team.players.length; i++) {
+          if (team.players[i].name === result) {
+            match.teams = [...teamNameAssign(index, teamIndex, match.teams)];
+            index === 1
+              ? (match.teams =
+                  teamIndex === 1 ? [...teamNameAssign(0, 0, match.teams)] : [...teamNameAssign(0, 1, match.teams)])
+              : (match.teams =
+                  teamIndex === 1 ? [...teamNameAssign(1, 0, match.teams)] : [...teamNameAssign(1, 1, match.teams)]);
+            break;
+          }
+        }
+      });
+    });
+
     return faceOff;
   }
 
@@ -109,7 +177,6 @@ export class DragAndDropComponent implements OnInit {
   upload(): void {
     this.loading = true;
     const faceoff = this.createFaceoffEntity(this.matches);
-    console.log(faceoff);
     this.faceoffService
       .uploadFaceOff(faceoff)
       .pipe(take(1))
@@ -170,13 +237,11 @@ export class DragAndDropComponent implements OnInit {
     const team_one_result = team_one_score > team_two_score ? 'win' : 'loss';
     const team_two_result = team_two_score > team_one_score ? 'win' : 'loss';
 
-    const teamNames = this.getTeamNames(team_one_result, team_two_result);
-
     const teams = [
       {
         score: team_one_score,
         teamId: 0,
-        name: teamNames.team_one.participant.name,
+        name: '',
         result: team_one_result,
         players: [],
       },
@@ -184,14 +249,14 @@ export class DragAndDropComponent implements OnInit {
         score: team_two_score,
         teamId: 1,
         result: team_two_result,
-        name: teamNames.team_two.participant.name,
+        name: '',
         players: [],
       },
     ];
     return teams;
   }
 
-  getTeamNames(teamOneResult: string, teamTwoResult: string): any {
+  /* getTeamNames(teamOneResult: string, teamTwoResult: string): any {
     let team_one;
     let team_two;
     const checkForSweep = this.participants.some(participant => participant.score === 3);
@@ -208,7 +273,7 @@ export class DragAndDropComponent implements OnInit {
       }
     }
     return { team_one, team_two };
-  }
+  } */
 
   /**
    * Create a player object with all of the relevant data that we want to show in the UI
