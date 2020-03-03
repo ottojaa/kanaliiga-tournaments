@@ -15,6 +15,7 @@ import { MatInputModule, MatSortModule, MatFormFieldModule } from '@angular/mate
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatTabsModule } from '@angular/material/tabs';
 import { TabsComponent } from './components/tabs/tabs.component';
+import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { DragDropModule } from '@angular/cdk/drag-drop';
@@ -86,6 +87,7 @@ import { FaceoffTableComponent } from './components/faceoff-stats/faceoff-table/
     MatTableModule,
     MatToolbarModule,
     MatSnackBarModule,
+    FlexLayoutModule,
     MatIconModule,
     MatTabsModule,
     MatSelectModule,
