@@ -10,13 +10,17 @@ export class ApiInterceptorService implements HttpInterceptor {
     const userData = localStorage.getItem('userData');
 
     // Only use JWT authorization for our own backend, as toornament thinks we're trying to use a fabricated "organizer" token
-    if (userData && !req.url.includes('api.toornament')) {
-      const idToken = JSON.parse(userData);
-      const cloned = authReq.clone({
-        headers: req.headers.set('Authorization', 'Bearer ' + idToken.token),
-      });
+    if (typeof userData !== 'undefined' && !req.url.includes('api.toornament')) {
+      try {
+        const idToken = JSON.parse(userData);
+        const cloned = authReq.clone({
+          headers: req.headers.set('Authorization', 'Bearer ' + idToken.token),
+        });
 
-      return next.handle(cloned);
+        return next.handle(cloned);
+      } catch (err) {
+        console.error('JSON parse failed:', err);
+      }
     }
     return next.handle(authReq);
   }

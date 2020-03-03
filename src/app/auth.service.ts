@@ -15,13 +15,15 @@ export class AuthService {
 
   constructor(private http: HttpClient) {
     this.url = this.baseUrl;
-
-    const user = localStorage.getItem('userData');
-
     this.currentUserData$ = new BehaviorSubject<any>({});
 
-    if (user) {
-      this.currentUserData$.next(JSON.parse(user));
+    const user = localStorage.getItem('userData');
+    if (typeof user !== 'undefined') {
+      try {
+        this.currentUserData$.next(JSON.parse(user));
+      } catch (err) {
+        console.error('JSON parse failed: ', err);
+      }
     }
     this.currentUser$ = this.currentUserData$.asObservable();
   }
