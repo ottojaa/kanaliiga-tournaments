@@ -7,7 +7,11 @@ export class ApiInterceptorService implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const authReq = req.clone({ headers: req.headers.set('X-Api-Key', environment.apiKey) });
 
-    const idToken = JSON.parse(localStorage.getItem('userData'));
+    let idToken;
+    const userData = localStorage.getItem('userData');
+    if (userData) {
+      idToken = JSON.parse(userData);
+    }
 
     // Only use JWT authorization for our own backend, as toornament thinks we're trying to use a fabricated "organizer" token
     if (idToken && !req.url.includes('api.toornament')) {
