@@ -8,6 +8,7 @@ import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { TournamentsComponent } from './components/tournaments-listing/tournaments-listing.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatIconModule } from '@angular/material/icon';
 import { MatStepperModule } from '@angular/material/stepper';
@@ -115,6 +116,7 @@ import { FaceoffTableComponent } from './components/faceoff-stats/faceoff-table/
       provide: STEPPER_GLOBAL_OPTIONS,
       useValue: { showError: true },
     },
+    { provide: LocationStrategy, useClass: HashLocationStrategy },
   ],
   entryComponents: [DragAndDropComponent, RegisterComponent, LoginComponent, ConfirmDialogComponent],
   bootstrap: [AppComponent],
