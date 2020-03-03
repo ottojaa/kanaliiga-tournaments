@@ -19,7 +19,8 @@ mat-grid-tile {
 
 .tournament {
   flex-grow: 1;
-  min-width: 45%;
+  min-width: 300px;
+  flex-basis: 400px;
   margin: 10px;
 }
 
