@@ -1,4 +1,4 @@
-const fs = require('fs');
+import * as fs from 'fs';
 require('dotenv').config({ path: __dirname + '/.env' });
 const environment = process.env.ENVIRONMENT;
 let apiURL: string;
