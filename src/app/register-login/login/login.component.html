@@ -36,7 +36,7 @@
       <form [formGroup]="formOtp" (ngSubmit)="verifyOTP()">
         <h2>Log In</h2>
         <mat-form-field class="full-width-input">
-          <input matInput placeholder="Your one time password" formControlName="otp" required [(ngModel)]="otp" />
+          <input matInput placeholder="Your one time password" formControlName="otp" required />
           <mat-error *ngIf="otpInvalid">
             The one time password you entered is incorrect.
           </mat-error>
