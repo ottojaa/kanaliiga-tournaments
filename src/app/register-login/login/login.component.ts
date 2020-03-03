@@ -67,7 +67,7 @@ export class LoginComponent implements OnInit {
               this.snackbar.open('Invalid credentials.', 'close', { duration: 3000 });
               this.accountNotFound = true;
             } else if (err.error.data.errorCode === 2) {
-              this.snackbar.open('Check your email for a one time password!', 'close', { duration: 3000 });
+              this.snackbar.open('Check your email for a one time password', 'close', { duration: 3000 });
               this.otpNotConfirmed = true;
             }
           }
@@ -92,6 +92,24 @@ export class LoginComponent implements OnInit {
           this.dialogRef.close();
           this.snackbar.open(data.message, 'close', { duration: 3000 });
           this.auth.updateStorage(data);
+        },
+        err => {
+          this.snackbar.open(err.error.message, 'close', { duration: 3000 });
+        }
+      );
+  }
+
+  resendOTP(): void {
+    const payload = {
+      email: this.email,
+    };
+    this.auth
+      .resendOTP(payload)
+      .pipe(take(1))
+      .subscribe(
+        data => {
+          console.log(data);
+          this.snackbar.open('Email sent.', 'close', { duration: 3000 });
         },
         err => {
           this.snackbar.open(err.error.message, 'close', { duration: 3000 });

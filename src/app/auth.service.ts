@@ -15,14 +15,14 @@ export class AuthService {
 
   constructor(private http: HttpClient) {
     this.url = this.baseUrl;
-    this.currentUserData$ = new BehaviorSubject<any>({});
+    this.currentUserData$ = new BehaviorSubject<any>(null);
 
     const user = localStorage.getItem('userData');
-    if (typeof user !== 'undefined') {
+    if (user && user !== 'undefined' && typeof user !== null) {
       try {
         this.currentUserData$.next(JSON.parse(user));
       } catch (err) {
-        console.error('JSON parse failed: ', err);
+        console.error('JSON parse failed: ', user);
       }
     }
     this.currentUser$ = this.currentUserData$.asObservable();
@@ -58,9 +58,15 @@ export class AuthService {
     return this.http.post(url, payload);
   }
 
+  resendOTP(payload: any): Observable<any> {
+    const url = this.url + '/auth/resend-verify-otp';
+    return this.http.post(url, payload);
+  }
+
   updateStorage(userData: any): any {
     localStorage.setItem('userData', JSON.stringify(userData.data));
     this.currentUserData$.next(userData.data);
+    console.log(this.currentUserData$.getValue());
   }
 }
 

@@ -67,9 +67,7 @@ export class ToolbarComponent {
       panelClass: 'custom-dialog-container',
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log(result);
-    });
+    dialogRef.afterClosed().subscribe();
   }
 
   logout(): void {

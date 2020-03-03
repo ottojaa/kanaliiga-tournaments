@@ -26,7 +26,7 @@
 
   <mat-step [stepControl]="secondFormGroup" [editable]="false">
     <form [formGroup]="secondFormGroup">
-      <ng-template matStepLabel>Fill out your address</ng-template>
+      <ng-template matStepLabel>Fill out your username and password</ng-template>
       <mat-form-field>
         <mat-label>Username</mat-label>
         <input matInput formControlName="nameCtrl" required [(ngModel)]="username" />

@@ -3,7 +3,7 @@
   <mat-card-content>
     <!-- Normal login modal formgroup-->
 
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!otpNotConfirmed; else confirmOtp">
+    <form *ngIf="!otpNotConfirmed; else confirmOtp" [formGroup]="form" (ngSubmit)="onSubmit()">
       <h2>Log In</h2>
       <mat-form-field class="full-width-input">
         <input matInput placeholder="Email" formControlName="email" required [(ngModel)]="email" />
@@ -36,12 +36,13 @@
       <form [formGroup]="formOtp" (ngSubmit)="verifyOTP()">
         <h2>Log In</h2>
         <mat-form-field class="full-width-input">
-          <input matInput placeholder="Your one time password" formControlName="otp" required />
+          <input matInput placeholder="Your one time password" formControlName="otp" required [(ngModel)]="otp" />
           <mat-error *ngIf="otpInvalid">
             The one time password you entered is incorrect.
           </mat-error>
         </mat-form-field>
-        <button mat-raised-button color="primary">Confirm</button>
+        <button mat-button type="button" (click)="resendOTP()" color="warn">Resend OTP</button>
+        <button mat-raised-button color="primary" type="submit">Confirm</button>
       </form>
     </ng-template>
   </mat-card-content>
