@@ -12,7 +12,7 @@ export class FaceoffService {
   url: string;
 
   constructor(private http: HttpClient) {
-    this.url = this.baseUrl;
+    this.url = this.testUrl;
   }
 
   uploadFaceOff(payload: Faceoff): Observable<any> {
@@ -30,6 +30,11 @@ export class FaceoffService {
   getFaceoffIds(stageId: string): Observable<string[] | any> {
     const url = this.url + '/faceoff?stageId=' + stageId;
     return this.http.get(url);
+  }
+
+  parseReplays(files: any): Observable<any> {
+    const url = this.url + '/faceoff/parse';
+    return this.http.post(url, files);
   }
 
   getFaceoff(id: string): Observable<any> {

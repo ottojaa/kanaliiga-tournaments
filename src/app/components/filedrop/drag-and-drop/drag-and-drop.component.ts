@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { RLParser } from '../../../utilities/replay-parser/rl-replay-parser';
-import { Subject } from 'rxjs';
+import { Subject, forkJoin, Observable } from 'rxjs';
 import { cloneDeep } from 'lodash';
 import * as moment from 'moment';
 import { MatDialogRef, MAT_DIALOG_DATA, MatSnackBar } from '@angular/material';
@@ -8,6 +8,7 @@ import { take } from 'rxjs/operators';
 import { Animations } from 'src/app/utilities/animations';
 import { Faceoff, Player, Match, Team } from 'src/app/interfaces/faceoff';
 import { FaceoffService } from 'src/app/faceoff.service';
+import { HttpClient } from '@angular/common/http';
 /**
  * Component for rocket league replay parser + drag and drop functionality.
  */
@@ -24,6 +25,7 @@ export class DragAndDropComponent implements OnInit {
   stageId: string;
   error: string;
   participants: any;
+  message: string;
   matchNumber: number;
   // Array used for ngFor match # column
   games: number[];
@@ -40,6 +42,7 @@ export class DragAndDropComponent implements OnInit {
     private faceoffService: FaceoffService,
     public dialogRef: MatDialogRef<any>,
     public snackbar: MatSnackBar,
+    private http: HttpClient,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
 
@@ -152,20 +155,61 @@ export class DragAndDropComponent implements OnInit {
   }
 
   /**
-   * Turns binary file arrays to JSON that will be shown in the faceoff-component
+   * Reads binary file array as promises.
+   * After all promises are resolved, create a new observable array and forkjoin the result JSON (match statistics).
    * @param files binary replay files
    */
-  replayParser(files: any): void {
-    const replayParser = new RLParser();
-    files.forEach((fileObject: any, index: number) => {
+  async replayParser(files: any): Promise<void> {
+    this.message = 'Uploading match data...';
+    const promises = [];
+
+    files.forEach(fileObject => {
+      const filePromise = new Promise(resolve => {
+        const reader = new FileReader();
+        reader.onload = e => {
+          const event: any = e.target;
+          const buffer = Buffer.from(event.result);
+          resolve(buffer);
+        };
+        reader.readAsArrayBuffer(fileObject.file);
+      });
+      promises.push(filePromise);
+    });
+
+    Promise.all(promises).then(buffers => {
+      const observables: Observable<any>[] = [];
+
+      for (const buffer of buffers) {
+        observables.push(this.faceoffService.parseReplays(buffer));
+      }
+
+      forkJoin(observables)
+        .pipe(take(1))
+        .subscribe(
+          (replayData: any) => {
+            this.message = 'Parsing response...';
+            for (let i = 0; i < replayData.length; i++) {
+              this.prettifyReplayJSON(replayData[i].data.properties, i);
+            }
+          },
+          err => {
+            console.error(err);
+            this.error = err.error.message;
+          }
+        );
+    });
+  }
+
+  readArrayBuffer(file): Promise<any> {
+    return new Promise((resolve, reject) => {
       const reader = new FileReader();
+      reader.onerror = reject;
       reader.onload = e => {
         const event: any = e.target;
         const buffer = Buffer.from(event.result);
-        const result = replayParser.RocketLeagueParser.parse(buffer);
-        this.prettifyReplayJSON(result.properties, index);
+        resolve(buffer);
       };
-      reader.readAsArrayBuffer(fileObject.file);
+      reader.readAsArrayBuffer(file);
     });
   }
 
