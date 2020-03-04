@@ -155,7 +155,7 @@ export class FiledropComponent implements AfterViewInit {
         },
         err => {
           console.error('Could not delete faceoff,', err);
-          this._snackBar.open('Faceoff with this id does not exist', 'close', { duration: 3000 });
+          this._snackBar.open(err.message, 'close', { duration: 3000 });
         }
       );
   }
