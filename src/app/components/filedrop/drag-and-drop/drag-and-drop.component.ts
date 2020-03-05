@@ -1,14 +1,14 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { RLParser } from '../../../utilities/replay-parser/rl-replay-parser';
-import { Subject, forkJoin, Observable } from 'rxjs';
+import { Subject, forkJoin, Observable, BehaviorSubject } from 'rxjs';
 import { cloneDeep } from 'lodash';
 import * as moment from 'moment';
 import { MatDialogRef, MAT_DIALOG_DATA, MatSnackBar } from '@angular/material';
-import { take } from 'rxjs/operators';
+import { take, tap, map, last, toArray, debounceTime } from 'rxjs/operators';
 import { Animations } from 'src/app/utilities/animations';
 import { Faceoff, Player, Match, Team } from 'src/app/interfaces/faceoff';
 import { FaceoffService } from 'src/app/faceoff.service';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpEvent, HttpEventType } from '@angular/common/http';
 /**
  * Component for rocket league replay parser + drag and drop functionality.
  */
@@ -23,7 +23,10 @@ export class DragAndDropComponent implements OnInit {
   replays: Buffer[];
   matchId: string;
   stageId: string;
+  uploadProgress = [];
+  totalProgress = 0;
   error: string;
+  mode = 'determinate';
   participants: any;
   message: string;
   matchNumber: number;
@@ -35,7 +38,8 @@ export class DragAndDropComponent implements OnInit {
 
   // Array containing all the values shown in the UI
   matches: Match[] = [];
-
+  progressSub$ = new BehaviorSubject<number>(0);
+  progressObs$: Observable<number>;
   loading = true;
 
   constructor(
@@ -44,7 +48,9 @@ export class DragAndDropComponent implements OnInit {
     public snackbar: MatSnackBar,
     private http: HttpClient,
     @Inject(MAT_DIALOG_DATA) public data: any
-  ) {}
+  ) {
+    this.progressObs$ = this.progressSub$.asObservable().pipe(debounceTime(200));
+  }
 
   // TODO: refactor this to be clearer. Also upload replays along the match data
   ngOnInit(): void {
@@ -179,17 +185,20 @@ export class DragAndDropComponent implements OnInit {
     Promise.all(promises).then(buffers => {
       const observables: Observable<any>[] = [];
 
-      for (const buffer of buffers) {
-        observables.push(this.faceoffService.parseReplays(buffer));
+      const total = buffers.length;
+      for (const [index, buffer] of buffers.entries()) {
+        this.uploadProgress.push(0);
+        observables.push(
+          this.faceoffService.parseReplays(buffer).pipe(tap(event => this.getUploadProgress(event, total, index)))
+        );
       }
 
       forkJoin(observables)
         .pipe(take(1))
         .subscribe(
           (replayData: any) => {
-            this.message = 'Parsing response...';
             for (let i = 0; i < replayData.length; i++) {
-              this.prettifyReplayJSON(replayData[i].data.properties, i);
+              this.prettifyReplayJSON(replayData[i].body.data.properties, i);
             }
           },
           err => {
@@ -300,25 +309,6 @@ export class DragAndDropComponent implements OnInit {
     return teams;
   }
 
-  /* getTeamNames(teamOneResult: string, teamTwoResult: string): any {
-    let team_one;
-    let team_two;
-    const checkForSweep = this.participants.some(participant => participant.score === 3);
-    if (checkForSweep) {
-      team_one = this.participants.find(participant => participant.result === teamOneResult);
-      team_two = this.participants.find(participant => participant.result === teamTwoResult);
-    } else {
-      if (teamOneResult === 'loss') {
-        team_one = this.participants.find(participant => participant.score === 1);
-        team_two = this.participants.find(participant => participant.score === 2);
-      } else if (teamTwoResult === 'loss') {
-        team_one = this.participants.find(participant => participant.score === 1);
-        team_two = this.participants.find(participant => participant.score === 2);
-      }
-    }
-    return { team_one, team_two };
-  } */
-
   /**
    * Create a player object with all of the relevant data that we want to show in the UI
    * @param properties Replay file's parsed properties
@@ -368,5 +358,22 @@ export class DragAndDropComponent implements OnInit {
 
   findElementWithName(elName: string, player: any): any {
     return player.part.find(el => el.name === elName).more.details.value;
+  }
+
+  private getUploadProgress(event: HttpEvent<any>, total: number, index) {
+    if (event.type === HttpEventType.UploadProgress) {
+      this.uploadProgress[index] = Math.round((100 * event.loaded) / event.total / total);
+      const progress = this.uploadProgress.reduce((a, b) => a + b, 0);
+      if (progress !== this.progressSub$.getValue()) {
+        if (progress === 99) {
+          this.message = 'Processing response...';
+          this.mode = 'buffer';
+          this.progressSub$.next(0);
+          return;
+        } else if (progress > this.progressSub$.getValue() + 1) {
+          this.progressSub$.next(progress);
+        }
+      }
+    }
   }
 }

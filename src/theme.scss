@@ -4,7 +4,7 @@
 // Primary theme
 @include mat-core();
 $mytheme-app-primary: mat-palette($mat-light-blue, 700, 600);
-$mytheme-app-accent: mat-palette($mat-pink, 600, 900, A100);
+$mytheme-app-accent: mat-palette($mat-pink, 600, 50, A100);
 $mytheme-app-warn: mat-palette($mat-deep-orange);
 $mytheme-app-success: mat-palette($mat-green, 500, 600);
 $mytheme-app-warning: mat-palette($mat-red, 500);

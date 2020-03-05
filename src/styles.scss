@@ -19,6 +19,11 @@ body {
   padding: 0;
 }
 
+.custom-dialog-container-padding .mat-dialog-container {
+  padding: 12px;
+  overflow: hidden;
+}
+
 mat-tab-header {
   padding-top: 20px;
 }

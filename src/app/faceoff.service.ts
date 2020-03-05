@@ -32,9 +32,9 @@ export class FaceoffService {
     return this.http.get(url);
   }
 
-  parseReplays(files: any): Observable<any> {
+  parseReplays(file: any): Observable<any> {
     const url = this.url + '/faceoff/parse';
-    return this.http.post(url, files);
+    return this.http.post(url, file, { reportProgress: true, observe: 'events' });
   }
 
   getFaceoff(id: string): Observable<any> {

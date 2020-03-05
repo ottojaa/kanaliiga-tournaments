@@ -1,12 +1,20 @@
-<h4 mat-dialog-title style="text-align: center;">
-  {{ !error ? message : 'Upload failed :(' }}
-</h4>
-<div mat-dialog-content class="dialog-content">
-  <div *ngIf="!error; else Error">
-    <mat-progress-spinner *ngIf="!error" @slideInOut color="warn" mode="indeterminate" diameter="40">
-    </mat-progress-spinner>
+<div class="container">
+  <h4 mat-dialog-title style="text-align: center;">
+    {{ !error ? message : 'Upload failed :(' }}
+  </h4>
+  <div mat-dialog-content class="dialog-content">
+    <div *ngIf="!error; else Error">
+      <mat-progress-bar
+        @slideInOut
+        *ngIf="!error"
+        color="accent"
+        [mode]="mode"
+        [value]="progressObs$ | async"
+        [bufferValue]="0"
+      ></mat-progress-bar>
+    </div>
+    <ng-template #Error>
+      <h5>{{ error }}</h5>
+    </ng-template>
   </div>
-  <ng-template #Error>
-    <h5>{{ error }}</h5>
-  </ng-template>
 </div>

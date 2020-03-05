@@ -107,8 +107,8 @@ export class FiledropComponent implements AfterViewInit {
     const allReplays = this.dataSource.every(file => file.name.split('.').pop() === 'replay');
     if (this.dataSource.length <= this.matchNumber && allReplays) {
       const dialogRef = this.dialog.open(DragAndDropComponent, {
-        width: '700px',
-        height: '400px',
+        width: '500px',
+        height: '150px',
         data: {
           files: this.dataSource,
           matchId: this.matchId,
@@ -116,6 +116,7 @@ export class FiledropComponent implements AfterViewInit {
           participants: this.participants,
           replays: this.files,
         },
+        panelClass: 'custom-dialog-container-padding',
       });
 
       dialogRef.afterClosed().subscribe(result => {
