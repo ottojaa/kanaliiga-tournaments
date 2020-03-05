@@ -24,12 +24,12 @@ export class DragAndDropComponent implements OnInit {
   matchId: string;
   stageId: string;
   uploadProgress = [];
-  totalProgress = 0;
   error: string;
   mode = 'determinate';
   participants: any;
   message: string;
   matchNumber: number;
+  bufferValue = 0;
   // Array used for ngFor match # column
   games: number[];
 
@@ -40,6 +40,7 @@ export class DragAndDropComponent implements OnInit {
   matches: Match[] = [];
   progressSub$ = new BehaviorSubject<number>(0);
   progressObs$: Observable<number>;
+  bufferSub$ = new Subject<any>();
   loading = true;
 
   constructor(
@@ -49,7 +50,10 @@ export class DragAndDropComponent implements OnInit {
     private http: HttpClient,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
-    this.progressObs$ = this.progressSub$.asObservable().pipe(debounceTime(200));
+    this.progressObs$ = this.progressSub$.asObservable().pipe(
+      tap(() => this.bufferSub$.next()),
+      debounceTime(200)
+    );
   }
 
   // TODO: refactor this to be clearer. Also upload replays along the match data
@@ -67,6 +71,12 @@ export class DragAndDropComponent implements OnInit {
       if (this.matches.length >= this.files.length) {
         this.upload();
       }
+    });
+
+    // This will fire when progressSub$ hasn't received a new value in 1600ms to indicate that we are waiting for backend
+    this.bufferSub$.pipe(debounceTime(1500)).subscribe(() => {
+      this.mode = 'buffer';
+      this.bufferValue = this.progressSub$.getValue();
     });
   }
 
@@ -368,9 +378,11 @@ export class DragAndDropComponent implements OnInit {
         if (progress === 99) {
           this.message = 'Processing response...';
           this.mode = 'buffer';
+          this.bufferValue = 0;
           this.progressSub$.next(0);
           return;
         } else if (progress > this.progressSub$.getValue() + 1) {
+          this.mode = 'determinate';
           this.progressSub$.next(progress);
         }
       }
