@@ -15,20 +15,30 @@
       src="./assets/Discord-Logo+Wordmark-White.png"
     />
   </a>
-  <div *ngIf="auth.currentUser$ | async; else signButtons">
-    <button mat-button [matMenuTriggerFor]="menu" style="float: right">
-      {{ (auth.currentUser$ | async).username }}<mat-icon class="icon">reorder</mat-icon>
-    </button>
-    <mat-menu #menu="matMenu">
-      <button mat-menu-item color="warn" (click)="logout()">Log out</button>
-      <button mat-menu-item>Profile</button>
-    </mat-menu>
-    <button mat-button></button>
+  <div *ngIf="auth.loading$ | async; else show">
+    <mat-progress-spinner
+      style="margin-right: 15px;"
+      color="warn"
+      mode="indeterminate"
+      diameter="25"
+    ></mat-progress-spinner>
   </div>
-  <ng-template #signButtons>
-    <div>
-      <button mat-button (click)="openSignIn()">Sign in</button>
-      <button mat-button (click)="openSignUp()">Sign up</button>
+  <ng-template #show>
+    <div *ngIf="auth.currentUser$ | async; else signButtons">
+      <button mat-button [matMenuTriggerFor]="menu" style="float: right">
+        {{ (auth.currentUser$ | async).username }}<mat-icon class="icon">reorder</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item color="warn" (click)="logout()">Log out</button>
+        <button mat-menu-item>Profile</button>
+      </mat-menu>
+      <button mat-button></button>
     </div>
+    <ng-template #signButtons>
+      <div>
+        <button mat-button (click)="openSignIn()">Sign in</button>
+        <button mat-button (click)="openSignUp()">Sign up</button>
+      </div>
+    </ng-template>
   </ng-template>
 </mat-toolbar>

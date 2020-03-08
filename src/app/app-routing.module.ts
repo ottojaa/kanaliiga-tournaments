@@ -15,7 +15,7 @@ const routes: Routes = [
     component: TournamentComponent,
     pathMatch: 'full',
   },
-  { path: '', redirectTo: '/tabs', pathMatch: 'full' },
+  { path: '', component: TabsComponent },
   {
     path: 'tournaments/:id/stages/:stageId/matches',
     component: TournamentComponent,

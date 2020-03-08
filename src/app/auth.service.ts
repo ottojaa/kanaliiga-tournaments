@@ -10,11 +10,12 @@ export class AuthService {
   baseUrl = 'https://kanaliiga-tournaments-api.herokuapp.com/api';
   url: string;
 
+  public loading$ = new BehaviorSubject<boolean>(false);
   public currentUserData$: BehaviorSubject<any>;
   public currentUser$ = new Observable<User>();
 
   constructor(private http: HttpClient) {
-    this.url = this.baseUrl;
+    this.url = this.testUrl;
     this.currentUserData$ = new BehaviorSubject<any>(null);
 
     const user = localStorage.getItem('userData');
@@ -71,6 +72,11 @@ export class AuthService {
 
   discordAuth(): Observable<any> {
     const url = this.url + '/auth/discord-auth';
+    return this.http.get(url);
+  }
+
+  discordLogin(code: string): Observable<any> {
+    const url = this.url + '/auth/discord-callback?code=' + code;
     return this.http.get(url);
   }
 }
