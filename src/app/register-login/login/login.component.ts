@@ -121,8 +121,8 @@ export class LoginComponent implements OnInit {
     this.auth
       .discordAuth()
       .pipe(take(1))
-      .subscribe(data => {
-        console.log(data);
+      .subscribe(response => {
+        window.location.href = response.data;
       });
   }
 
