@@ -15,7 +15,7 @@ export class AuthService {
   public currentUser$ = new Observable<User>();
 
   constructor(private http: HttpClient) {
-    this.url = this.testUrl;
+    this.url = this.baseUrl;
     this.currentUserData$ = new BehaviorSubject<any>(null);
 
     const user = localStorage.getItem('userData');
