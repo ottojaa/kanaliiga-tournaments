@@ -19,6 +19,7 @@ export class FaceoffTableComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {
+    console.log(this.sort);
     this.dataSource.data = this.match;
     this.dataSource.sort = this.sort;
     this.sort.sort({ id: 'score', start: 'desc', disableClear: false });

@@ -5,23 +5,32 @@ import { Observable } from 'rxjs';
 @Injectable()
 export class ApiInterceptorService implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const authReq = req.clone({ headers: req.headers.set('X-Api-Key', environment.apiKey) });
+    if (req.url.includes('discord')) {
+      return next.handle(req);
+    } else {
+      const authReq = req.clone({ headers: req.headers.set('X-Api-Key', environment.apiKey) });
 
-    const userData = localStorage.getItem('userData');
+      const userData = localStorage.getItem('userData');
 
-    // Only use JWT authorization for our own backend, as toornament thinks we're trying to use a fabricated "organizer" token
-    if (userData && userData !== 'undefined' && !req.url.includes('api.toornament')) {
-      try {
-        const idToken = JSON.parse(userData);
-        const cloned = authReq.clone({
-          headers: req.headers.set('Authorization', 'Bearer ' + idToken.token),
-        });
+      // Only use JWT authorization for our own backend, as toornament thinks we're trying to use a fabricated "organizer" token
+      if (
+        userData &&
+        userData !== 'undefined' &&
+        !req.url.includes('api.toornament') &&
+        !req.url.includes('discordapp.com')
+      ) {
+        try {
+          const idToken = JSON.parse(userData);
+          const cloned = authReq.clone({
+            headers: req.headers.set('Authorization', 'Bearer ' + idToken.token),
+          });
 
-        return next.handle(cloned);
-      } catch (err) {
-        console.error('JSON parse failed:', userData);
+          return next.handle(cloned);
+        } catch (err) {
+          console.error('JSON parse failed:', userData);
+        }
       }
+      return next.handle(authReq);
     }
-    return next.handle(authReq);
   }
 }

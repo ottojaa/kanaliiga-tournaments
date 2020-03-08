@@ -38,7 +38,7 @@ mat-card {
 }
 
 mat-icon {
-  font-family: 'Material Icons';
+  font-family: "Material Icons";
 }
 
 .actions {
@@ -49,7 +49,7 @@ mat-icon {
 }
 
 .winner-column::before {
-  content: '';
+  content: "";
   display: inline-block;
   background: #8bc34a;
   width: 6px;
@@ -57,7 +57,7 @@ mat-icon {
   height: 100%;
 }
 .loser-column::before {
-  content: '';
+  content: "";
   display: inline-block;
   background: #f44336;
   width: 6px;
@@ -95,7 +95,7 @@ mat-card-subtitle {
 }
 
 mat-card:not(:last-child)::before {
-  content: '';
+  content: "";
   border-left: 4px solid #040300;
   position: absolute;
   top: 93%;
@@ -145,7 +145,7 @@ li {
 }
 
 br {
-  content: '\A';
+  content: "\A";
   display: contents;
   white-space: pre;
 }
@@ -191,7 +191,7 @@ mat-progress-bar {
   color: #f44336;
 }
 * {
-  font-family: 'Open Sans';
+  font-family: "Open Sans";
 }
 
 .winner {
@@ -209,4 +209,8 @@ mat-progress-bar {
 
 .replay-found {
   color: #8bc34a;
+}
+
+app-player-stats-table {
+  width: 100%;
 }

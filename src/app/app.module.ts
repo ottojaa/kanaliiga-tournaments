@@ -12,7 +12,13 @@ import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatIconModule } from '@angular/material/icon';
 import { MatStepperModule } from '@angular/material/stepper';
-import { MatInputModule, MatSortModule, MatFormFieldModule } from '@angular/material';
+import {
+  MatInputModule,
+  MatSortModule,
+  MatFormFieldModule,
+  MatRadioModule,
+  MatPaginatorModule,
+} from '@angular/material';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatTabsModule } from '@angular/material/tabs';
 import { TabsComponent } from './components/tabs/tabs.component';
@@ -50,6 +56,9 @@ import { RegisterComponent } from './register-login/register/register.component'
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
 import { ConfirmDialogComponent } from './common/confirm-dialog/confirm-dialog.component';
 import { FaceoffTableComponent } from './components/faceoff-stats/faceoff-table/faceoff-table.component';
+import { PlayerStatsTableModule } from './components/tournaments-listing/tournament-info/player-stats-table/player-stats-table.module';
+// tslint:disable-next-line: max-line-length
+import { PlayerStatsTableComponent } from './components/tournaments-listing/tournament-info/player-stats-table/player-stats-table.component';
 
 @NgModule({
   declarations: [
@@ -74,10 +83,12 @@ import { FaceoffTableComponent } from './components/faceoff-stats/faceoff-table/
     BrowserModule,
     MatMenuModule,
     AppRoutingModule,
+    MatPaginatorModule,
     RouterModule,
     MatStepperModule,
     BrowserAnimationsModule,
     MatSortModule,
+    PlayerStatsTableModule,
     HttpClientModule,
     MatDialogModule,
     NgxSkeletonLoaderModule,
@@ -92,6 +103,7 @@ import { FaceoffTableComponent } from './components/faceoff-stats/faceoff-table/
     MatProgressSpinnerModule,
     MatExpansionModule,
     MatTooltipModule,
+    MatRadioModule,
     MatGridListModule,
     MatSidenavModule,
     MatListModule,

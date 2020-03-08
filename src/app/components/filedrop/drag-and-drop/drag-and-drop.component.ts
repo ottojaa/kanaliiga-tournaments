@@ -1,10 +1,9 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { RLParser } from '../../../utilities/replay-parser/rl-replay-parser';
 import { Subject, forkJoin, Observable, BehaviorSubject } from 'rxjs';
 import { cloneDeep } from 'lodash';
 import * as moment from 'moment';
 import { MatDialogRef, MAT_DIALOG_DATA, MatSnackBar } from '@angular/material';
-import { take, tap, map, last, toArray, debounceTime } from 'rxjs/operators';
+import { take, tap, debounceTime } from 'rxjs/operators';
 import { Animations } from 'src/app/utilities/animations';
 import { Faceoff, Player, Match, Team } from 'src/app/interfaces/faceoff';
 import { FaceoffService } from 'src/app/faceoff.service';
@@ -381,7 +380,7 @@ export class DragAndDropComponent implements OnInit {
           this.bufferValue = 0;
           this.progressSub$.next(0);
           return;
-        } else if (progress > this.progressSub$.getValue() + 1) {
+        } else if (progress > this.progressSub$.getValue()) {
           this.mode = 'determinate';
           this.progressSub$.next(progress);
         }

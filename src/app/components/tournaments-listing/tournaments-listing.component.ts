@@ -31,7 +31,6 @@ export class TournamentsComponent implements OnInit {
         for (let i = 0; i < data.length; i++) {
           this.participants.push(data[i]);
         }
-        console.log(this.participants);
       });
   }
 }

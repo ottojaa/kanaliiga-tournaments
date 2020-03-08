@@ -7,6 +7,7 @@ import { groupBy, toArray, mergeMap, flatMap, reduce, takeUntil, filter, take, s
 import { FiledropComponent } from '../../filedrop/filedrop.component';
 import { FaceoffService } from 'src/app/faceoff.service';
 import { AuthService } from 'src/app/auth.service';
+import { Player } from 'src/app/interfaces/faceoff';
 
 @Component({
   selector: 'app-tournament',
@@ -31,8 +32,10 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
   groups = [];
   labels = [];
   faceoffs = [];
+  playerStats$: Observable<Player[]>;
   selectedStage: any;
   selectedGroup = '';
+  tableType = 'average';
   stageId: string;
   tournamentId: string;
   disableAnimation = true;
@@ -54,6 +57,7 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
     this.selectedStage = this.stageId;
     this.getFaceoffs();
     this.getStageData();
+    this.getPlayerStats();
     this.getRoundLabels();
     this.currentStage$ = this.getGroups();
   }
@@ -63,6 +67,10 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   ngAfterViewInit(): void {
     setTimeout(() => (this.disableAnimation = false), 500);
+  }
+
+  getPlayerStats(): void {
+    this.playerStats$ = this.faceoffService.getPlayerStats(this.stageId);
   }
 
   getFaceoffs(): any {
@@ -160,6 +168,7 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
     this.selectedGroup = '';
     this.groups = [];
     this.getFaceoffs();
+    this.getPlayerStats();
     this.currentStage$ = this.getGroups();
   }
 

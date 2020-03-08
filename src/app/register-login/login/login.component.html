@@ -30,6 +30,16 @@
       <button mat-raised-button color="primary" [disabled]="!form.valid">Login</button>
     </form>
 
+    <h4>Or login using Discord</h4>
+
+    <button mat-flat-button color="primary" (click)="discordAuth()">
+      <img
+        style="height: 40px; margin-right: 20px;"
+        href="https://discord.gg/UFetjhv"
+        src="../../../assets/Discord-Logo+Wordmark-White.png"
+      />
+    </button>
+
     <!-- First time logging in, the user is requested to confirm their OTP to guarantee it's a real email -->
 
     <ng-template #confirmOtp>

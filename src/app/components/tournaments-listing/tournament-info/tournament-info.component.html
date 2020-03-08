@@ -100,4 +100,12 @@
       </div>
     </div>
   </div>
+  <div *ngIf="currentStage$ | async" fxLayout="column" fxLayoutAlign="center center" style="width: 100%">
+    <h2>Player Statistics</h2>
+    <mat-radio-group aria-label="Select an option" [(ngModel)]="tableType" style="margin-bottom: 20px;">
+      <mat-radio-button color="warn" style="padding: 10px;" [value]="'average'">Average</mat-radio-button>
+      <mat-radio-button color="warn" style="padding: 10px;" [value]="'total'">Total</mat-radio-button>
+    </mat-radio-group>
+    <app-player-stats-table [source]="playerStats$" [type]="tableType"></app-player-stats-table>
+  </div>
 </div>

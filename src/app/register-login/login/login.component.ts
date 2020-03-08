@@ -117,6 +117,15 @@ export class LoginComponent implements OnInit {
       );
   }
 
+  discordAuth(): void {
+    this.auth
+      .discordAuth()
+      .pipe(take(1))
+      .subscribe(data => {
+        console.log(data);
+      });
+  }
+
   closeDialog(): void {
     this.dialogRef.close();
   }

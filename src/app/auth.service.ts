@@ -14,7 +14,7 @@ export class AuthService {
   public currentUser$ = new Observable<User>();
 
   constructor(private http: HttpClient) {
-    this.url = this.baseUrl;
+    this.url = this.testUrl;
     this.currentUserData$ = new BehaviorSubject<any>(null);
 
     const user = localStorage.getItem('userData');
@@ -67,6 +67,11 @@ export class AuthService {
     localStorage.setItem('userData', JSON.stringify(userData.data));
     this.currentUserData$.next(userData.data);
     console.log(this.currentUserData$.getValue());
+  }
+
+  discordAuth(): Observable<any> {
+    const url = this.url + '/auth/discord-auth';
+    return this.http.get(url);
   }
 }
 
