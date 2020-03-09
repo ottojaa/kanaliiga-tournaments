@@ -67,7 +67,6 @@ export class AuthService {
   updateStorage(userData: any): any {
     localStorage.setItem('userData', JSON.stringify(userData.data));
     this.currentUserData$.next(userData.data);
-    console.log(this.currentUserData$.getValue());
   }
 
   discordAuth(): Observable<any> {

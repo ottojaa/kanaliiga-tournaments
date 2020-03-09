@@ -108,7 +108,6 @@ export class LoginComponent implements OnInit {
       .pipe(take(1))
       .subscribe(
         data => {
-          console.log(data);
           this.snackbar.open('Email sent.', 'close', { duration: 3000 });
         },
         err => {

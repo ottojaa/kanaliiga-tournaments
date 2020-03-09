@@ -44,7 +44,6 @@ export class StagesComponent implements OnInit {
         return this.groupStages(stageIds);
       }),
       flatMap(x => from(x)),
-      take(8),
       map((x: any) => x.data),
       toArray()
     );
@@ -53,7 +52,6 @@ export class StagesComponent implements OnInit {
   groupStages(stageIds: string[]): Observable<any> {
     const observables = [];
     for (const stage of stageIds) {
-      console.log(stage);
       observables.push(this.faceoffService.getFaceoffForStage(stage));
     }
     return forkJoin(observables);

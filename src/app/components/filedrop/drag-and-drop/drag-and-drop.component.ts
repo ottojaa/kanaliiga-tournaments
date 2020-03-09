@@ -51,7 +51,7 @@ export class DragAndDropComponent implements OnInit {
   ) {
     this.progressObs$ = this.progressSub$.asObservable().pipe(
       tap(() => this.bufferSub$.next()),
-      debounceTime(200)
+      debounceTime(120)
     );
   }
 

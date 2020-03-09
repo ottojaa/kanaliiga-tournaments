@@ -91,7 +91,7 @@ export class FiledropComponent implements AfterViewInit {
     const dialogData = new ConfirmDialogModel('Delete faceoff data', message);
 
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      minWidth: '300px',
+      width: '300px',
       data: dialogData,
     });
 
