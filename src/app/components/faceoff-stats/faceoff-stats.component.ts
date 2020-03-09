@@ -59,8 +59,11 @@ export class FaceoffStatsComponent implements OnInit {
       );
   }
 
-  navigateBack(): void {
-    const url = `/tournaments/${this.tournamentId}/stages/${this.stageId}/matches`;
+  navigateBack(navigation: string): void {
+    const url =
+      navigation === 'matches'
+        ? `/tournaments/${this.tournamentId}/stages/${this.stageId}/matches`
+        : `/tournaments/${this.tournamentId}/stages/`;
     this.router.navigate([url]);
   }
 

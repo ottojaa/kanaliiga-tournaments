@@ -1,11 +1,33 @@
-mat-card {
+mat-card .stages {
   padding: 0px;
   margin: 20px 20px 0px 20px;
   min-height: 200px;
 }
 
-mat-list > * {
-  font-family: 'Open Sans';
+mat-card .faceoffs {
+  width: 100%;
+  padding: 0px;
+  margin: 8px 10px 0px 10px;
+}
+
+mat-card:last-child {
+  padding-bottom: 50px;
+}
+
+.parent {
+  min-height: 400px;
+}
+
+::ng-deep.mat-tab-label {
+  opacity: 1;
+}
+
+.mat-card-header .mat-card-title {
+  margin: 0;
+}
+
+::ng-deep .mat-tab-list .mat-tab-labels .mat-tab-label-active {
+  opacity: 1;
 }
 
 .buttons {
@@ -15,4 +37,116 @@ mat-list > * {
   flex-direction: row;
   align-items: center;
   justify-content: center;
+}
+
+::ng-deep mat-tab-header {
+  z-index: 0;
+  width: 100%;
+  padding: 0px !important;
+}
+
+.winner-column {
+  font-weight: bolder;
+  text-decoration: underline;
+  -webkit-font-smoothing: antialiased;
+}
+
+::ng-deep mat-tab-group {
+  align-items: center;
+}
+
+::ng-deep .mat-tab-body-wrapper {
+  width: 100%;
+}
+/* 
+.winner-column::before {
+  content: "";
+  display: inline-block;
+  background: #8bc34a;
+  width: 6px;
+  margin-right: 3px;
+  height: 100%;
+}
+.loser-column::before {
+  content: "";
+  display: inline-block;
+  background: #f44336;
+  width: 6px;
+  margin-right: 3px;
+  height: 100%;
+} */
+.name {
+  margin: 20px 5px 20px 20px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+}
+
+::ng-deep .mat-card-header-text {
+  width: 100%;
+}
+.match-score {
+  width: 35%;
+  @media (max-width: 767px) {
+    width: 100%;
+  }
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+}
+
+.score {
+  width: 20%;
+}
+
+.start {
+  @media (max-width: 767px) {
+    justify-content: flex-start;
+  }
+}
+
+.shadow {
+  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14),
+    0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.faceoff-row:last-child {
+  margin-bottom: 30px;
+}
+
+.end {
+  @media (max-width: 767px) {
+    justify-content: flex-end;
+  }
+}
+
+.date-link {
+  min-width: 300px;
+  @media (max-width: 767px) {
+    place-content: center center !important;
+  }
+  width: 65%;
+}
+
+.column {
+  width: 40%;
+  display: flex;
+  flex-direction: row;
+}
+
+.loser {
+  color: #f44336;
+}
+.lose {
+  color: grey;
+}
+
+.winner {
+  color: #8bc34a;
+  font-weight: bolder;
+  font-size: 14px;
+}
+
+.win {
+  font-weight: 900;
 }

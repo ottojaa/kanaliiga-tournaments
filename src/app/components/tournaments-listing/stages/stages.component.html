@@ -7,8 +7,10 @@
     Tournaments
   </button>
 </div>
-<mat-card>
-  <mat-card-title class="mat-display-2" style="padding: 25px;">Stages </mat-card-title>
+<mat-card class="stages">
+  <section class="mat-typography" style="padding-top: 60px; text-align: left">
+    <h3 class="mat-display-1" style="margin: 20px;">Stages</h3>
+  </section>
   <mat-divider></mat-divider>
   <mat-list role="list">
     <div *ngIf="!(stages$ | async); else stageList" style="padding: 10px; margin-top: 20px;" class="item">
@@ -23,7 +25,12 @@
     </div>
     <ng-template #stageList>
       <mat-list-item *ngFor="let stage of stages$ | async; let i = index" role="listitem" @animatedItem>
-        <mat-icon matListIcon>label_important</mat-icon>
+        <img
+          matListAvatar
+          class="avatar"
+          src="//www.kanaliiga.fi/wp-content/uploads/2019/05/kanaliiga-logo-100px.png"
+          alt="..."
+        />
         <h4 matLine>{{ stage.name }}</h4>
         <p matLine class="demo-2">Participants: {{ stage.settings.size }}</p>
         <a
@@ -35,5 +42,71 @@
         >
       </mat-list-item>
     </ng-template>
+
+    <div class="parent" *ngIf="stageFaceoffs$ | async" @animatedItem>
+      <section class="mat-typography" style="padding-top: 60px; text-align: left">
+        <h3 class="mat-display-1" style="margin: 20px;">Latest faceoffs</h3>
+      </section>
+      <mat-tab-group [backgroundColor]="background" class="shadow">
+        <mat-tab [label]="stageLabels[i]" *ngFor="let faceoffs of stageFaceoffs$ | async; let i = index">
+          <div
+            class="faceoff-row"
+            *ngFor="let faceoff of faceoffs; let i = index"
+            fxLayoutAlign="center center"
+            fxLayout="row"
+          >
+            <mat-card class="mat-elevation-z4 faceoffs" @animatedItem>
+              <mat-card-header>
+                <mat-card-title fxLayout="row wrap" fxLayoutAlign="start center">
+                  <div class="match-score">
+                    <div class="column start">
+                      <p
+                        class="name mat-body"
+                        [ngClass]="faceoff.participants[0].result === 'win' ? 'winner-column' : 'loser-column'"
+                      >
+                        {{ faceoff.participants[0].participant[0].name }}
+                      </p>
+                    </div>
+                    <div class="score" fxLayout="row">
+                      <p class="name" [ngClass]="faceoff.participants[0].result === 'win' ? 'winner' : 'loser'">
+                        {{ faceoff.participants[0].score || 0 }}
+                      </p>
+
+                      <p class="name" [ngClass]="faceoff.participants[1].result === 'win' ? 'winner' : 'loser'">
+                        {{ faceoff.participants[1].score || 0 }}
+                      </p>
+                    </div>
+
+                    <!-- Opponent -->
+
+                    <div class="column end">
+                      <p
+                        class="name mat-body"
+                        [ngClass]="faceoff.participants[1].result === 'win' ? 'winner-column' : 'loser-column'"
+                      >
+                        {{ faceoff.participants[1].participant[0].name }}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div class="date-link" fxLayout="row" fxLayoutAlign="flex-end center">
+                    <h5 class="mat-h5" style="margin: 0">{{ faceoff.date | date: 'mediumDate' }}</h5>
+                    <a
+                      mat-button
+                      color="primary"
+                      routerLink="/tournaments/{{ tournamentId }}/stages/{{ faceoff.stageId }}/faceoff/{{
+                        faceoff.matchId
+                      }}"
+                      routerLinkActive="active"
+                      >Match page</a
+                    >
+                  </div>
+                </mat-card-title>
+              </mat-card-header>
+            </mat-card>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
   </mat-list>
 </mat-card>

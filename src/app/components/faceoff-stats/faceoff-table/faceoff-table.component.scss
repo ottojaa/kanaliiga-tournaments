@@ -48,10 +48,6 @@ table {
   align-items: center;
 }
 
-.title {
-  font-family: 'Open Sans';
-}
-
 .icon {
   font-size: 70px;
   display: flex;
@@ -66,12 +62,8 @@ table {
     0px 3px 14px 2px rgba(0, 0, 0, 0.12);
 }
 
-.mat-table {
-  font-family: 'Open Sans';
-}
-
 body .material-icons {
-  font-family: 'Material Icons';
+  font-family: "Material Icons";
 }
 
 td.mat-cell:last-of-type {

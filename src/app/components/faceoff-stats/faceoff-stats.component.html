@@ -2,8 +2,12 @@
 <!-- Game specific scores -->
 <!-------------------------->
 
-<div class="buttons">
-  <button mat-button (click)="navigateBack()">
+<div class="buttons" fxLayout="row">
+  <button mat-button (click)="navigateBack('stages')">
+    <mat-icon>keyboard_arrow_left</mat-icon>
+    Stages
+  </button>
+  <button mat-button (click)="navigateBack('matches')">
     <mat-icon>keyboard_arrow_left</mat-icon>
     Matches
   </button>

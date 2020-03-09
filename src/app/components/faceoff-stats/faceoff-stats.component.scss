@@ -1,4 +1,4 @@
-@import 'https://fonts.googleapis.com/icon?family=Material+Icons';
+@import "https://fonts.googleapis.com/icon?family=Material+Icons";
 .data-table {
   width: 90%;
   margin-left: auto;
@@ -23,12 +23,8 @@
   align-items: center;
 }
 
-.mat-table {
-  font-family: 'Open Sans';
-}
-
 body .material-icons {
-  font-family: 'Material Icons';
+  font-family: "Material Icons";
 }
 
 tr.example-detail-row {
@@ -69,7 +65,6 @@ tr.example-element-row:not(.example-expanded-row):active {
 
 .buttons {
   margin-top: 20px;
-  margin-left: 100px;
   display: flex;
   flex-direction: row;
 }

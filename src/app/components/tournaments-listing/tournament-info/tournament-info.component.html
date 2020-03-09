@@ -53,7 +53,9 @@
   <div class="row">
     <div class="group" *ngFor="let group of currentStage$ | async; let i = index">
       <div *ngIf="labels && labels.length" class="divider" color="primary">
-        <h4 style="padding: 10px;">{{ getRoundLabel(group[0].round_id) }}</h4>
+        <section class="mat-typography">
+          <h2 class="mat-subheading-2" style="margin: 10px;">{{ getRoundLabel(group[0].round_id) }}</h2>
+        </section>
       </div>
       <div class="column" @animatedList>
         <!-- Container for all of the matches inside a group -->
@@ -62,7 +64,7 @@
           <mat-card-header>
             <mat-card-title *ngFor="let opponent of match.opponents">
               <div class="match-score opponent">
-                <p class="name" [ngClass]="opponent.result === 'win' ? 'winner-column' : 'loser-column'">
+                <p class="name mat-body" [ngClass]="opponent.result === 'win' ? 'winner-column' : 'loser-column'">
                   {{ opponent.participant.name }}
                 </p>
                 <p class="name" [ngClass]="opponent.result === 'win' ? 'winner' : 'loser'">
@@ -101,11 +103,15 @@
     </div>
   </div>
   <div *ngIf="currentStage$ | async" fxLayout="column" fxLayoutAlign="center center" style="width: 100%">
-    <h2>Player Statistics</h2>
+    <section class="mat-typography" style="padding-top: 40px;">
+      <h3 class="mat-display-1" style="margin: 20px;">Player statistics</h3>
+    </section>
     <mat-radio-group aria-label="Select an option" [(ngModel)]="tableType" style="margin-bottom: 20px;">
       <mat-radio-button color="warn" style="padding: 10px;" [value]="'average'">Average</mat-radio-button>
       <mat-radio-button color="warn" style="padding: 10px;" [value]="'total'">Total</mat-radio-button>
     </mat-radio-group>
-    <app-player-stats-table [source]="playerStats$" [type]="tableType"></app-player-stats-table>
+    <section style="width: 100%">
+      <app-player-stats-table [source]="playerStats$" [type]="tableType"></app-player-stats-table>
+    </section>
   </div>
 </div>
