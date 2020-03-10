@@ -24,18 +24,20 @@ table {
 
 .loser {
   color: #f44336;
-}
-.lose {
-  color: grey;
+  font-size: 18px;
+  font-weight: bolder;
 }
 
 .winner {
+  font-size: 18px;
   color: #8bc34a;
   font-weight: bolder;
-  font-size: 14px;
 }
 
 .win {
+  font-weight: 900;
+}
+.lose {
   font-weight: 900;
 }
 
@@ -55,11 +57,16 @@ table {
   align-items: center;
 }
 .container {
-  background: white;
+  background: #0188d2;
+  color: white;
   display: flex;
   justify-content: space-around;
   box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14),
     0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+tr:nth-child(even) {
+  background: #f9f9f9;
 }
 
 body .material-icons {

@@ -48,7 +48,12 @@
   width: 100%;
 }
 
+.expanded {
+  max-width: 350px;
+}
+
 .data-table {
+  width: 100%;
   animation: fadein 1s;
   overflow: auto;
 }

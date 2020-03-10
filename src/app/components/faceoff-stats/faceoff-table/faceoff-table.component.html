@@ -55,9 +55,11 @@
   </ng-container>
 
   <ng-container matColumnDef="shots">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Shots</th>
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Shot %</th>
     <td mat-cell *matCellDef="let element; let i = index">
-      <h5 style="margin-right: 20px; margin-bottom: 0;" class="mat-h5">{{ element.shots }}</h5>
+      <h5 style="margin-right: 20px; margin-bottom: 0;" class="mat-h5">
+        {{ getShotPercentage(element.goals, element.shots) }}
+      </h5>
     </td>
   </ng-container>
 

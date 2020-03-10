@@ -50,4 +50,8 @@ export class PlayerStatsTableComponent implements OnInit {
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
   }
+
+  getShotPercentage(goals: number, shots: number): string {
+    return ((goals / shots + Number.EPSILON) * 100).toFixed(1).toString() + '%';
+  }
 }

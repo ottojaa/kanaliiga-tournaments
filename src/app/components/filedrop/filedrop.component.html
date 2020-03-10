@@ -22,7 +22,7 @@
           class="upload-button"
           (click)="openFileSelector()"
         >
-          <div class="text">
+          <div class="text" [ngClass]="{ expanded: expanded }">
             <p>
               Drop your .replay files here, or click to select files to upload.
             </p>
