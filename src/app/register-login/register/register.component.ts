@@ -106,6 +106,15 @@ export class RegisterComponent implements OnInit {
     );
   }
 
+  discordAuth(): void {
+    this.auth
+      .discordAuth()
+      .pipe(take(1))
+      .subscribe(response => {
+        window.location.href = response.data;
+      });
+  }
+
   secondStepHasErrors(): any {
     return (
       this.secondFormGroup.get('nameCtrl').hasError('required') &&

@@ -18,6 +18,14 @@
   align-items: center;
 }
 
+.text {
+  font-size: 12px;
+  white-space: normal;
+  height: auto;
+  max-width: 150px;
+  word-wrap: break-word;
+}
+
 .mat-expansion-panel:not([class*="mat-elevation-z"]) {
   box-shadow: none;
 }
@@ -36,8 +44,8 @@
 }
 
 .upload-button {
+  border: 1px dashed grey;
   width: 100%;
-  padding: 20px;
 }
 
 .data-table {

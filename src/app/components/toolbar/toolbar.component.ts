@@ -50,7 +50,7 @@ export class ToolbarComponent {
   openSignUp(): void {
     const dialogRef = this.dialog.open(RegisterComponent, {
       width: '600px',
-      height: '450px',
+      height: '500px',
       panelClass: 'custom-dialog-container',
     });
 

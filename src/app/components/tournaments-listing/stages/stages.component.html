@@ -59,15 +59,21 @@
               <mat-card-header>
                 <mat-card-title fxLayout="row wrap" fxLayoutAlign="start center">
                   <div class="match-score">
-                    <div class="column start">
+                    <div class="column">
                       <p
                         class="name mat-body"
                         [ngClass]="faceoff.participants[0].result === 'win' ? 'winner-column' : 'loser-column'"
                       >
                         {{ faceoff.participants[0].participant[0].name }}
                       </p>
+                      <p
+                        class="name mat-body"
+                        [ngClass]="faceoff.participants[1].result === 'win' ? 'winner-column' : 'loser-column'"
+                      >
+                        {{ faceoff.participants[1].participant[0].name }}
+                      </p>
                     </div>
-                    <div class="score" fxLayout="row">
+                    <div class="score" fxLayout="column">
                       <p class="name" [ngClass]="faceoff.participants[0].result === 'win' ? 'winner' : 'loser'">
                         {{ faceoff.participants[0].score || 0 }}
                       </p>
@@ -78,15 +84,6 @@
                     </div>
 
                     <!-- Opponent -->
-
-                    <div class="column end">
-                      <p
-                        class="name mat-body"
-                        [ngClass]="faceoff.participants[1].result === 'win' ? 'winner-column' : 'loser-column'"
-                      >
-                        {{ faceoff.participants[1].participant[0].name }}
-                      </p>
-                    </div>
                   </div>
 
                   <div class="date-link" fxLayout="row" fxLayoutAlign="flex-end center">

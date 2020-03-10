@@ -69,3 +69,14 @@
     </div>
   </mat-step>
 </mat-vertical-stepper>
+
+<div class="discord-container mat-typography" *ngIf="!username">
+  <h4 style="font-weight: 900;">Or, sign up with Discord.</h4>
+  <button mat-flat-button (click)="discordAuth()">
+    <img
+      style="height: 30px; margin-right: 20px;"
+      href="https://discord.gg/UFetjhv"
+      src="../../../assets/Discord-Logo+Wordmark-White.png"
+    />
+  </button>
+</div>

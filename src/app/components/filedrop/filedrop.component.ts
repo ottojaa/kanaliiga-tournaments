@@ -127,7 +127,9 @@ export class FiledropComponent implements AfterViewInit {
       });
     } else {
       const message = allReplays
-        ? 'Too many files! Maximum amount allowed: ' + this.matchNumber
+        ? this.matchNumber
+          ? 'Too many files! Maximum amount allowed: ' + this.matchNumber
+          : 'Toornament.com data not found for this match'
         : 'Not all of the files were .replay-files';
       this._snackBar.open(message, 'close', { duration: 3000 });
     }

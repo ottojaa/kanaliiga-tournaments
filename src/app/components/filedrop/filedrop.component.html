@@ -22,7 +22,14 @@
           class="upload-button"
           (click)="openFileSelector()"
         >
-          Drag and drop replays
+          <div class="text">
+            <p>
+              Drop your .replay files here, or click to select files to upload.
+            </p>
+            <p>
+              Replays can be found in your Documents/My Games/Rocket League/TAGame/Demos/ folder
+            </p>
+          </div>
         </button>
       </ng-template>
     </ngx-file-drop>
