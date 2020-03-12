@@ -12,7 +12,17 @@ export class FaceoffTableComponent implements OnInit {
   @Input() match;
   @Input() index: number;
   @Input() teamScore;
-  displayedMatchColumns: string[] = ['name', 'teamName', 'goals', 'assists', 'saves', 'shots', 'score'];
+  displayedMatchColumns: string[] = [
+    'index',
+    'name',
+    'teamName',
+    'goals',
+    'assists',
+    'saves',
+    'shots',
+    'shootingPercentage',
+    'score',
+  ];
   dataSource = new MatTableDataSource(this.match);
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
@@ -24,13 +34,7 @@ export class FaceoffTableComponent implements OnInit {
     this.sort.sort({ id: 'score', start: 'desc', disableClear: false });
   }
 
-  getShotPercentage(goals: number, shots: number): string {
-    const number = (goals / shots + Number.EPSILON) * 100;
-    if (isNaN(number) || number <= 0) {
-      return '0.0%';
-    } else if (number === 100) {
-      return '100%';
-    }
-    return ((goals / shots + Number.EPSILON) * 100).toFixed(1).toString() + '%';
+  getShotPercentage(shootingPercentage: number): string {
+    return shootingPercentage.toFixed(1).toString() + '%';
   }
 }

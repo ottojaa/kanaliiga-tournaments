@@ -6,6 +6,13 @@
   matSort
   class="mat-elevation-z8 data-table"
 >
+  <ng-container matColumnDef="index">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Rank</th>
+    <td mat-cell *matCellDef="let element; let i = index" style="margin-right: 20px; font-weight: bolder;">
+      <p style="color: #ff5623;">{{ i + 1 }}</p>
+    </td>
+  </ng-container>
+
   <ng-container matColumnDef="name">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Player</th>
     <td mat-cell *matCellDef="let element" style="margin-right: 20px; font-weight: bolder;">
@@ -47,11 +54,22 @@
 
   <ng-container matColumnDef="shots">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>
+      Shots
+    </th>
+    <td mat-cell *matCellDef="let element; let i = index">
+      <h5 style="margin-right: 20px; margin-bottom: 0;" class="mat-h5">
+        {{ element.shots }}
+      </h5>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="shootingPercentage">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>
       Shooting %
     </th>
     <td mat-cell *matCellDef="let element; let i = index">
       <h5 style="margin-right: 20px; margin-bottom: 0;" class="mat-h5">
-        {{ getShotPercentage(element.goals, element.shots) }}
+        {{ getShotPercentage(element.shootingPercentage) }}
       </h5>
     </td>
   </ng-container>

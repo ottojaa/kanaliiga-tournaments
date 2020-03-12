@@ -22,7 +22,18 @@ export class PlayerStatsTableComponent implements OnInit {
   tableType: 'average' | 'total' = 'average';
   total = [];
   average = [];
-  displayedMatchColumns: string[] = ['name', 'teamName', 'goals', 'assists', 'saves', 'shots', 'games', 'score'];
+  displayedMatchColumns: string[] = [
+    'index',
+    'name',
+    'teamName',
+    'goals',
+    'assists',
+    'saves',
+    'shots',
+    'shootingPercentage',
+    'games',
+    'score',
+  ];
   dataSource: MatTableDataSource<any>;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
@@ -51,7 +62,7 @@ export class PlayerStatsTableComponent implements OnInit {
     this.dataSource.paginator = this.paginator;
   }
 
-  getShotPercentage(goals: number, shots: number): string {
-    return ((goals / shots + Number.EPSILON) * 100).toFixed(1).toString() + '%';
+  getShotPercentage(shootingPercentage: number): string {
+    return shootingPercentage.toFixed(1).toString() + '%';
   }
 }

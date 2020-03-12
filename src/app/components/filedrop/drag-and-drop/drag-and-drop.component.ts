@@ -116,12 +116,15 @@ export class DragAndDropComponent implements OnInit {
       });
     });
 
-    // From toornament stats, get the team whose score is higher
+    // From toornament stats, get the team whose score is higher.
     const max = Math.max(this.participants[0].score, this.participants[1].score);
     const teamIndex = this.participants.findIndex(participant => participant.score === max);
 
-    // We now have player's who had at least one win the whole faceoff in an array.
-    // Sort the array by name so we can count the duplicates
+    /**
+     * Accumulate player name duplicates. Breaks when we have found a player whose names appearance is the same as "max".
+     * if i.e max === 3, we're searching for the player whose name appears 3 times in the player names array.
+     * This player belongs to the winning team, and if we know one player from a team, we know the rest.
+     */
     arr.sort();
     let count = 0;
     let curr = '';
@@ -165,6 +168,7 @@ export class DragAndDropComponent implements OnInit {
         }
       });
     });
+    console.log(faceOff);
 
     return faceOff;
   }

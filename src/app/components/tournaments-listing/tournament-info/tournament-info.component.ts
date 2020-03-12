@@ -71,6 +71,9 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
 
   getPlayerStats(): void {
     this.playerStats$ = this.faceoffService.getPlayerStats(this.stageId);
+    this.playerStats$.subscribe(data => {
+      console.log(data);
+    });
   }
 
   getFaceoffs(): any {
