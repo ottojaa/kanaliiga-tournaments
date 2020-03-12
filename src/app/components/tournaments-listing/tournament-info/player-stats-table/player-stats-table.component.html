@@ -29,7 +29,7 @@
 
   <ng-container matColumnDef="goals">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>
-      {{ tableType === 'average' ? 'Goals / game' : 'Goals' }}
+      Goals
     </th>
     <td mat-cell *matCellDef="let element">
       <h5 style="margin-right: 20px; margin-bottom: 0;" class="mat-h5">{{ element.goals }}</h5>
@@ -38,7 +38,7 @@
 
   <ng-container matColumnDef="assists">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>
-      {{ tableType === 'average' ? 'Assists / game' : 'Assists' }}
+      Assists
     </th>
     <td mat-cell *matCellDef="let element; let i = index">
       <h5 style="margin-right: 20px; margin-bottom: 0;" class="mat-h5">{{ element.assists }}</h5>
@@ -46,7 +46,9 @@
   </ng-container>
 
   <ng-container matColumnDef="saves">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ tableType === 'average' ? 'Saves / game' : 'Saves' }}</th>
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+      Saves
+    </th>
     <td mat-cell *matCellDef="let element; let i = index">
       <h5 style="margin-right: 20px; margin-bottom: 0;" class="mat-h5">{{ element.saves }}</h5>
     </td>
