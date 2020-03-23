@@ -33,12 +33,13 @@ mat-card {
 }
 
 .played-at {
-  transform: scale(0.75);
+  transform: scale(0.55);
   margin-right: 5px;
 }
 
 .played-at-container {
-  margin-left: 16px;
+  margin-left: 19px;
+  margin-bottom: 0;
   font-size: 12px;
   letter-spacing: 0.5px;
   display: flex;
