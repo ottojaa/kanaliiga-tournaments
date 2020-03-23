@@ -61,16 +61,35 @@
         <!-- Container for all of the matches inside a group -->
 
         <mat-card class="mat-elevation-z4" *ngFor="let match of group; let j = index" @animatedItem>
+          <p class="played-at-container" *ngIf="match.played_at; else pending">
+            <mat-icon class="played-at">calendar_today</mat-icon>
+            {{ match.played_at | date: 'mediumDate' }}
+          </p>
+          <ng-template #pending>
+            <p class="played-at-container">
+              <mat-icon class="played-at" style="margin-right: 5px;">transit_enterexit</mat-icon>
+              Pending
+            </p>
+          </ng-template>
           <mat-card-header>
             <mat-card-title *ngFor="let opponent of match.opponents">
               <div class="match-score opponent">
-                <p class="name mat-body" [ngClass]="opponent.result === 'win' ? 'winner-column' : 'loser-column'">
+                <p
+                  *ngIf="opponent.participant; else toBeDecided"
+                  class="name mat-body"
+                  [ngClass]="{ 'winner-column': opponent.result === 'win', 'loser-column': opponent.result === 'loss' }"
+                >
                   {{ opponent.participant.name }}
                 </p>
                 <p class="name" [ngClass]="opponent.result === 'win' ? 'winner' : 'loser'">
                   {{ opponent.score }}
                 </p>
               </div>
+              <ng-template #toBeDecided>
+                <p class="tbd">
+                  TBD
+                </p>
+              </ng-template>
             </mat-card-title>
           </mat-card-header>
 
@@ -90,6 +109,7 @@
             </button>
           </mat-card-actions>
           <app-filedrop
+            [ngClass]="match.status === 'completed' ? '' : 'hide'"
             #fileDropComponent
             [matchId]="match.id"
             [stageId]="stageId"
