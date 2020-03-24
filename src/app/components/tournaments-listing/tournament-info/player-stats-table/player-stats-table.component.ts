@@ -21,6 +21,7 @@ export class PlayerStatsTableComponent implements OnInit {
   data: any;
   tableType: 'average' | 'total' = 'average';
   total = [];
+  pageIndex = 0;
   average = [];
   displayedMatchColumns: string[] = [
     'index',
@@ -31,7 +32,7 @@ export class PlayerStatsTableComponent implements OnInit {
     'saves',
     'shots',
     'shootingPercentage',
-    'games',
+    'count',
     'score',
   ];
   dataSource: MatTableDataSource<any>;
@@ -42,6 +43,7 @@ export class PlayerStatsTableComponent implements OnInit {
 
   ngOnInit() {
     this.source.subscribe(data => {
+      console.log(data.data['total']);
       this.total = data.data['total'];
       this.average = data.data['average'];
       this.data = data.data[this.tableType];
@@ -60,6 +62,10 @@ export class PlayerStatsTableComponent implements OnInit {
     this.dataSource.data = this.data;
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
+  }
+
+  onPageChange(event: any): void {
+    this.pageIndex = event.pageIndex * event.pageSize;
   }
 
   getShotPercentage(shootingPercentage: number): string {
