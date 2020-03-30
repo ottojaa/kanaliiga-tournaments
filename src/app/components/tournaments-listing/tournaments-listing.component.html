@@ -58,12 +58,14 @@
               </ng-container>
               <h3 style="margin-top: 10px; margin-left: 15px; margin-bottom: 0">Contact</h3>
               <div class="container" *ngIf="additionalInformation[i].contact" fxLayout="column">
-                <p *ngIf="additionalInformation[i].contact">Email: {{ additionalInformation[i].contact }}</p>
+                <p *ngIf="additionalInformation[i].contact">
+                  Email: <a href="{{ additionalInformation[i].contact }}">{{ additionalInformation[i].contact }}</a>
+                </p>
                 <p *ngIf="additionalInformation[i].discord">
                   Discord: <a href="{{ additionalInformation[i].discord }}">{{ additionalInformation[i].discord }}</a>
                 </p>
                 <p *ngIf="additionalInformation[i].website">
-                  Website: <a href="{{ additionalInformation[i].website }}"></a>{{ additionalInformation[i].website }}
+                  Website: <a href="{{ additionalInformation[i].website }}">{{ additionalInformation[i].website }} </a>
                 </p>
               </div>
             </div>
