@@ -1,0 +1,74 @@
+<div class="container mat-elevation-z8">
+  <table mat-table [dataSource]="dataSource">
+    <ng-container matColumnDef="index">
+      <th mat-header-cell *matHeaderCellDef>#</th>
+      <td mat-cell *matCellDef="let element; let i = index">
+        <p style="color: #ff5623;">{{ i + 1 }}</p>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef>Name</th>
+      <td mat-cell *matCellDef="let element" style="font-weight: 900">{{ element.name }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="played">
+      <th mat-header-cell *matHeaderCellDef matTooltip="Played" class="center">P</th>
+      <td mat-cell *matCellDef="let element">
+        <p class="center">{{ element.played }}</p>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="wins">
+      <th mat-header-cell *matHeaderCellDef matTooltip="Wins" class="center">W</th>
+      <td mat-cell *matCellDef="let element">
+        <p class="center">{{ element.wins }}</p>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="losses">
+      <th mat-header-cell *matHeaderCellDef matTooltip="Losses" class="center">L</th>
+      <td mat-cell *matCellDef="let element">
+        <p class="center">{{ element.losses }}</p>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="scoreFor">
+      <th mat-header-cell *matHeaderCellDef matTooltip="Score for" class="center">SF</th>
+      <td mat-cell *matCellDef="let element">
+        <p class="center">{{ element.scoreFor }}</p>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="scoreAgainst">
+      <th mat-header-cell *matHeaderCellDef matTooltip="Score against" class="center">SA</th>
+      <td mat-cell *matCellDef="let element">
+        <p class="center">{{ element.scoreAgainst }}</p>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="forfeits">
+      <th mat-header-cell *matHeaderCellDef matTooltip="Forfeits" class="center">F</th>
+      <td mat-cell *matCellDef="let element">
+        <p class="center">{{ element.forfeits }}</p>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="plusMinus">
+      <th mat-header-cell *matHeaderCellDef matTooltip="Total" class="center">+ / -</th>
+      <td mat-cell *matCellDef="let element">
+        <p class="center">{{ element.plusMinus }}</p>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="points">
+      <th mat-header-cell *matHeaderCellDef matTooltip="Points" class="center">Points</th>
+      <td mat-cell *matCellDef="let element">
+        <p class="points center">{{ element.scoreFor }}</p>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns; let i = index"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+</div>
