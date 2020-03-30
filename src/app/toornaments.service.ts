@@ -20,7 +20,8 @@ export class ToornamentsService {
       headers: new HttpHeaders(headerDict),
     };
 
-    const url = environment.apiUrl + '/viewer/v2/playlists/' + environment.playlist + '/tournaments';
+    const url =
+      environment.apiUrl + '/viewer/v2/playlists/' + environment.playlist + '/tournaments?sort=scheduled_desc';
     return this.http.get(url, requestOptions);
   }
 
@@ -95,6 +96,19 @@ export class ToornamentsService {
     };
 
     const url = environment.apiUrl + '/viewer/v2/tournaments/' + tournamentId + '/participants';
+    return this.http.get(url, requestOptions);
+  }
+
+  getMoreInformation(tournamentId: string): any {
+    const headerDict = {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    };
+
+    const requestOptions = {
+      headers: new HttpHeaders(headerDict),
+    };
+    const url = environment.apiUrl + '/viewer/v2/tournaments/' + tournamentId;
     return this.http.get(url, requestOptions);
   }
 }

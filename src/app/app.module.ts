@@ -57,8 +57,7 @@ import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
 import { ConfirmDialogComponent } from './common/confirm-dialog/confirm-dialog.component';
 import { FaceoffTableComponent } from './components/faceoff-stats/faceoff-table/faceoff-table.component';
 import { PlayerStatsTableModule } from './components/tournaments-listing/tournament-info/player-stats-table/player-stats-table.module';
-// tslint:disable-next-line: max-line-length
-import { PlayerStatsTableComponent } from './components/tournaments-listing/tournament-info/player-stats-table/player-stats-table.component';
+import { TeamsListComponent } from './components/teams-list/teams-list.component';
 
 @NgModule({
   declarations: [
@@ -78,6 +77,7 @@ import { PlayerStatsTableComponent } from './components/tournaments-listing/tour
     LoginComponent,
     RegisterComponent,
     ConfirmDialogComponent,
+    TeamsListComponent,
   ],
   imports: [
     BrowserModule,

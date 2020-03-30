@@ -15,8 +15,6 @@ mat-grid-tile {
 
 .tournament {
   flex-grow: 1;
-  min-width: 300px;
-  flex-basis: 400px;
   margin: 10px;
 }
 
@@ -40,26 +38,8 @@ mat-expansion-panel {
   margin-right: 20px;
 }
 
-p.effect-underline:after {
-  content: "";
-  position: absolute;
-  left: 2%;
-  display: inline-block;
-  height: 1em;
-  width: 60%;
-  border-bottom: 1px solid;
-  margin-top: 10px;
-  opacity: 0;
-  -webkit-transition: opacity 0.35s, -webkit-transform 0.35s;
-  transition: opacity 0.35s, transform 0.35s;
-  -webkit-transform: scale(0, 1);
-  transform: scale(0, 1);
-}
-
-p.effect-underline:hover:after {
-  opacity: 1;
-  -webkit-transform: scale(1);
-  transform: scale(1);
+mat-card {
+  border: 1px solid #0088d1;
 }
 
 mat-panel-title,
@@ -74,10 +54,20 @@ mat-panel-description {
 .container {
   padding: 24px;
   display: flex;
+  white-space: pre-wrap;
   align-items: flex-start;
   flex-wrap: wrap;
 }
 
 .participant {
   width: 50%;
+}
+
+.mat-expansion-panel:not([class*="mat-elevation-z"]) {
+  box-shadow: none;
+  padding: 0;
+}
+
+.mat-expansion-panel-header {
+  padding-left: 0;
 }

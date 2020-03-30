@@ -4,6 +4,7 @@ export interface Tournament {
   name: string;
   full_name: string;
   status: string;
+  description?: string;
   scheduled_date_start: string;
   scheduled_date_end: string;
   timezone: string;

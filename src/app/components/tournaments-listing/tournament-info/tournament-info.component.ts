@@ -19,6 +19,7 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChildren('fileDropComponent') fileDropComponentList: QueryList<FiledropComponent>;
   matches$: Observable<any>;
   stages$: Observable<any>;
+  teamStats$: Observable<any>;
   roundLabels$: Observable<any>;
 
   destroy$ = new Subject();
@@ -60,6 +61,7 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getPlayerStats();
     this.getRoundLabels();
     this.currentStage$ = this.getGroups();
+    this.teamStats$ = this.faceoffService.getTeamStatsForStage(this.stageId);
   }
 
   /**
@@ -71,9 +73,6 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
 
   getPlayerStats(): void {
     this.playerStats$ = this.faceoffService.getPlayerStats(this.stageId);
-    this.playerStats$.subscribe(data => {
-      console.log(data);
-    });
   }
 
   getFaceoffs(): any {
@@ -173,6 +172,7 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getFaceoffs();
     this.getPlayerStats();
     this.currentStage$ = this.getGroups();
+    this.teamStats$ = this.faceoffService.getTeamStatsForStage(this.stageId);
   }
 
   /**

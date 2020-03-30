@@ -50,7 +50,27 @@
     </ng-template>
   </div>
 
-  <div class="row">
+  <div *ngIf="currentStage$ | async" @animatedOpacity style="margin-bottom: 30px;">
+    <section
+      class="mat-typography"
+      style="width: 100%; margin-bottom: 15px;"
+      fxLayout="column"
+      fxLayoutAlign="center center"
+    >
+      <h3 class="mat-display-1" style="margin: 0; color: #ff5623;">Standings</h3>
+    </section>
+    <app-teams-list [teams]="teamStats$"></app-teams-list>
+  </div>
+
+  <div class="row" *ngIf="currentStage$ | async">
+    <section
+      class="mat-typography"
+      style="width: 100%; margin-bottom: 15px;"
+      fxLayout="column"
+      fxLayoutAlign="center center"
+    >
+      <h3 class="mat-display-1" style="margin: 0; color: #ff5623;">Schedule</h3>
+    </section>
     <div class="group" *ngFor="let group of currentStage$ | async; let i = index">
       <div *ngIf="labels && labels.length" class="divider" color="primary">
         <section class="mat-typography">
@@ -123,9 +143,11 @@
     </div>
   </div>
   <div *ngIf="currentStage$ | async" fxLayout="column" fxLayoutAlign="center center" style="width: 100%" @animatedItem>
-    <section class="mat-typography stats" fxLayout="row" fxLayoutAlign="space-around center">
-      <h3 class="mat-display-1" style="margin: 0;">Player statistics</h3>
-      <mat-icon style="font-size:30px;">equalizer</mat-icon>
+    <section class="mat-typography" style="width: 100%;" fxLayout="row" fxLayoutAlign="center center">
+      <div fxLayout="row" fxLayoutAlign="center center">
+        <h3 class="mat-display-1" style="margin: 0;  color: #ff5623;">Player statistics</h3>
+        <mat-icon style="font-size:30px;">equalizer</mat-icon>
+      </div>
     </section>
     <mat-radio-group
       aria-label="Select an option"

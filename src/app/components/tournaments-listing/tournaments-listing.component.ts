@@ -13,13 +13,29 @@ export class TournamentsComponent implements OnInit {
   @Input() tournaments$: Observable<Tournament[]>;
 
   participants = [];
+  additionalInformation = [];
 
   constructor(public tournamentService: ToornamentsService) {}
 
   ngOnInit() {
     this.tournaments$.subscribe(data => {
+      console.log(data);
       this.getParticipants(data);
+      this.getMoreInformation(data);
     });
+  }
+
+  getMoreInformation(tournaments: Tournament[]): any {
+    const arr = [];
+    tournaments.map(tournament => tournament.id).forEach(id => arr.push(this.tournamentService.getMoreInformation(id)));
+    forkJoin(arr)
+      .pipe(take(1))
+      .subscribe((data: any) => {
+        for (let i = 0; i < data.length; i++) {
+          this.additionalInformation.push(data[i]);
+        }
+        console.log(this.additionalInformation);
+      });
   }
 
   getParticipants(tournaments: Tournament[]): any {

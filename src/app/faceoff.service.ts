@@ -47,6 +47,11 @@ export class FaceoffService {
     return this.http.get(url);
   }
 
+  getTeamStatsForStage(stageId: string): Observable<any> {
+    const url = this.url + '/faceoff/team-stats?stageId=' + stageId;
+    return this.http.get(url);
+  }
+
   getFaceoff(id: string): Observable<any> {
     const url = this.url + '/faceoff/' + id;
     return this.http.get(url);

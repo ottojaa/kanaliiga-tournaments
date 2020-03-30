@@ -43,7 +43,6 @@ export class PlayerStatsTableComponent implements OnInit {
 
   ngOnInit() {
     this.source.subscribe(data => {
-      console.log(data.data['total']);
       this.total = data.data['total'];
       this.average = data.data['average'];
       this.data = data.data[this.tableType];
