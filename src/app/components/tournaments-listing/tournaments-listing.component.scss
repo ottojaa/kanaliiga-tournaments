@@ -9,12 +9,15 @@ mat-grid-tile {
 
 .flex-container {
   display: flex;
+  padding: 30px;
+  background: #fbfbfb !important;
+  justify-content: center;
   flex-wrap: wrap;
   flex-direction: row;
 }
 
 .tournament {
-  flex-grow: 1;
+  width: 90%;
   margin: 10px;
 }
 
@@ -36,10 +39,6 @@ mat-expansion-panel {
 .avatar {
   width: 30px;
   margin-right: 20px;
-}
-
-mat-card {
-  border: 1px solid #0088d1;
 }
 
 mat-panel-title,
