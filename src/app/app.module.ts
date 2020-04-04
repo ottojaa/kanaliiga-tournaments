@@ -58,6 +58,7 @@ import { ConfirmDialogComponent } from './common/confirm-dialog/confirm-dialog.c
 import { FaceoffTableComponent } from './components/faceoff-stats/faceoff-table/faceoff-table.component';
 import { PlayerStatsTableModule } from './components/tournaments-listing/tournament-info/player-stats-table/player-stats-table.module';
 import { TeamsListComponent } from './components/teams-list/teams-list.component';
+import { AdminPanelComponent } from './components/admin-panel/admin-panel.component';
 
 @NgModule({
   declarations: [
@@ -78,6 +79,7 @@ import { TeamsListComponent } from './components/teams-list/teams-list.component
     RegisterComponent,
     ConfirmDialogComponent,
     TeamsListComponent,
+    AdminPanelComponent,
   ],
   imports: [
     BrowserModule,

@@ -78,6 +78,16 @@ export class AuthService {
     const url = this.url + '/auth/discord-callback?code=' + code;
     return this.http.get(url);
   }
+
+  getUsers(): Observable<any> {
+    const url = this.url + '/users/all-users';
+    return this.http.get(url);
+  }
+
+  updateUserRole(body: any): Observable<any> {
+    const url = this.url + `/users/update-user-role`;
+    return this.http.put(url, body);
+  }
 }
 
 export interface User {
