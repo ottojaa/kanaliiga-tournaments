@@ -13,13 +13,25 @@ table {
 .name {
   margin: 20px 5px;
   font-size: 14px;
+  text-align: center;
   display: flex;
   align-items: center;
+  justify-content: center;
 }
+
+.team {
+  width: 40%;
+}
+.score {
+  color: #8dd1f5;
+  letter-spacing: 1px;
+  width: 20%;
+}
+
 .match-score {
+  width: 80%;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
 }
 
 .loser {

@@ -9,12 +9,17 @@
   <caption class="mat-typography">
     <h1 class="title">Game {{ index + 1 }}</h1>
     <div class="container">
-      <div class="match-score opponent" *ngFor="let score of teamScore; let i = index">
-        <p class="name" style="font-size: 20px;" [ngClass]="score.result === 'win' ? 'win' : 'lose'">
-          {{ score.name }}
+      <div class="match-score">
+        <p class="name team" style="font-size: 20px;" [ngClass]="teamScore[0].result === 'win' ? 'win' : 'lose'">
+          {{ teamScore[0].name }}
         </p>
-        <p class="name" style="font-size: 20px;" [ngClass]="score.result === 'win' ? 'winner' : 'loser'">
-          {{ score.score }}
+        <p class="name score" style="font-size: 20px;">
+          {{ teamScore[0].score }}
+          -
+          {{ teamScore[1].score }}
+        </p>
+        <p class="name team" style="font-size: 20px;" [ngClass]="teamScore[1].result === 'win' ? 'win' : 'lose'">
+          {{ teamScore[1].name }}
         </p>
       </div>
     </div>
