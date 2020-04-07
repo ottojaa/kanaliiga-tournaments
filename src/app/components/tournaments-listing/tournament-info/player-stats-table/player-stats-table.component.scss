@@ -3,8 +3,6 @@
   min-width: 70%;
   margin-left: auto;
   margin-right: auto;
-  border: 1px solid #cbcdce94;
-  border-radius: 3px;
 }
 
 table {
@@ -19,10 +17,6 @@ td {
   @media (max-width: 767px) {
     font-size: 8px;
   }
-}
-
-tr:nth-child(even) {
-  background: #f9f9f9;
 }
 
 .name {
@@ -80,7 +74,7 @@ tr:nth-child(even) {
 }
 
 body .material-icons {
-  font-family: 'Material Icons';
+  font-family: "Material Icons";
 }
 
 .mat-header-cell {
