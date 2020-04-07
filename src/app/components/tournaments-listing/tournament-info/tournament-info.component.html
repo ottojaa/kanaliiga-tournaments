@@ -63,7 +63,7 @@
         <div class="column" @animatedList>
           <!-- Container for all of the matches inside a group -->
 
-          <mat-card class="mat-elevation-z4" *ngFor="let match of group; let j = index" @animatedItem>
+          <mat-card class="mat-elevation-z4" *ngFor="let match of group; let j = index">
             <p class="played-at-container" *ngIf="match.played_at; else pending">
               <mat-icon class="played-at">calendar_today</mat-icon>
               {{ match.played_at | date: 'mediumDate' }}
