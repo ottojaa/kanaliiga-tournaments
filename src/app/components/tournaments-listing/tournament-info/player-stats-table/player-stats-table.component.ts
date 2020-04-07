@@ -1,7 +1,9 @@
-import { Component, OnInit, Input, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { Animations } from '../../../../utilities/animations';
 import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { Observable } from 'rxjs/internal/Observable';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-player-stats-table',
@@ -9,16 +11,9 @@ import { Observable } from 'rxjs/internal/Observable';
   styleUrls: ['./player-stats-table.component.scss'],
   animations: [Animations.enterAnimation(), Animations.listAnimations()],
 })
-export class PlayerStatsTableComponent implements OnInit {
+export class PlayerStatsTableComponent implements OnInit, OnDestroy {
   @Input() source: Observable<any>;
-  @Input() set type(type: 'total' | 'average') {
-    if (this.tableType === type) {
-      return;
-    }
-    this.onTypeChange(type);
-  }
   @Input() teamScore;
-  data: any;
   tableType: 'average' | 'total' = 'average';
   total = [];
   pageIndex = 0;
@@ -35,32 +30,38 @@ export class PlayerStatsTableComponent implements OnInit {
     'count',
     'score',
   ];
-  dataSource: MatTableDataSource<any>;
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  destroy$ = new Subject();
+  dataSource = new MatTableDataSource();
+
+  private paginator: MatPaginator;
+  private sort: MatSort;
+
+  @ViewChild(MatSort) set matSort(ms: MatSort) {
+    this.sort = ms;
+    this.setDataSourceAttributes();
+  }
+
+  @ViewChild(MatPaginator) set matPaginator(mp: MatPaginator) {
+    this.paginator = mp;
+    this.setDataSourceAttributes();
+  }
+
+  setDataSourceAttributes() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
 
   constructor() {}
 
   ngOnInit() {
-    this.source.subscribe(data => {
-      this.total = data.data['total'];
-      this.average = data.data['average'];
-      this.data = data.data[this.tableType];
-      this.dataSource = new MatTableDataSource(this.data);
-      this.dataSource.data = this.data;
-      this.dataSource.sort = this.sort;
-      this.dataSource.paginator = this.paginator;
-      this.sort.sort({ id: 'score', start: 'desc', disableClear: false });
+    this.source.pipe(takeUntil(this.destroy$)).subscribe(data => {
+      if (data) {
+        this.dataSource = new MatTableDataSource(data);
+        this.dataSource.data = data;
+        this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
+      }
     });
-  }
-
-  onTypeChange(type: 'total' | 'average'): void {
-    this.tableType = type;
-    this.data = this.tableType === 'total' ? this.total : this.average;
-    this.dataSource = new MatTableDataSource(this.data);
-    this.dataSource.data = this.data;
-    this.dataSource.sort = this.sort;
-    this.dataSource.paginator = this.paginator;
   }
 
   onPageChange(event: any): void {
@@ -69,5 +70,10 @@ export class PlayerStatsTableComponent implements OnInit {
 
   getShotPercentage(shootingPercentage: number): string {
     return shootingPercentage.toFixed(1).toString() + '%';
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

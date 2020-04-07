@@ -25,6 +25,7 @@ export class Animations {
           style({ transform: 'translateX(-10px)', opacity: 0 }),
           animate('0.4s cubic-bezier(.8, -0.6, 0.26, .6)', style({ transform: 'translateX(-0px)', opacity: 1 })),
         ]),
+        transition(':leave', [animate('400ms cubic-bezier(0.25, 0.69, 0.41, 1.01)', style({ opacity: 0 }))]),
       ]),
       trigger('detailExpand', [
         state('collapsed', style({ height: '0px', minHeight: '0' })),

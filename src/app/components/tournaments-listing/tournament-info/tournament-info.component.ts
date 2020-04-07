@@ -1,13 +1,29 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ViewChildren, QueryList } from '@angular/core';
 import { Animations } from 'src/app/utilities/animations';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, from, Subject, BehaviorSubject, of } from 'rxjs';
+import { Observable, from, Subject, BehaviorSubject, of, combineLatest, merge, forkJoin, interval } from 'rxjs';
 import { ToornamentsService } from 'src/app/toornaments.service';
-import { groupBy, toArray, mergeMap, flatMap, reduce, takeUntil, filter, take, switchMap } from 'rxjs/operators';
+import {
+  groupBy,
+  toArray,
+  mergeMap,
+  flatMap,
+  reduce,
+  takeUntil,
+  filter,
+  take,
+  switchMap,
+  map,
+  catchError,
+  delay,
+  debounceTime,
+  tap,
+} from 'rxjs/operators';
 import { FiledropComponent } from '../../filedrop/filedrop.component';
 import { FaceoffService } from 'src/app/faceoff.service';
 import { AuthService } from 'src/app/auth.service';
 import { Player } from 'src/app/interfaces/faceoff';
+import { flatten } from '@angular/compiler';
 
 @Component({
   selector: 'app-tournament',
@@ -17,10 +33,6 @@ import { Player } from 'src/app/interfaces/faceoff';
 })
 export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChildren('fileDropComponent') fileDropComponentList: QueryList<FiledropComponent>;
-  matches$: Observable<any>;
-  stages$: Observable<any>;
-  teamStats$: Observable<any>;
-  roundLabels$: Observable<any>;
 
   destroy$ = new Subject();
 
@@ -33,7 +45,6 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
   groups = [];
   labels = [];
   faceoffs = [];
-  playerStats$: Observable<Player[]>;
   selectedStage: any;
   selectedGroup = '';
   tableType = 'average';
@@ -41,6 +52,22 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
   tournamentId: string;
   disableAnimation = true;
   loading = false;
+
+  initialState = {
+    teamStats: [],
+    playerStats: [],
+    groups: [],
+    faceoffIds: [],
+  };
+
+  teamStats$: Observable<any>;
+  stages$: Observable<any>;
+  roundLabels$: Observable<any>;
+  playerStats$: Observable<Player[]>;
+
+  public state$: BehaviorSubject<any> = new BehaviorSubject(this.initialState);
+  public updateState$: Subject<{ [key: string]: any }> = new Subject();
+  public loading$ = new Subject<boolean>();
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -56,12 +83,17 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this.loading = true;
     this.selectedStage = this.stageId;
-    this.getFaceoffs();
-    this.getStageData();
-    this.getPlayerStats();
-    this.getRoundLabels();
-    this.currentStage$ = this.getGroups();
-    this.teamStats$ = this.faceoffService.getTeamStatsForStage(this.stageId);
+    this.teamStats$ = this.getStatePart('teamStats');
+    this.stages$ = this.getStatePart('stageData');
+    this.playerStats$ = this.getStatePart('playerStats').pipe(map(x => x[this.tableType]));
+    this.currentStage$ = this.getStatePart('groups');
+
+    this.handleStateUpdate()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(state => {
+        this.loading = false;
+        this.state$.next(state);
+      });
   }
 
   /**
@@ -71,21 +103,78 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
     setTimeout(() => (this.disableAnimation = false), 500);
   }
 
-  getPlayerStats(): void {
-    this.playerStats$ = this.faceoffService.getPlayerStats(this.stageId);
+  handleStateUpdate(): Observable<any> {
+    const observables = [
+      this.updateState$,
+      this.getTeamStats(),
+      this.getPlayerStats(),
+      this.getFaceoffIds(),
+      this.getGroups(),
+      this.getStageData(),
+      this.getFaceoffs(),
+    ];
+
+    return merge(...observables).pipe(flatMap(this.getNewState()));
   }
 
-  getFaceoffs(): any {
-    this.faceoffService
-      .getFaceoffIds(this.stageId)
-      .pipe(take(1))
-      .subscribe(faceoffs => {
-        this.faceoffs = faceoffs.data;
-      });
+  getNewState(): (obj: { [key: string]: any }) => Observable<any> {
+    return obj =>
+      this.state$.pipe(
+        take(1),
+        map((state): any => ({ ...state, ...obj }))
+      );
+  }
+
+  getCurrentTableType(): Observable<any> {
+    return this.getStatePart('playerStats').pipe(map(x => x[this.tableType]));
+  }
+
+  getStatePart(partName: string): Observable<any[]> {
+    return this.state$.pipe(map(state => state[partName]));
+  }
+
+  getPlayerStats(): Observable<any> {
+    return this.faceoffService.getPlayerStats(this.stageId).pipe(
+      catchError(err => {
+        console.log(err);
+        return of([]);
+      }),
+      map(players => ({ playerStats: players.data }))
+    );
+  }
+
+  getTeamStats(): Observable<any> {
+    return this.faceoffService.getTeamStatsForStage(this.stageId).pipe(
+      catchError(err => {
+        console.log(err);
+        return of([]);
+      }),
+      map(teams => ({ teamStats: teams.data }))
+    );
+  }
+
+  getFaceoffIds(): Observable<any> {
+    return this.faceoffService.getFaceoffIds(this.stageId).pipe(
+      catchError(err => {
+        console.log(err);
+        return of([]);
+      }),
+      map(faceoffs => ({ faceoffIds: faceoffs.data }))
+    );
+  }
+
+  getFaceoffs(): Observable<any> {
+    return this.faceoffService.getFaceoffIds(this.stageId).pipe(
+      catchError(err => {
+        console.log(err);
+        return of([]);
+      }),
+      map(faceoffs => ({ faceoffIds: faceoffs.data }))
+    );
   }
 
   checkExistingData(matchId: string): boolean {
-    return this.faceoffs.includes(matchId);
+    return this.state$.value['faceoffIds'].includes(matchId);
   }
 
   getCurrentUser(): any {
@@ -101,12 +190,9 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
    * Get a list of round objects, used to match round labels with correct groups
    */
   getRoundLabels(): void {
-    this.tournamentService
-      .getTournamentRounds(this.tournamentId)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(data => {
-        this.labels = data;
-      });
+    this.tournamentService.getTournamentRounds(this.tournamentId).subscribe(data => {
+      this.labels = data;
+    });
   }
 
   /**
@@ -123,11 +209,26 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  changeTableType(type: string): void {
+    this.tableType = type;
+    this.updateState$.next();
+  }
+
   /**
    * Returns all the different stages for the current tournament. These are selectable options in the match view dropdown
    */
-  getStageData(): void {
+  /*   getStageData(): void {
     this.stages$ = this.tournamentService.getTournamentStages(this.tournamentId);
+  } */
+
+  getStageData(): Observable<any> {
+    return this.tournamentService.getTournamentStages(this.tournamentId).pipe(
+      catchError(err => {
+        console.log(err);
+        return of([]);
+      }),
+      map(stage => ({ stageData: stage }))
+    );
   }
 
   /**
@@ -137,7 +238,6 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   getGroups(): Observable<any> {
     return this.tournamentService.getTournamentMatches(this.tournamentId).pipe(
-      take(1),
       flatMap((x: any) => from(x)),
       filter((x: any) => x.stage_id === this.stageId),
       switchMap((group: any[]) => {
@@ -147,8 +247,13 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
       filter((x: any) => x.group_id === this.selectedGroup),
       groupBy((match: any) => match.round_id),
       mergeMap((group: any) => group.pipe(reduce((acc, cur) => [...acc, cur], []))),
-      toArray()
+      toArray(),
+      map(groups => ({ groups: groups }))
     );
+  }
+
+  getFilteredGroups(groups$: Observable<any>): Observable<any> {
+    return groups$.pipe(flatMap(groups => groups.filter(group => group)));
   }
 
   setGroupSelectableOptions(match): void {
@@ -166,13 +271,32 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onStageChange(event: any): void {
     // Reset current group choices and get new groups
+    this.loading = !this.loading;
     this.stageId = event.value;
     this.selectedGroup = '';
     this.groups = [];
-    this.getFaceoffs();
-    this.getPlayerStats();
-    this.currentStage$ = this.getGroups();
-    this.teamStats$ = this.faceoffService.getTeamStatsForStage(this.stageId);
+    const toUpdate$ = [this.getPlayerStats(), this.getTeamStats(), this.getGroups(), this.getFaceoffIds()];
+    forkJoin(toUpdate$).subscribe(data => {
+      for (let i = 0; i < data.length; i++) {
+        switch (i) {
+          case 0:
+            this.updateState$.next({ playerStats: data[0]['playerStats'] });
+            break;
+          case 1:
+            this.updateState$.next({ teamStats: data[1]['teamStats'] });
+            break;
+          case 2:
+            this.updateState$.next({ groups: data[2]['groups'] });
+            break;
+          case 3:
+            this.updateState$.next({ faceoffIds: data[3]['faceoffIds'] });
+            break;
+          default:
+            break;
+        }
+      }
+      this.loading = false;
+    });
   }
 
   /**

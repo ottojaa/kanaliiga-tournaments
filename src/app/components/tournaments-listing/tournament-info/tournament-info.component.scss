@@ -46,14 +46,18 @@ mat-card {
   flex-direction: row;
 }
 
-.hide {
-  display: none;
-}
-
 .icon {
   position: absolute;
   top: 0;
   right: 0;
+}
+
+.hide {
+  visibility: hidden;
+}
+
+.show {
+  visibility: visible;
 }
 
 .progress {
@@ -74,7 +78,7 @@ mat-card {
 }
 
 mat-icon {
-  font-family: "Material Icons";
+  font-family: 'Material Icons';
 }
 
 .actions {
@@ -85,7 +89,7 @@ mat-icon {
 }
 
 .winner-column::before {
-  content: "";
+  content: '';
   display: inline-block;
   background: #8bc34a;
   width: 6px;
@@ -93,12 +97,19 @@ mat-icon {
   height: 100%;
 }
 .loser-column::before {
-  content: "";
+  content: '';
   display: inline-block;
   background: #f44336;
   width: 6px;
   margin-right: 3px;
   height: 100%;
+}
+
+.top-bar {
+  width: 100%;
+  background: white;
+  z-index: 10;
+  position: fixed;
 }
 
 .name {
@@ -118,7 +129,8 @@ mat-icon {
 }
 
 .top {
-  padding-top: 20px;
+  height: 60px;
+  padding-top: 12px;
   display: flex;
   margin: auto;
   flex-direction: row;
@@ -131,7 +143,7 @@ mat-card-subtitle {
 }
 
 mat-card:not(:last-child)::before {
-  content: "";
+  content: '';
   border-left: 4px solid #040300;
   position: absolute;
   top: 93%;
@@ -181,7 +193,7 @@ li {
 }
 
 br {
-  content: "\A";
+  content: '\A';
   display: contents;
   white-space: pre;
 }
@@ -201,10 +213,6 @@ mat-card-actions {
 mat-grid-tile {
   margin-top: 10px;
   margin-bottom: 10px;
-}
-
-mat-progress-bar {
-  margin-top: 8px;
 }
 
 .column {

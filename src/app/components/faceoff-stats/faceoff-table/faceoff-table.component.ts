@@ -24,14 +24,18 @@ export class FaceoffTableComponent implements OnInit {
     'score',
   ];
   dataSource = new MatTableDataSource(this.match);
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  private sort: MatSort;
+
+  @ViewChild(MatSort) set matSort(ms: MatSort) {
+    this.sort = ms;
+    this.dataSource.sort = this.sort;
+    this.sort.sort({ id: 'score', start: 'desc', disableClear: false });
+  }
 
   constructor() {}
 
   ngOnInit() {
     this.dataSource.data = this.match;
-    this.dataSource.sort = this.sort;
-    this.sort.sort({ id: 'score', start: 'desc', disableClear: false });
   }
 
   getShotPercentage(shootingPercentage: number): string {

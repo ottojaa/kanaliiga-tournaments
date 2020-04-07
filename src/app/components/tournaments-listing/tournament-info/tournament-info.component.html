@@ -1,7 +1,7 @@
 <div class="container">
   <!-- Dropdown for stage filtering -->
 
-  <div class="mat-elevation-z6" style="width: 100%;">
+  <div class="mat-elevation-z6 top-bar">
     <div class="top">
       <button mat-button (click)="navigateToStages()">
         <mat-icon>keyboard_arrow_left</mat-icon>
@@ -24,141 +24,131 @@
         </mat-form-field>
       </div>
     </div>
-  </div>
-
-  <mat-divider color="primary" style="width: 100%;"></mat-divider>
-
-  <!-- Container for all of the groups-->
-
-  <div class="progress">
-    <div *ngIf="!(currentStage$ | async); else filler" style="width: 100%;" @animatedOpacity>
-      <mat-progress-bar mode="indeterminate" color="warn" style="width: 100%; margin: 0"></mat-progress-bar>
-      <div style="margin-top: 30px !important; width: 80%; margin: auto;" *ngFor="let el of [0, 1, 2]">
-        <ngx-skeleton-loader
-          count="3"
-          appearance="line"
-          [theme]="{
-            padding: '10px'
-          }"
-        >
-        </ngx-skeleton-loader>
-      </div>
-    </div>
-
+    <mat-progress-bar *ngIf="loading; else filler" mode="indeterminate" color="accent"> </mat-progress-bar>
     <ng-template #filler>
-      <div></div>
+      <div style="height: 4px"></div>
     </ng-template>
   </div>
 
-  <div *ngIf="currentStage$ | async" @animatedOpacity style="margin-bottom: 30px;">
-    <section
-      class="mat-typography"
-      style="width: 100%; margin-bottom: 15px;"
-      fxLayout="column"
-      fxLayoutAlign="center center"
-    >
-      <h3 class="mat-display-1" style="margin: 0; color: #ff5623;">Standings</h3>
-    </section>
-    <app-teams-list [teams]="teamStats$"></app-teams-list>
-  </div>
+  <!-- Container for all of the groups-->
 
-  <div class="row" *ngIf="currentStage$ | async">
-    <section
-      class="mat-typography"
-      style="width: 100%; margin-bottom: 15px;"
-      fxLayout="column"
-      fxLayoutAlign="center center"
-    >
-      <h3 class="mat-display-1" style="margin: 0; color: #ff5623;">Schedule</h3>
-    </section>
-    <div class="group" *ngFor="let group of currentStage$ | async; let i = index">
-      <div *ngIf="labels && labels.length" class="divider" color="primary">
-        <section class="mat-typography">
-          <h2 class="mat-subheading-2" style="margin: 10px;">{{ getRoundLabel(group[0].round_id) }}</h2>
-        </section>
-      </div>
-      <div class="column" @animatedList>
-        <!-- Container for all of the matches inside a group -->
+  <ng-container>
+    <div @animatedOpacity style="margin: 120px 70px 0; width: 100%;">
+      <section
+        class="mat-typography"
+        style="width: 100%; margin-bottom: 15px;"
+        fxLayout="column"
+        fxLayoutAlign="center center"
+      >
+        <h3 class="mat-display-1" style="margin: 0; color: #ff5623;">Standings</h3>
+      </section>
+      <app-teams-list @animatedItem [teams]="teamStats$"></app-teams-list>
+    </div>
 
-        <mat-card class="mat-elevation-z4" *ngFor="let match of group; let j = index" @animatedItem>
-          <p class="played-at-container" *ngIf="match.played_at; else pending">
-            <mat-icon class="played-at">calendar_today</mat-icon>
-            {{ match.played_at | date: 'mediumDate' }}
-          </p>
-          <ng-template #pending>
-            <p class="played-at-container">
-              <mat-icon class="played-at" style="margin-right: 5px;">transit_enterexit</mat-icon>
-              Pending
+    <div class="row" style="margin-top: 30px;">
+      <section
+        class="mat-typography"
+        style="width: 100%; margin-bottom: 15px;"
+        fxLayout="column"
+        fxLayoutAlign="center center"
+      >
+        <h3 class="mat-display-1" style="margin: 0; color: #ff5623;">Schedule</h3>
+      </section>
+      <div class="group" *ngFor="let group of currentStage$ | async; let i = index">
+        <div *ngIf="labels && labels.length" class="divider" color="primary">
+          <section class="mat-typography">
+            <h2 class="mat-subheading-2" style="margin: 10px;">{{ getRoundLabel(group[0].round_id) }}</h2>
+          </section>
+        </div>
+        <div class="column" @animatedList>
+          <!-- Container for all of the matches inside a group -->
+
+          <mat-card class="mat-elevation-z4" *ngFor="let match of group; let j = index" @animatedItem>
+            <p class="played-at-container" *ngIf="match.played_at; else pending">
+              <mat-icon class="played-at">calendar_today</mat-icon>
+              {{ match.played_at | date: 'mediumDate' }}
             </p>
-          </ng-template>
-          <mat-card-header>
-            <mat-card-title *ngFor="let opponent of match.opponents">
-              <div class="match-score opponent">
-                <p
-                  *ngIf="opponent.participant; else toBeDecided"
-                  class="name mat-body"
-                  [ngClass]="{ 'winner-column': opponent.result === 'win', 'loser-column': opponent.result === 'loss' }"
+            <ng-template #pending>
+              <p class="played-at-container">
+                <mat-icon class="played-at" style="margin-right: 5px;">transit_enterexit</mat-icon>
+                Pending
+              </p>
+            </ng-template>
+            <mat-card-header>
+              <mat-card-title *ngFor="let opponent of match.opponents">
+                <div class="match-score opponent">
+                  <p
+                    *ngIf="opponent.participant; else toBeDecided"
+                    class="name mat-body"
+                    [ngClass]="{
+                      'winner-column': opponent.result === 'win',
+                      'loser-column': opponent.result === 'loss'
+                    }"
+                  >
+                    {{ opponent.participant.name }}
+                  </p>
+                  <p class="name" [ngClass]="opponent.result === 'win' ? 'winner' : 'loser'">
+                    {{ opponent.score }}
+                  </p>
+                </div>
+                <ng-template #toBeDecided>
+                  <p class="tbd">
+                    TBD
+                  </p>
+                </ng-template>
+              </mat-card-title>
+            </mat-card-header>
+
+            <!-- Bottom part of the faceoff-card -->
+
+            <mat-card-actions align="end" class="actions">
+              <button mat-icon-button (click)="onToggleExpand(match.id)">
+                <mat-icon
+                  matTooltip="Match statistics up to date"
+                  class="replay-found"
+                  *ngIf="checkExistingData(match.id); else noData"
+                  >done</mat-icon
                 >
-                  {{ opponent.participant.name }}
-                </p>
-                <p class="name" [ngClass]="opponent.result === 'win' ? 'winner' : 'loser'">
-                  {{ opponent.score }}
-                </p>
-              </div>
-              <ng-template #toBeDecided>
-                <p class="tbd">
-                  TBD
-                </p>
-              </ng-template>
-            </mat-card-title>
-          </mat-card-header>
-
-          <!-- Bottom part of the faceoff-card -->
-
-          <mat-card-actions align="end" class="actions">
-            <button mat-icon-button (click)="onToggleExpand(match.id)">
-              <mat-icon
-                matTooltip="Match statistics up to date"
-                class="replay-found"
-                *ngIf="checkExistingData(match.id); else noData"
-                >done</mat-icon
-              >
-              <ng-template #noData>
-                <mat-icon>keyboard_arrow_down</mat-icon>
-              </ng-template>
-            </button>
-          </mat-card-actions>
-          <app-filedrop
-            [ngClass]="match.status === 'completed' ? '' : 'hide'"
-            #fileDropComponent
-            [matchId]="match.id"
-            [stageId]="stageId"
-            [user]="getCurrentUser()"
-            [dataExists]="checkExistingData(match.id)"
-            [participants]="match.opponents"
-            (deleteSuccess)="onDeleteFaceoff($event)"
-          ></app-filedrop>
-        </mat-card>
+                <ng-template #noData>
+                  <mat-icon>keyboard_arrow_down</mat-icon>
+                </ng-template>
+              </button>
+            </mat-card-actions>
+            <app-filedrop
+              [ngClass]="match.status === 'completed' ? '' : 'hide'"
+              #fileDropComponent
+              [matchId]="match.id"
+              [stageId]="stageId"
+              [user]="getCurrentUser()"
+              [dataExists]="checkExistingData(match.id)"
+              [participants]="match.opponents"
+              (deleteSuccess)="onDeleteFaceoff($event)"
+            ></app-filedrop>
+          </mat-card>
+        </div>
       </div>
     </div>
-  </div>
-  <div *ngIf="currentStage$ | async" fxLayout="column" fxLayoutAlign="center center" style="width: 100%" @animatedItem>
-    <section class="mat-typography" style="width: 100%;" fxLayout="row" fxLayoutAlign="center center">
-      <div fxLayout="row" fxLayoutAlign="center center">
-        <h3 class="mat-display-1" style="margin: 0;  color: #ff5623;">Player statistics</h3>
-        <mat-icon style="font-size:30px;">equalizer</mat-icon>
+    <div fxLayout="column" fxLayoutAlign="center center" style="width: 100%" @animatedItem>
+      <section class="mat-typography" style="width: 100%;" fxLayout="row" fxLayoutAlign="center center">
+        <div fxLayout="row" fxLayoutAlign="center center">
+          <h3 class="mat-display-1" style="margin: 0;  color: #ff5623;">Player statistics</h3>
+        </div>
+      </section>
+      <mat-radio-group
+        aria-label="Select an option"
+        [(ngModel)]="tableType"
+        style="margin-bottom: 20px; margin-top: 10px;"
+      >
+        <mat-radio-button color="warn" style="padding: 10px;" (click)="changeTableType('average')" [value]="'average'"
+          >Per game</mat-radio-button
+        >
+        <mat-radio-button color="warn" style="padding: 10px;" (click)="changeTableType('total')" [value]="'total'"
+          >Total</mat-radio-button
+        >
+      </mat-radio-group>
+      <div style="width: 100%">
+        <app-player-stats-table [source]="playerStats$"></app-player-stats-table>
       </div>
-    </section>
-    <mat-radio-group
-      aria-label="Select an option"
-      [(ngModel)]="tableType"
-      style="margin-bottom: 20px; margin-top: 10px;"
-    >
-      <mat-radio-button color="warn" style="padding: 10px;" [value]="'average'">Per game</mat-radio-button>
-      <mat-radio-button color="warn" style="padding: 10px;" [value]="'total'">Total</mat-radio-button>
-    </mat-radio-group>
-    <section style="width: 100%">
-      <app-player-stats-table [source]="playerStats$" [type]="tableType"></app-player-stats-table>
-    </section>
-  </div>
+    </div>
+  </ng-container>
 </div>

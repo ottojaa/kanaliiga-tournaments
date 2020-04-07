@@ -1,11 +1,4 @@
-<table
-  mat-table
-  @animatedItem
-  [dataSource]="dataSource"
-  matSortStart="desc"
-  matSort
-  class="mat-elevation-z8 data-table"
->
+<table mat-table [dataSource]="dataSource" matSortStart="desc" matSort class="mat-elevation-z8 data-table">
   <caption class="mat-typography">
     <h1 class="title">Game {{ index + 1 }}</h1>
     <div class="container">

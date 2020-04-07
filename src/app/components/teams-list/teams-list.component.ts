@@ -1,11 +1,13 @@
 import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
 import { MatTableDataSource } from '@angular/material';
 import { Observable } from 'rxjs';
+import { Animations } from 'src/app/utilities/animations';
 
 @Component({
   selector: 'app-teams-list',
   templateUrl: './teams-list.component.html',
   styleUrls: ['./teams-list.component.scss'],
+  animations: [Animations.enterAnimation(), Animations.listAnimations()],
 })
 export class TeamsListComponent implements OnInit {
   @Input() teams: Observable<any>;
@@ -37,8 +39,8 @@ export class TeamsListComponent implements OnInit {
 
   ngOnInit() {
     this.teams.subscribe(data => {
-      this.dataSource = new MatTableDataSource(data.data);
-      this.dataSource.data = data.data;
+      this.dataSource = new MatTableDataSource(data);
+      this.dataSource.data = data;
     });
   }
 
