@@ -19,7 +19,6 @@ export class PlayerStatsTableComponent implements OnInit, OnDestroy {
   pageIndex = 0;
   average = [];
   displayedMatchColumns: string[] = [
-    'index',
     'name',
     'teamName',
     'goals',
@@ -49,6 +48,7 @@ export class PlayerStatsTableComponent implements OnInit, OnDestroy {
   setDataSourceAttributes() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+    this.sort.sort({ id: 'score', start: 'asc', disableClear: false });
   }
 
   constructor() {}
