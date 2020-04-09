@@ -83,6 +83,7 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this.loading = true;
     this.selectedStage = this.stageId;
+    this.getRoundLabels();
     this.teamStats$ = this.getStatePart('teamStats');
     this.stages$ = this.getStatePart('stageData');
     this.playerStats$ = this.getStatePart('playerStats').pipe(map(x => x[this.tableType]));
@@ -191,6 +192,7 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   getRoundLabels(): void {
     this.tournamentService.getTournamentRounds(this.tournamentId).subscribe(data => {
+      console.log(data);
       this.labels = data;
     });
   }
