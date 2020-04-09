@@ -315,16 +315,20 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onDeleteFaceoff(event: string): void {
-    const index = this.faceoffs.indexOf(event);
-    if (index > -1) {
-      this.faceoffs.splice(index, 1);
-    }
-    this.faceoffs = [...this.faceoffs];
+    this.getStatePart('faceoffIds')
+      .pipe(take(1))
+      .subscribe(data => {
+        const index = data.indexOf(event);
+        if (index > -1) {
+          data.splice(index, 1);
+        }
+        this.updateState$.next({ faceoffIds: data });
+      });
   }
 
   onGroupChange(event: any): void {
     this.selectedGroup = event.value;
-    this.currentStage$ = this.getGroups();
+    this.updateState$.next();
   }
 
   ngOnDestroy(): void {
