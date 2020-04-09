@@ -70,7 +70,7 @@
   </mat-step>
 </mat-vertical-stepper>
 
-<div class="discord-container mat-typography" *ngIf="!username">
+<div class="discord-container mat-typography" *ngIf="showDiscord">
   <h4 style="font-weight: 900;">Or, sign up with Discord.</h4>
   <button mat-flat-button (click)="discordAuth()">
     <img

@@ -21,10 +21,32 @@ table {
 
 .team {
   width: 40%;
+  font-size: 20px;
+  font-weight: 100;
 }
 .score {
-  color: #8dd1f5;
+  color: #d5ebf7;
   letter-spacing: 1px;
+  font-weight: 400;
+  font-size: 20px;
+  width: 20%;
+}
+
+p {
+  margin: 0;
+}
+
+.title {
+  margin: 0;
+}
+
+.game-title {
+  font-size: 22px;
+  font-weight: 200;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #ff5623;
   width: 20%;
 }
 
@@ -37,20 +59,11 @@ table {
 .loser {
   color: #f44336;
   font-size: 18px;
-  font-weight: bolder;
 }
 
 .winner {
   font-size: 18px;
   color: #8bc34a;
-  font-weight: bolder;
-}
-
-.win {
-  font-weight: 900;
-}
-.lose {
-  font-weight: 900;
 }
 
 .center {

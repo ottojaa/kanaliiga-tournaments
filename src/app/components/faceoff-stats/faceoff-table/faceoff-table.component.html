@@ -1,17 +1,19 @@
 <table mat-table [dataSource]="dataSource" matSortStart="desc" matSort class="mat-elevation-z8 data-table">
   <caption class="mat-typography">
-    <h1 class="title">Game {{ index + 1 }}</h1>
     <div class="container">
+      <div class="game-title">
+        <p class="title">{{ index + 1 }}</p>
+      </div>
       <div class="match-score">
-        <p class="name team" style="font-size: 20px;" [ngClass]="teamScore[0].result === 'win' ? 'win' : 'lose'">
+        <p class="name team" [ngClass]="teamScore[0].result === 'win' ? 'win' : 'lose'">
           {{ teamScore[0].name }}
         </p>
-        <p class="name score" style="font-size: 20px;">
+        <p class="name score">
           {{ teamScore[0].score }}
           -
           {{ teamScore[1].score }}
         </p>
-        <p class="name team" style="font-size: 20px;" [ngClass]="teamScore[1].result === 'win' ? 'win' : 'lose'">
+        <p class="name team" [ngClass]="teamScore[1].result === 'win' ? 'win' : 'lose'">
           {{ teamScore[1].name }}
         </p>
       </div>
