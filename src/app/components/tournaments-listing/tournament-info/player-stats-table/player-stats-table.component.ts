@@ -19,6 +19,7 @@ export class PlayerStatsTableComponent implements OnInit, OnDestroy {
   pageIndex = 0;
   average = [];
   displayedMatchColumns: string[] = [
+    'index',
     'name',
     'teamName',
     'goals',
