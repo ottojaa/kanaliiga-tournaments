@@ -20,6 +20,7 @@ export interface Team {
 }
 
 export interface Player {
+  id: string;
   team: number;
   name: string;
   score: number;

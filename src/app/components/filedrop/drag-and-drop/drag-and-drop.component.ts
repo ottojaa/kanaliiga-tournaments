@@ -72,7 +72,7 @@ export class DragAndDropComponent implements OnInit {
       }
     });
 
-    // This will fire when progressSub$ hasn't received a new value in 1600ms to indicate that we are waiting for backend
+    // This will fire when progressSub$ hasn't received a new value in 1500ms to indicate that we are waiting for backend
     this.bufferSub$.pipe(debounceTime(1500)).subscribe(() => {
       this.mode = 'buffer';
       this.bufferValue = this.progressSub$.getValue();
@@ -146,13 +146,14 @@ export class DragAndDropComponent implements OnInit {
       const teamsCopy = cloneDeep(teams);
       teamsCopy[index].name = this.participants[participantIndex].participant.name;
       teamsCopy[index].players.forEach(player => {
+        player.teamId = this.participants[participantIndex].participant.id;
         player.teamName = this.participants[participantIndex].participant.name;
       });
       return teamsCopy;
     };
 
     // At this point we know who at least one of the winning team members is "result", so we can assign the
-    // winning team's (participants[teamIndex] name to that player's team, and the other to the loser's team.)
+    // that player's team members to the winning team, and the others to the losing team.
     faceOff.matches.forEach(match => {
       match.teams.forEach((team, index) => {
         for (let i = 0; i < team.players.length; i++) {
@@ -168,7 +169,6 @@ export class DragAndDropComponent implements OnInit {
         }
       });
     });
-    console.log(faceOff);
 
     return faceOff;
   }
@@ -257,7 +257,9 @@ export class DragAndDropComponent implements OnInit {
   }
 
   /**
-   * Because the RLParser class gives us a pretty unusable format of JSON, we need to prettify it in order to show it on template
+   * Because the RLParser class gives us a pretty unusable format of JSON, we need to prettify it in order to show it on template.
+   * Not done in backend because parsing was initially done in browser as it was much faster,
+   * but unfortunately VM methods only work in node environment so it had to be moved to BE.
    * @param properties all of the properties that the parser class gives us
    * @param index index of the file
    */
@@ -341,6 +343,8 @@ export class DragAndDropComponent implements OnInit {
       player.assists = this.findElementWithName('Assists', stat);
       player.saves = this.findElementWithName('Saves', stat);
       player.shots = this.findElementWithName('Shots', stat);
+      player.platform = this.getPlayerPlatform(stat);
+      player.onlineId = this.getPlayerOnlineId(stat);
       arr.push(player);
     });
 
@@ -348,6 +352,20 @@ export class DragAndDropComponent implements OnInit {
     teams = this.getTeamPlayers(1, arr, teams);
 
     return teams;
+  }
+
+  getPlayerOnlineId(stat: any): string {
+    const idHexadecimals = this.findElementWithNamePartial('OnlineID', stat);
+    const { hex1, hex2 } = idHexadecimals;
+    return this.hexToDecimalString(hex1 + hex2);
+  }
+
+  getPlayerPlatform(stat: any): string {
+    return this.findElementWithNamePartial('Platform', stat).value2;
+  }
+
+  hexToDecimalString(hex: string): any {
+    return parseInt(hex, 16).toString();
   }
 
   /**
@@ -371,6 +389,10 @@ export class DragAndDropComponent implements OnInit {
 
   findElementWithName(elName: string, player: any): any {
     return player.part.find(el => el.name === elName).more.details.value;
+  }
+
+  findElementWithNamePartial(elName: string, player: any): any {
+    return player.part.find(el => el.name === elName).more.details;
   }
 
   private getUploadProgress(event: HttpEvent<any>, total: number, index) {

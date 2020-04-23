@@ -192,7 +192,6 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   getRoundLabels(): void {
     this.tournamentService.getTournamentRounds(this.tournamentId).subscribe(data => {
-      console.log(data);
       this.labels = data;
     });
   }
