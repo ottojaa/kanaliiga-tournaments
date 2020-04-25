@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ViewChildren, QueryList } from '@angular/core';
 import { Animations } from 'src/app/utilities/animations';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, from, Subject, BehaviorSubject, of, combineLatest, merge, forkJoin, interval } from 'rxjs';
+import { Observable, from, Subject, BehaviorSubject, of, merge, forkJoin, combineLatest } from 'rxjs';
 import { ToornamentsService } from 'src/app/toornaments.service';
 import {
   groupBy,
@@ -15,15 +15,13 @@ import {
   switchMap,
   map,
   catchError,
-  delay,
-  debounceTime,
   tap,
 } from 'rxjs/operators';
 import { FiledropComponent } from '../../filedrop/filedrop.component';
 import { FaceoffService } from 'src/app/faceoff.service';
 import { AuthService } from 'src/app/auth.service';
 import { Player } from 'src/app/interfaces/faceoff';
-import { flatten } from '@angular/compiler';
+import { cloneDeep } from 'lodash';
 
 @Component({
   selector: 'app-tournament',
@@ -45,6 +43,7 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
   groups = [];
   labels = [];
   faceoffs = [];
+  teams = [];
   selectedStage: any;
   selectedGroup = '';
   tableType = 'average';
@@ -58,11 +57,17 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
     playerStats: [],
     groups: [],
     faceoffIds: [],
+    filters: [],
   };
 
+  toggleAll = false;
+
+  filteredTeams$: Observable<any>;
+  filters$: Observable<any>;
   teamStats$: Observable<any>;
   stages$: Observable<any>;
   roundLabels$: Observable<any>;
+  toggleAll$: Observable<any>;
   playerStats$: Observable<Player[]>;
 
   public state$: BehaviorSubject<any> = new BehaviorSubject(this.initialState);
@@ -84,10 +89,7 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loading = true;
     this.selectedStage = this.stageId;
     this.getRoundLabels();
-    this.teamStats$ = this.getStatePart('teamStats');
-    this.stages$ = this.getStatePart('stageData');
-    this.playerStats$ = this.getStatePart('playerStats').pipe(map(x => x[this.tableType]));
-    this.currentStage$ = this.getStatePart('groups');
+    this.initStateObservers();
 
     this.handleStateUpdate()
       .pipe(takeUntil(this.destroy$))
@@ -95,6 +97,26 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
         this.loading = false;
         this.state$.next(state);
       });
+  }
+
+  /**
+   * Each of these observables' values update whenever their respective state changes.
+   */
+  initStateObservers(): void {
+    this.teamStats$ = this.getStatePart('teamStats');
+    this.stages$ = this.getStatePart('stageData');
+    this.filters$ = this.getStatePart('filters').pipe(
+      tap(filters => (this.toggleAll = filters.every(el => el.checked)))
+    );
+    this.filteredTeams$ = this.getFilteredTeams();
+    this.playerStats$ = this.getStatePart('playerStats').pipe(map(x => x[this.tableType]));
+    this.toggleAll$ = this.filters$.pipe(map(filters => filters.every(el => (el.checked = true))));
+  }
+
+  getFilteredTeams(): Observable<any> {
+    const groups$ = this.getStatePart('groups');
+    const filters$ = this.getStatePart('filters');
+    return combineLatest([groups$, filters$]).pipe(map(data => this.filterByTeams(data)));
   }
 
   /**
@@ -249,6 +271,7 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
       groupBy((match: any) => match.round_id),
       mergeMap((group: any) => group.pipe(reduce((acc, cur) => [...acc, cur], []))),
       toArray(),
+      tap(groups => this.setTeamFilters(groups)),
       map(groups => ({ groups: groups }))
     );
   }
@@ -268,6 +291,99 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!this.selectedGroup) {
       this.selectedGroup = this.groups[0];
     }
+  }
+
+  setTeamFilters(groups: any): void {
+    const teams = [];
+    groups.forEach(group => {
+      group.forEach(match => {
+        match.opponents.forEach(opponent => {
+          if (opponent.participant) {
+            const teamIds = teams.map(team => team.id);
+            const index = teamIds.findIndex(id => id === opponent.participant.id);
+            if (index === -1) {
+              const obj = {
+                id: opponent.participant.id,
+                name: opponent.participant.name,
+              };
+              teams.push(obj);
+            }
+          }
+        });
+      });
+    });
+    this.teams = teams;
+
+    const filters = teams.map(team => {
+      return {
+        id: team.id,
+        name: team.name,
+        checked: true,
+      };
+    });
+    this.updateState$.next({ filters: filters });
+  }
+
+  filterByTeams(data: any): any {
+    const groups = data[0];
+    const filters = data[1];
+    if (!groups && !filters) {
+      return of([]);
+    }
+    const filterIds = filters.map(el => {
+      if (el.checked) {
+        return el.id;
+      }
+    });
+    const filteredGroups = [];
+    const filteredMatchIds = [];
+    groups.forEach(group => {
+      group.forEach(match => {
+        match.opponents.forEach(opponent => {
+          if (opponent.participant && filterIds.includes(opponent.participant.id)) {
+            filteredMatchIds.push(match.id);
+          }
+        });
+      });
+    });
+    groups.forEach(group => {
+      filteredGroups.push(group.filter(match => filteredMatchIds.includes(match.id)));
+    });
+    return filteredGroups;
+  }
+
+  onFilterChange(event: any, team: any): void {
+    const newFilterState = {
+      ...team,
+      checked: event.checked,
+    };
+    this.getStatePart('filters')
+      .pipe(
+        take(1),
+        tap(filters => this.updateFilterState(filters, newFilterState))
+      )
+      .subscribe();
+  }
+
+  updateFilterState(filters: any, filterState: any): void {
+    const filtersCopy = cloneDeep(filters);
+    const index = filtersCopy.findIndex(copy => copy.id === filterState.id);
+    filtersCopy.splice(index, 1, filterState);
+    this.updateState$.next({ filters: filtersCopy });
+  }
+
+  toggleAllFilters(event: any): void {
+    this.getStatePart('filters')
+      .pipe(take(1))
+      .subscribe(filters => {
+        filters = filters.map(el => {
+          return {
+            ...el,
+            checked: event.checked,
+          };
+        });
+        this.updateState$.next({ filters: filters });
+      });
   }
 
   onStageChange(event: any): void {

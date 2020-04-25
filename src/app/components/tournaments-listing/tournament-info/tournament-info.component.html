@@ -53,10 +53,28 @@
         fxLayoutAlign="center center"
       >
         <h3 class="mat-display-1" style="margin: 0; color: #ff5623;">Schedule</h3>
+        <div class="filters">
+          <mat-slide-toggle
+            style="font-weight: bold; font-size: 16px;"
+            [color]="'warn'"
+            (change)="toggleAllFilters($event)"
+            [checked]="toggleAll"
+          >
+            All
+          </mat-slide-toggle>
+          <mat-slide-toggle
+            *ngFor="let filter of filters$ | async; let i = index"
+            (change)="onFilterChange($event, filter)"
+            [color]="'warn'"
+            [checked]="filter.checked"
+            >{{ filter.name }}</mat-slide-toggle
+          >
+        </div>
       </section>
-      <div class="group" *ngFor="let group of currentStage$ | async; let i = index">
+
+      <div class="group" *ngFor="let group of filteredTeams$ | async; let i = index">
         <div *ngIf="labels && labels.length" class="divider" color="primary">
-          <section class="mat-typography">
+          <section class="mat-typography" *ngIf="group[0]">
             <h2 class="mat-subheading-2" style="margin: 10px;">{{ getRoundLabel(group[0].round_id) }}</h2>
           </section>
         </div>

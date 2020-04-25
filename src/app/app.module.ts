@@ -59,6 +59,7 @@ import { FaceoffTableComponent } from './components/faceoff-stats/faceoff-table/
 import { PlayerStatsTableModule } from './components/tournaments-listing/tournament-info/player-stats-table/player-stats-table.module';
 import { TeamsListComponent } from './components/teams-list/teams-list.component';
 import { AdminPanelComponent } from './components/admin-panel/admin-panel.component';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @NgModule({
   declarations: [
@@ -88,6 +89,7 @@ import { AdminPanelComponent } from './components/admin-panel/admin-panel.compon
     MatPaginatorModule,
     RouterModule,
     MatStepperModule,
+    MatSlideToggleModule,
     BrowserAnimationsModule,
     MatSortModule,
     PlayerStatsTableModule,

@@ -265,15 +265,15 @@ export class DragAndDropComponent implements OnInit {
    */
   prettifyReplayJSON(properties: any, index: number): any {
     try {
+      // Date when the game was played
+      const dateIndex = properties.findIndex(property => property.name === 'Date');
+      const date = moment(properties[dateIndex].more.details.value, 'YYYY-MM-DD HH-mm-ss').toISOString();
+
       // Get team objects
       const teamScores = this.getTeamScores(properties);
 
       // Get player stats and assign them under the correct teams
-      const playerStats = this.getPlayerStats(properties, teamScores);
-
-      // Then get date from the properties, which can be used to sort the games
-      const dateIndex = properties.findIndex(property => property.name === 'Date');
-      const date = moment(properties[dateIndex].more.details.value, 'YYYY-MM-DD HH-mm-ss').toISOString();
+      const playerStats = this.getPlayerStats(properties, teamScores, date);
 
       // Construct a match object that will be shown in the template
       const match = { matchIndex: index, date: date, teams: playerStats };
@@ -329,7 +329,7 @@ export class DragAndDropComponent implements OnInit {
    * @param properties Replay file's parsed properties
    * @param teams Toornaments teams
    */
-  getPlayerStats(properties: any, teams: Team[]): Team[] {
+  getPlayerStats(properties: any, teams: Team[], date: string): Team[] {
     const player_stats_index = properties.findIndex(prop => prop.name === 'PlayerStats');
     const player_stats = properties[player_stats_index].more.details.array;
 
@@ -343,6 +343,7 @@ export class DragAndDropComponent implements OnInit {
       player.assists = this.findElementWithName('Assists', stat);
       player.saves = this.findElementWithName('Saves', stat);
       player.shots = this.findElementWithName('Shots', stat);
+      player.datePlayed = date;
       player.platform = this.getPlayerPlatform(stat);
       player.onlineId = this.getPlayerOnlineId(stat);
       arr.push(player);
