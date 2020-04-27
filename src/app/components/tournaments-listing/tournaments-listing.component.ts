@@ -19,7 +19,6 @@ export class TournamentsComponent implements OnInit {
 
   ngOnInit() {
     this.tournaments$.subscribe(data => {
-      console.log(data);
       this.getParticipants(data);
       this.getMoreInformation(data);
     });
@@ -34,7 +33,6 @@ export class TournamentsComponent implements OnInit {
         for (let i = 0; i < data.length; i++) {
           this.additionalInformation.push(data[i]);
         }
-        console.log(this.additionalInformation);
       });
   }
 

@@ -113,6 +113,7 @@ export class FiledropComponent implements AfterViewInit {
           files: this.dataSource,
           matchId: this.matchId,
           stageId: this.stageId,
+          tournamentId: this.tournamentId,
           participants: this.participants,
           replays: this.files,
         },

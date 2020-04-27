@@ -97,6 +97,33 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
         this.loading = false;
         this.state$.next(state);
       });
+    this.getParticipants()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(data => {
+        this.tournamentService.participants$.next(data);
+      });
+  }
+
+  getParticipants(): Observable<any> {
+    return this.tournamentService
+      .getParticipants(this.tournamentId)
+      .pipe(
+        map((participants: any) =>
+          participants.flatMap(participant => this.createLineupArrayEntity(participant.lineup))
+        )
+      );
+  }
+
+  createLineupArrayEntity(lineup: any): any {
+    return lineup.map(player => {
+      const steam_id = player.custom_fields.steam_id;
+      const pattern = /^[0-9]{17}$/;
+      const steam_id_valid = pattern.test(steam_id);
+      return {
+        name: player.name,
+        steam_id: steam_id_valid ? steam_id : null,
+      };
+    });
   }
 
   /**

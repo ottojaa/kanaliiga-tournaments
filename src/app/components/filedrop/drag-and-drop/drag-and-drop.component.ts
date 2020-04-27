@@ -8,6 +8,7 @@ import { Animations } from 'src/app/utilities/animations';
 import { Faceoff, Player, Match, Team } from 'src/app/interfaces/faceoff';
 import { FaceoffService } from 'src/app/faceoff.service';
 import { HttpClient, HttpEvent, HttpEventType } from '@angular/common/http';
+import { ToornamentsService } from 'src/app/toornaments.service';
 /**
  * Component for rocket league replay parser + drag and drop functionality.
  */
@@ -22,6 +23,7 @@ export class DragAndDropComponent implements OnInit {
   replays: Buffer[];
   matchId: string;
   stageId: string;
+  tournamentId: string;
   uploadProgress = [];
   error: string;
   mode = 'determinate';
@@ -46,7 +48,7 @@ export class DragAndDropComponent implements OnInit {
     private faceoffService: FaceoffService,
     public dialogRef: MatDialogRef<any>,
     public snackbar: MatSnackBar,
-    private http: HttpClient,
+    public tournamentService: ToornamentsService,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.progressObs$ = this.progressSub$.asObservable().pipe(
@@ -61,6 +63,7 @@ export class DragAndDropComponent implements OnInit {
     this.matchId = this.data.matchId;
     this.participants = this.data.participants;
     this.stageId = this.data.stageId;
+    this.tournamentId = this.data.tournamentId;
 
     this.games = Array.from(Array(this.matchNumber || this.files.length).keys());
     this.replayParser(this.files);
@@ -145,6 +148,7 @@ export class DragAndDropComponent implements OnInit {
     const teamNameAssign = (index: number, participantIndex: number, teams: any) => {
       const teamsCopy = cloneDeep(teams);
       teamsCopy[index].name = this.participants[participantIndex].participant.name;
+      teamsCopy[index].teamId = this.participants[participantIndex].participant.id;
       teamsCopy[index].players.forEach(player => {
         player.teamId = this.participants[participantIndex].participant.id;
         player.teamName = this.participants[participantIndex].participant.name;
@@ -206,19 +210,17 @@ export class DragAndDropComponent implements OnInit {
         );
       }
 
-      forkJoin(observables)
-        .pipe(take(1))
-        .subscribe(
-          (replayData: any) => {
-            for (let i = 0; i < replayData.length; i++) {
-              this.prettifyReplayJSON(replayData[i].body.data.properties, i);
-            }
-          },
-          err => {
-            console.error(err);
-            this.error = err.error.message;
+      forkJoin(observables).subscribe(
+        (replayData: any) => {
+          for (let i = 0; i < replayData.length; i++) {
+            this.prettifyReplayJSON(replayData[i].body.data.properties, i);
           }
-        );
+        },
+        err => {
+          console.error(err);
+          this.error = err.error.message;
+        }
+      );
     });
   }
 
@@ -239,21 +241,17 @@ export class DragAndDropComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  // Mock upload process for now
   upload(): void {
     this.loading = true;
     const faceoff = this.createFaceoffEntity(this.matches);
-    this.faceoffService
-      .uploadFaceOff(faceoff)
-      .pipe(take(1))
-      .subscribe(
-        data => {
-          this.dialogRef.close(data);
-        },
-        err => {
-          this.error = err.error.message;
-        }
-      );
+    this.faceoffService.uploadFaceOff(faceoff).subscribe(
+      data => {
+        this.dialogRef.close(data);
+      },
+      err => {
+        this.error = err.error.message;
+      }
+    );
   }
 
   /**
@@ -309,8 +307,10 @@ export class DragAndDropComponent implements OnInit {
       {
         score: team_one_score,
         teamId: 0,
-        name: '',
         result: team_one_result,
+        name: '',
+        stageId: this.stageId,
+        tournamentId: this.tournamentId,
         players: [],
       },
       {
@@ -318,6 +318,8 @@ export class DragAndDropComponent implements OnInit {
         teamId: 1,
         result: team_two_result,
         name: '',
+        stageId: this.stageId,
+        tournamentId: this.tournamentId,
         players: [],
       },
     ];
@@ -336,16 +338,19 @@ export class DragAndDropComponent implements OnInit {
     const arr = [];
     player_stats.forEach((stat: any) => {
       const player: Player | any = {};
+      const onlineId = this.getPlayerOnlineId(stat);
+      player.platform = this.getPlayerPlatform(stat);
+      player.name = this.getPlayerName(stat, onlineId);
       player.team = this.findElementWithName('Team', stat);
-      player.name = this.findElementWithName('Name', stat);
       player.score = this.findElementWithName('Score', stat);
       player.goals = this.findElementWithName('Goals', stat);
       player.assists = this.findElementWithName('Assists', stat);
       player.saves = this.findElementWithName('Saves', stat);
       player.shots = this.findElementWithName('Shots', stat);
       player.datePlayed = date;
-      player.platform = this.getPlayerPlatform(stat);
-      player.onlineId = this.getPlayerOnlineId(stat);
+      player.onlineId = onlineId;
+      player.tournamentId = this.tournamentId;
+      player.stageId = this.stageId;
       arr.push(player);
     });
 
@@ -353,6 +358,16 @@ export class DragAndDropComponent implements OnInit {
     teams = this.getTeamPlayers(1, arr, teams);
 
     return teams;
+  }
+
+  /**
+   * Replays always have onlineId, so we can match this id with the ones that we have from toornament to use
+   * the toornament name instead of the replay name, which especially in the case of steam can be changed easily.
+   */
+  getPlayerName(stat: any, onlineId: string): string {
+    const lineup = this.tournamentService.participants$.value;
+    const player_index = lineup.findIndex(player => onlineId === player.steam_id);
+    return player_index > -1 ? lineup[player_index].name : this.findElementWithName('Name', stat);
   }
 
   getPlayerOnlineId(stat: any): string {
