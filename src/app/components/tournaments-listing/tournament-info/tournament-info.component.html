@@ -42,7 +42,25 @@
       >
         <h3 class="mat-display-1" style="margin: 0; color: #ff5623;">Standings</h3>
       </section>
-      <app-teams-list @animatedItem [teams]="teamStats$"></app-teams-list>
+
+      <ng-container *ngIf="(teamStats$ | async).length; else noTeamStats">
+        <app-teams-list @animatedItem [teams]="teamStats$"></app-teams-list>
+      </ng-container>
+      <ng-template #noTeamStats>
+        <ng-container *ngIf="teamsLoading; else showPlaceholderTeams">
+          <mat-progress-spinner style="margin-top: 35px;" color="warn" mode="indeterminate" diameter="35">
+          </mat-progress-spinner>
+        </ng-container>
+        <ng-template #showPlaceholderTeams>
+          <section class="mat-typography no-content-center">
+            <mat-icon color="accent" style="transform: scale(2.0); margin-bottom: 10px;">warning</mat-icon>
+            <h4>No content found!</h4>
+            <p>
+              Team statistics will appear here once replays have been submitted from matches.
+            </p>
+          </section>
+        </ng-template>
+      </ng-template>
     </div>
 
     <div class="row" style="margin-top: 30px;">
@@ -146,27 +164,50 @@
         </div>
       </div>
     </div>
+
     <div fxLayout="column" fxLayoutAlign="center center" style="width: 100%" @animatedItem>
       <section class="mat-typography" style="width: 100%;" fxLayout="row" fxLayoutAlign="center center">
         <div fxLayout="row" fxLayoutAlign="center center">
           <h3 class="mat-display-1" style="margin: 0;  color: #ff5623;">Player statistics</h3>
         </div>
       </section>
-      <mat-radio-group
-        aria-label="Select an option"
-        [(ngModel)]="tableType"
-        style="margin-bottom: 20px; margin-top: 10px;"
-      >
-        <mat-radio-button color="warn" style="padding: 10px;" (click)="changeTableType('average')" [value]="'average'"
-          >Per game</mat-radio-button
+      <ng-container *ngIf="(playerStats$ | async)?.length; else noContent">
+        <mat-radio-group
+          aria-label="Select an option"
+          [(ngModel)]="tableType"
+          style="margin-bottom: 20px; margin-top: 10px;"
         >
-        <mat-radio-button color="warn" style="padding: 10px;" (click)="changeTableType('total')" [value]="'total'"
-          >Total</mat-radio-button
-        >
-      </mat-radio-group>
-      <div style="width: 100%">
-        <app-player-stats-table [source]="playerStats$"></app-player-stats-table>
-      </div>
+          <mat-radio-button color="warn" style="padding: 10px;" (click)="changeTableType('average')" [value]="'average'"
+            >Per game</mat-radio-button
+          >
+          <mat-radio-button color="warn" style="padding: 10px;" (click)="changeTableType('total')" [value]="'total'"
+            >Total</mat-radio-button
+          >
+        </mat-radio-group>
+        <div style="width: 100%">
+          <app-player-stats-table [source]="playerStats$"></app-player-stats-table>
+        </div>
+      </ng-container>
+
+      <ng-template #noContent>
+        <ng-container *ngIf="playersLoading; else showPlaceholder">
+          <mat-progress-spinner
+            style="margin-top: 35px;"
+            color="warn"
+            mode="indeterminate"
+            diameter="35"
+          ></mat-progress-spinner>
+        </ng-container>
+        <ng-template #showPlaceholder>
+          <section class="mat-typography no-content-center">
+            <mat-icon color="accent" style="transform: scale(2.0); margin-bottom: 10px;">warning</mat-icon>
+            <h4>No content found!</h4>
+            <p>
+              Player statistics will appear here once replays have been submitted from matches.
+            </p>
+          </section>
+        </ng-template>
+      </ng-template>
     </div>
   </ng-container>
 </div>

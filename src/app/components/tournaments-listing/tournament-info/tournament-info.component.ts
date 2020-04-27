@@ -52,6 +52,9 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
   disableAnimation = true;
   loading = false;
 
+  teamsLoading = false;
+  playersLoading = false;
+
   initialState = {
     teamStats: [],
     playerStats: [],
@@ -184,21 +187,25 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getPlayerStats(): Observable<any> {
+    this.playersLoading = true;
     return this.faceoffService.getPlayerStats(this.stageId).pipe(
       catchError(err => {
         console.log(err);
         return of([]);
       }),
+      tap(() => (this.playersLoading = false)),
       map(players => ({ playerStats: players.data }))
     );
   }
 
   getTeamStats(): Observable<any> {
+    this.teamsLoading = true;
     return this.faceoffService.getTeamStatsForStage(this.stageId).pipe(
       catchError(err => {
         console.log(err);
         return of([]);
       }),
+      tap(() => (this.teamsLoading = false)),
       map(teams => ({ teamStats: teams.data }))
     );
   }
