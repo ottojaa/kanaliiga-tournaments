@@ -60,6 +60,7 @@ import { PlayerStatsTableModule } from './components/tournaments-listing/tournam
 import { TeamsListComponent } from './components/teams-list/teams-list.component';
 import { AdminPanelComponent } from './components/admin-panel/admin-panel.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { FaceoffOverviewTableComponent } from './components/faceoff-stats/faceoff-overview-table/faceoff-overview-table.component';
 
 @NgModule({
   declarations: [
@@ -81,6 +82,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     ConfirmDialogComponent,
     TeamsListComponent,
     AdminPanelComponent,
+    FaceoffOverviewTableComponent,
   ],
   imports: [
     BrowserModule,

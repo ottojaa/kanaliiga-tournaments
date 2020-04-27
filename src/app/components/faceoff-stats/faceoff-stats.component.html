@@ -13,11 +13,41 @@
   </button>
 </div>
 
-<div style="width: 100%; height: 100%;" @animatedItem>
+<mat-tab-group mat-align-tabs="center" animationDuration="200ms">
+  <mat-tab label="Overview">
+    <ng-container *ngIf="overviewScores">
+      <div style="margin-top: 30px;">
+        <app-faceoff-overview-table
+          @animatedItem
+          [index]="0"
+          [participant]="overviewScores.participantOne"
+          [date]="date"
+          [match]="overviewScores.teamOne"
+        ></app-faceoff-overview-table>
+        <app-faceoff-overview-table
+          @animatedItem
+          [index]="1"
+          [participant]="overviewScores.participantTwo"
+          [date]="date"
+          [match]="overviewScores.teamTwo"
+        >
+        </app-faceoff-overview-table>
+      </div>
+      <div style="margin-bottom: 30px;"></div>
+    </ng-container>
+  </mat-tab>
+  <mat-tab *ngFor="let match of dataSource; let i = index" label="Game {{ i + 1 }}">
+    <div class="faceoff-game">
+      <app-faceoff-table @animatedItem [match]="match" [teamScore]="teamScores[i]" [index]="i"></app-faceoff-table>
+    </div>
+  </mat-tab>
+</mat-tab-group>
+
+<!-- <div style="width: 100%; height: 100%;" @animatedItem>
   <div *ngFor="let match of dataSource; let i = index">
     <app-faceoff-table [match]="match" [teamScore]="teamScores[i]" [index]="i"></app-faceoff-table>
   </div>
-</div>
+</div> -->
 
 <ng-template #noContent>
   <div class="center" @animatedItem *ngIf="loading; else noContentFound">

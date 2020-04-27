@@ -25,7 +25,7 @@ table {
   font-weight: 100;
 }
 .score {
-  color: #d5ebf7;
+  color: black;
   letter-spacing: 1px;
   font-weight: 400;
   font-size: 20px;
@@ -40,12 +40,17 @@ p {
   margin: 0;
 }
 
+.mat-sort-header-button {
+  color: black !important;
+}
+
 .game-title {
   font-size: 22px;
   font-weight: 200;
   display: flex;
   justify-content: center;
   align-items: center;
+  color: white;
   background: #ff5623;
   width: 20%;
 }
@@ -54,6 +59,7 @@ p {
   width: 80%;
   display: flex;
   flex-direction: row;
+  border-bottom: 1px solid #ff5523;
 }
 
 .loser {
@@ -82,8 +88,8 @@ p {
   align-items: center;
 }
 .container {
-  background: #0288d1;
-  color: white;
+  background: white;
+  color: black;
   display: flex;
   justify-content: space-around;
   box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14),

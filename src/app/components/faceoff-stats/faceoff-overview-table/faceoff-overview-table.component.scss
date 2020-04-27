@@ -1,0 +1,81 @@
+.data-table {
+    max-width: 90%;
+    min-width: 60%;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+}
+
+.container {
+    background: white;
+    color: white;
+    display: flex;
+    justify-content: flex-start;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+}
+
+.filler-container {
+    .banner {
+        margin: 0;
+        padding-bottom: 10px;
+        font-size: 18px;
+        font-weight: 100;
+        font-family: Roboto, "Helvetica Neue", sans-serif !important;
+    }
+    .filler-one {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: black;
+        height: 40px;
+        width: 100%;
+        /* background: #2a5167; */
+        background: white;
+    }
+
+    .filler-two {
+        height: 2px;
+        width: 100%;
+        background: #2a5167;
+        /* background: #ff5623; */
+    }
+}
+
+.match-score {
+    color: black;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+.name {
+    margin: 20px 5px;
+    font-size: 14px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.team {
+    padding: 6px 15px 6px 15px;
+    font-size: 20px;
+    font-weight: 100;
+}
+.score {
+    padding-bottom: 6px;
+    padding-top: 6px;
+    letter-spacing: 1px;
+    font-weight: 400;
+    font-size: 20px;
+}
+
+.loser {
+    color: #f44336;
+    font-size: 18px;
+}
+
+.winner {
+    font-size: 18px;
+    color: #8bc34a;
+}

@@ -20,15 +20,17 @@ import { take } from 'rxjs/operators';
 export class FaceoffStatsComponent implements OnInit {
   dataSource: any;
   teamScores: any;
-  averageScores = [];
+  participants = [];
 
   // Used for routing on page refresh
   matchId: string;
   tournamentId: string;
   stageId: string;
+  date: string;
 
   loading = false;
   matches = [];
+  overviewScores;
 
   constructor(private activatedRoute: ActivatedRoute, private faceoffService: FaceoffService, private router: Router) {
     this.tournamentId = this.activatedRoute.params['_value']['id'];
@@ -46,9 +48,10 @@ export class FaceoffStatsComponent implements OnInit {
         response => {
           const matches = response.data.matches;
           if (matches) {
+            this.participants = response.data.participants;
+            this.date = response.data.date;
             this.dataSource = [...this.createDataTables(matches)];
             this.teamScores = [...this.createTeamScoreArrays(matches)];
-            this.averageScores = this.getAverageStats(matches);
           }
           this.loading = false;
         },
@@ -82,7 +85,54 @@ export class FaceoffStatsComponent implements OnInit {
         }
       });
     });
+    this.overviewScores = { ...this.createOverview(matchArr) };
     return matchArr;
+  }
+
+  // This is what hangover code looks like
+  createOverview(matches: any[]): any {
+    let amount = 0;
+    const overview = [];
+    matches.forEach(match => {
+      match.forEach(player => {
+        const index = overview.findIndex(stat => stat.name === player.name);
+        if (index === -1) {
+          overview.push(player);
+        } else {
+          overview[index] = {
+            ...overview[index],
+            assists: overview[index].assists + player.assists,
+            score: overview[index].score + player.score,
+            goals: overview[index].goals + player.goals,
+            saves: overview[index].saves + player.saves,
+            shots: overview[index].shots + player.shots,
+          };
+        }
+      });
+      amount++;
+    });
+    const final = overview.map(player => {
+      let percentage = '0.0%';
+      if (player.goals && player.shots) {
+        percentage = this.getShotPercentage((player.goals / player.shots) * 100);
+      }
+      return {
+        ...player,
+        goals: (player.goals / amount).toFixed(1).toString(),
+        shots: (player.shots / amount).toFixed(1).toString(),
+        saves: (player.saves / amount).toFixed(1).toString(),
+        assists: (player.assists / amount).toFixed(1).toString(),
+        score: (player.score / amount).toFixed(1).toString(),
+        shootingPercentage: percentage,
+      };
+    });
+
+    const team_one_name = final[0].teamName;
+    const team_one = final.filter(player => player.teamName === team_one_name);
+    const team_two = final.filter(player => player.teamName !== team_one_name);
+    const participant_one = this.participants.find(participant => participant.participant[0].name === team_one_name);
+    const participant_two = this.participants.find(participant => participant.participant[0].name !== team_one_name);
+    return { teamOne: team_one, teamTwo: team_two, participantOne: participant_one, participantTwo: participant_two };
   }
 
   // Used for displaying each team's match score on top of the player score data table
@@ -105,31 +155,7 @@ export class FaceoffStatsComponent implements OnInit {
     return teamScoreArr;
   }
 
-  /**
-   * Not used for now
-   */
-  getAverageStats(matches: Match[]): any[] {
-    const playerStats = [];
-    matches.forEach(match => {
-      match.teams.forEach(team => {
-        team.players.forEach(player => {
-          const index = playerStats.findIndex(stats => stats.name === player.name);
-          if (index > -1) {
-            const { goals, assists, saves, shots, score } = playerStats[index];
-            const newStats = {
-              goals: (goals + player.goals) / 2,
-              assists: (assists + player.assists) / 2,
-              saves: (saves + player.saves) / 2,
-              shots: (shots + player.shots) / 2,
-              score: (score + player.score) / 2,
-            };
-            playerStats[index] = { ...playerStats[index], ...newStats };
-          } else {
-            playerStats.push(player);
-          }
-        });
-      });
-    });
-    return playerStats;
+  getShotPercentage(shootingPercentage: number): string {
+    return shootingPercentage.toFixed(1).toString() + '%';
   }
 }
