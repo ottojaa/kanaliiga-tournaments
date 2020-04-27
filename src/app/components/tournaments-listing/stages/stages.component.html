@@ -47,7 +47,7 @@
       <section class="mat-typography" style="padding-top: 60px; text-align: left">
         <h3 class="mat-display-1" style="margin: 20px;">Latest faceoffs</h3>
       </section>
-      <mat-tab-group [backgroundColor]="background" class="shadow">
+      <mat-tab-group [backgroundColor]="background" dynamicHeight animationDuration="400ms" class="shadow">
         <mat-tab [label]="stageLabels[i]" *ngFor="let faceoffs of stageFaceoffs$ | async; let i = index">
           <div
             class="faceoff-row"
