@@ -48,8 +48,10 @@
       </ng-container>
       <ng-template #noTeamStats>
         <ng-container *ngIf="teamsLoading; else showPlaceholderTeams">
-          <mat-progress-spinner style="margin-top: 35px;" color="warn" mode="indeterminate" diameter="35">
-          </mat-progress-spinner>
+          <div fxLayoutAlign="center center">
+            <mat-progress-spinner style="margin: 35px;" color="warn" mode="indeterminate" diameter="35">
+            </mat-progress-spinner>
+          </div>
         </ng-container>
         <ng-template #showPlaceholderTeams>
           <section class="mat-typography no-content-center">
