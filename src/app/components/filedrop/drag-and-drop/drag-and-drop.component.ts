@@ -1,13 +1,13 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { Subject, forkJoin, Observable, BehaviorSubject } from 'rxjs';
+import { Subject, forkJoin, Observable, BehaviorSubject, of } from 'rxjs';
 import { cloneDeep } from 'lodash';
 import * as moment from 'moment';
 import { MatDialogRef, MAT_DIALOG_DATA, MatSnackBar } from '@angular/material';
-import { take, tap, debounceTime } from 'rxjs/operators';
+import { take, tap, debounceTime, switchMap, catchError } from 'rxjs/operators';
 import { Animations } from 'src/app/utilities/animations';
 import { Faceoff, Player, Match, Team } from 'src/app/interfaces/faceoff';
 import { FaceoffService } from 'src/app/faceoff.service';
-import { HttpClient, HttpEvent, HttpEventType } from '@angular/common/http';
+import { HttpEvent, HttpEventType, HttpResponse } from '@angular/common/http';
 import { ToornamentsService } from 'src/app/toornaments.service';
 /**
  * Component for rocket league replay parser + drag and drop functionality.
@@ -24,7 +24,8 @@ export class DragAndDropComponent implements OnInit {
   matchId: string;
   stageId: string;
   tournamentId: string;
-  uploadProgress = [];
+  uploadProgress: number;
+  replayBuffers = [];
   error: string;
   mode = 'determinate';
   participants: any;
@@ -57,7 +58,7 @@ export class DragAndDropComponent implements OnInit {
     );
   }
 
-  // TODO: refactor this to be clearer. Also upload replays along the match data
+  // TODO: refactor this to be clearer.
   ngOnInit(): void {
     this.files = this.data.files;
     this.matchId = this.data.matchId;
@@ -173,7 +174,6 @@ export class DragAndDropComponent implements OnInit {
         }
       });
     });
-
     return faceOff;
   }
 
@@ -200,28 +200,32 @@ export class DragAndDropComponent implements OnInit {
     });
 
     Promise.all(promises).then(buffers => {
-      const observables: Observable<any>[] = [];
-
-      const total = buffers.length;
-      for (const [index, buffer] of buffers.entries()) {
-        this.uploadProgress.push(0);
-        observables.push(
-          this.faceoffService.parseReplays(buffer).pipe(tap(event => this.getUploadProgress(event, total, index)))
-        );
-      }
-
-      forkJoin(observables).subscribe(
-        (replayData: any) => {
-          for (let i = 0; i < replayData.length; i++) {
-            this.prettifyReplayJSON(replayData[i].body.data.properties, i);
+      const obj = {
+        files: buffers,
+        matchName: this.getMatchName(),
+      };
+      this.faceoffService
+        .parseReplays(obj, this.matchId, this.tournamentId)
+        .pipe(tap(event => this.getUploadProgress(event)))
+        .subscribe(
+          (event: any) => {
+            if (event instanceof HttpResponse) {
+              const res = event.body.data;
+              for (let i = 0; i < res.length; i++) {
+                this.prettifyReplayJSON(res[i].properties, i);
+              }
+            }
+          },
+          err => {
+            console.error(err);
+            this.error = err.error.message;
           }
-        },
-        err => {
-          console.error(err);
-          this.error = err.error.message;
-        }
-      );
+        );
     });
+  }
+
+  getMatchName(): string {
+    return this.participants[0].participant.name + '-' + this.participants[1].participant.name;
   }
 
   readArrayBuffer(file): Promise<any> {
@@ -244,14 +248,16 @@ export class DragAndDropComponent implements OnInit {
   upload(): void {
     this.loading = true;
     const faceoff = this.createFaceoffEntity(this.matches);
-    this.faceoffService.uploadFaceOff(faceoff).subscribe(
-      data => {
-        this.dialogRef.close(data);
-      },
-      err => {
-        this.error = err.error.message;
-      }
-    );
+    this.faceoffService
+      .uploadFaceOff(faceoff)
+      .pipe(
+        tap(data => this.dialogRef.close(data)),
+        catchError(err => {
+          this.error = 'Upload failed';
+          throw new Error('Error in source. Details: ' + err);
+        })
+      )
+      .subscribe();
   }
 
   /**
@@ -269,7 +275,6 @@ export class DragAndDropComponent implements OnInit {
 
       // Get team objects
       const teamScores = this.getTeamScores(properties);
-
       // Get player stats and assign them under the correct teams
       const playerStats = this.getPlayerStats(properties, teamScores, date);
 
@@ -411,20 +416,19 @@ export class DragAndDropComponent implements OnInit {
     return player.part.find(el => el.name === elName).more.details;
   }
 
-  private getUploadProgress(event: HttpEvent<any>, total: number, index) {
+  private getUploadProgress(event: HttpEvent<any>) {
     if (event.type === HttpEventType.UploadProgress) {
-      this.uploadProgress[index] = Math.round((100 * event.loaded) / event.total / total);
-      const progress = this.uploadProgress.reduce((a, b) => a + b, 0);
-      if (progress !== this.progressSub$.getValue()) {
-        if (progress === 99) {
-          this.message = 'Processing response...';
+      this.uploadProgress = Math.round((100 * event.loaded) / event.total);
+      if (this.uploadProgress !== this.progressSub$.getValue()) {
+        if (this.uploadProgress >= 99) {
+          this.message = 'Saving replays to database...';
           this.mode = 'buffer';
           this.bufferValue = 0;
           this.progressSub$.next(0);
           return;
-        } else if (progress > this.progressSub$.getValue()) {
+        } else if (this.uploadProgress > this.progressSub$.getValue()) {
           this.mode = 'determinate';
-          this.progressSub$.next(progress);
+          this.progressSub$.next(this.uploadProgress);
         }
       }
     }

@@ -12,7 +12,7 @@ export class FaceoffService {
   url: string;
 
   constructor(private http: HttpClient) {
-    this.url = this.baseUrl;
+    this.url = this.testUrl;
   }
 
   uploadFaceOff(payload: Faceoff): Observable<any> {
@@ -20,6 +20,11 @@ export class FaceoffService {
     let headers = new HttpHeaders();
     headers = headers.append('content-type', 'application/json');
     return this.http.post(url, payload, { headers: headers });
+  }
+
+  uploadReplays(files: any, faceoffId: string): Observable<any> {
+    const url = this.url + '/faceoff/replays/' + faceoffId;
+    return this.http.post(url, files);
   }
 
   deleteFaceoff(id: string): Observable<any> {
@@ -37,8 +42,8 @@ export class FaceoffService {
     return this.http.get(url);
   }
 
-  parseReplays(file: any): Observable<any> {
-    const url = this.url + '/faceoff/parse';
+  parseReplays(file: any, matchId: string, tournamentId): Observable<any> {
+    const url = this.url + `/faceoff/parse/v2/?matchId=${matchId}&tournamentId=${tournamentId}`;
     return this.http.post(url, file, { reportProgress: true, observe: 'events' });
   }
 
