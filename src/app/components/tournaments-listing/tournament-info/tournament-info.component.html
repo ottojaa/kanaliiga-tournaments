@@ -8,7 +8,7 @@
         Stages
       </button>
       <div class="button-container" fxLayoutAlign="center center">
-        <mat-form-field style="margin-left: 10px;" class="dropdown">
+        <mat-form-field style="margin-left: 10px; min-width: 200px;" class="dropdown">
           <mat-label>Select a stage</mat-label>
           <mat-select [(value)]="selectedStage" (selectionChange)="onStageChange($event)">
             <mat-option *ngFor="let stage of stages$ | async; let i = index" [value]="stage.id">{{
