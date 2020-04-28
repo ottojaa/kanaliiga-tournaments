@@ -34,13 +34,8 @@
 
   <ng-container>
     <div @animatedOpacity style="margin: 120px 70px 0; width: 100%;">
-      <section
-        class="mat-typography"
-        style="width: 100%; margin-bottom: 15px;"
-        fxLayout="column"
-        fxLayoutAlign="center center"
-      >
-        <h3 class="mat-display-1" style="margin: 0; color: #ff5623;">Standings</h3>
+      <section fxLayout="column" fxLayoutAlign="center center" class="mat-typography" style="text-align: left">
+        <h3 class="mat-display-1" style="margin: 20px;">Team standings</h3>
       </section>
 
       <ng-container *ngIf="(teamStats$ | async).length; else noTeamStats">
@@ -72,7 +67,9 @@
         fxLayout="column"
         fxLayoutAlign="center center"
       >
-        <h3 class="mat-display-1" style="margin: 0; color: #ff5623;">Schedule</h3>
+        <section class="mat-typography" style="padding-top: 30px; text-align: left">
+          <h3 class="mat-display-1" style="margin: 20px;">Match schedule</h3>
+        </section>
         <div class="filters">
           <mat-slide-toggle
             style="font-weight: bold; font-size: 16px;"
@@ -169,10 +166,8 @@
     </div>
 
     <div fxLayout="column" fxLayoutAlign="center center" style="width: 100%" @animatedItem>
-      <section class="mat-typography" style="width: 100%;" fxLayout="row" fxLayoutAlign="center center">
-        <div fxLayout="row" fxLayoutAlign="center center">
-          <h3 class="mat-display-1" style="margin: 0;  color: #ff5623;">Player statistics</h3>
-        </div>
+      <section fxLayout="column" fxLayoutAlign="center center" class="mat-typography" style="text-align: left">
+        <h3 class="mat-display-1" style="margin: 20px;">Player statistics</h3>
       </section>
       <ng-container *ngIf="(playerStats$ | async)?.length; else noContent">
         <mat-radio-group
