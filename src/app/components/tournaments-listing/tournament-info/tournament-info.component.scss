@@ -164,9 +164,9 @@ mat-slide-toggle {
   margin: auto;
   flex-direction: row;
   align-items: baseline;
-  justify-content: space-between;
+  justify-content: space-evenly;
   @media (max-width: 767px) {
-    justify-content: center;
+    justify-content: space-around;
   }
 }
 
