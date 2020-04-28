@@ -20,6 +20,7 @@ import {
 import { FiledropComponent } from '../../filedrop/filedrop.component';
 import { FaceoffService } from 'src/app/faceoff.service';
 import { AuthService } from 'src/app/auth.service';
+import { TeamsService } from 'src/app/teams.service';
 import { Player } from 'src/app/interfaces/faceoff';
 import { cloneDeep } from 'lodash';
 
@@ -82,6 +83,7 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
     private tournamentService: ToornamentsService,
     private faceoffService: FaceoffService,
     private authService: AuthService,
+    private teamService: TeamsService,
     private router: Router
   ) {
     this.tournamentId = this.activatedRoute.params['_value']['id'];
@@ -264,6 +266,14 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
       console.error('Error matching labels: ', err);
       return 'Unable to match round label';
     }
+  }
+
+  openTeamPage(participant: any) {
+    console.log(participant);
+    const part = participant.id;
+    this.teamService.getTeamById(part, this.tournamentId).subscribe(data => {
+      console.log(data);
+    });
   }
 
   changeTableType(type: string): void {

@@ -8,6 +8,10 @@
 table {
   width: 100%;
   table-layout: fixed;
+  @media (max-width: 767px) {
+    width: 700px;
+    justify-content: space-between;
+  }
 }
 
 .mat-column-name {

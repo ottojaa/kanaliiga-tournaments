@@ -1,27 +1,17 @@
-<div *ngIf="!(stages$ | async)">
-  <mat-progress-bar mode="indeterminate" color="primary"></mat-progress-bar>
-</div>
-<div class="buttons">
-  <button mat-button (click)="navigateTournaments()">
-    <mat-icon>keyboard_arrow_left</mat-icon>
-    Tournaments
-  </button>
-</div>
 <mat-card class="stages">
+  <div class="buttons">
+    <button mat-button (click)="navigateTournaments()">
+      <mat-icon>keyboard_arrow_left</mat-icon>
+      Tournaments
+    </button>
+  </div>
   <section class="mat-typography" style="padding-top: 60px; text-align: left">
     <h3 class="mat-display-1" style="margin: 20px;">Stages</h3>
   </section>
   <mat-divider></mat-divider>
   <mat-list role="list">
-    <div *ngIf="!(stages$ | async); else stageList" style="padding: 10px; margin-top: 20px;" class="item">
-      <ngx-skeleton-loader
-        count="5"
-        appearance="line"
-        [theme]="{
-          padding: '10px'
-        }"
-      >
-      </ngx-skeleton-loader>
+    <div *ngIf="!(stages$ | async); else stageList">
+      <mat-progress-bar mode="indeterminate" color="accent"></mat-progress-bar>
     </div>
     <ng-template #stageList>
       <mat-list-item *ngFor="let stage of stages$ | async; let i = index" role="listitem" @animatedItem>

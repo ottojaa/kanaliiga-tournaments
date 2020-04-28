@@ -12,7 +12,7 @@ export class FaceoffService {
   url: string;
 
   constructor(private http: HttpClient) {
-    this.url = this.baseUrl;
+    this.url = this.testUrl;
   }
 
   uploadFaceOff(payload: Faceoff): Observable<any> {

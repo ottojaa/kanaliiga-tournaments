@@ -111,7 +111,6 @@ import { FaceoffOverviewTableComponent } from './components/faceoff-stats/faceof
     MatTooltipModule,
     MatRadioModule,
     MatGridListModule,
-    MatSidenavModule,
     MatListModule,
     MatCardModule,
     MatDividerModule,
@@ -122,6 +121,7 @@ import { FaceoffOverviewTableComponent } from './components/faceoff-stats/faceof
     NgxFileDropModule,
     FormsModule,
     MatInputModule,
+    MatSidenavModule,
   ],
   providers: [
     ToornamentsService,

@@ -1,13 +1,9 @@
-<mat-sidenav-container>
-  <mat-sidenav-content>
-    <mat-tab-group backgroundColor="primary" class="index elevation">
-      <mat-tab>
-        <!-- TODO: If we want more games to be added, add different games to a dictionary, append
+<mat-tab-group backgroundColor="primary" class="index elevation">
+  <mat-tab>
+    <!-- TODO: If we want more games to be added, add different games to a dictionary, append
           different game data to the corresponding key, and ngFor over the dictionary-->
 
-        <ng-template mat-tab-label style="color: white;"> Rocket League </ng-template>
-        <app-tournaments [tournaments$]="rocketLeagueTournaments$"></app-tournaments>
-      </mat-tab>
-    </mat-tab-group>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+    <ng-template mat-tab-label style="color: white;"> Rocket League </ng-template>
+    <app-tournaments [tournaments$]="rocketLeagueTournaments$"></app-tournaments>
+  </mat-tab>
+</mat-tab-group>

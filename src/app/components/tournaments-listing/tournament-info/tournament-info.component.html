@@ -8,7 +8,7 @@
         Stages
       </button>
       <div class="button-container" fxLayoutAlign="center center">
-        <mat-form-field style="margin-left: 10px;">
+        <mat-form-field style="margin-left: 10px;" class="dropdown">
           <mat-label>Select a stage</mat-label>
           <mat-select [(value)]="selectedStage" (selectionChange)="onStageChange($event)">
             <mat-option *ngFor="let stage of stages$ | async; let i = index" [value]="stage.id">{{
@@ -16,7 +16,7 @@
             }}</mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-form-field style="margin-left: 10px;">
+        <mat-form-field style="margin-left: 10px;" class="dropdown">
           <mat-label>Select a group</mat-label>
           <mat-select [(value)]="selectedGroup" (selectionChange)="onGroupChange($event)">
             <mat-option *ngFor="let group of groups; let i = index" [value]="group"> Group {{ i + 1 }} </mat-option>
@@ -118,6 +118,7 @@
                   <p
                     *ngIf="opponent.participant; else toBeDecided"
                     class="name mat-body"
+                    (click)="openTeamPage(opponent.participant)"
                     [ngClass]="{
                       'winner-column': opponent.result === 'win',
                       'loser-column': opponent.result === 'loss'

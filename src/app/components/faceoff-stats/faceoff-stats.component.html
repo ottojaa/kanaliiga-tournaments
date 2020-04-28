@@ -16,7 +16,7 @@
 <mat-tab-group mat-align-tabs="center" dynamicHeight animationDuration="400ms">
   <mat-tab label="Overview">
     <ng-container *ngIf="overviewScores">
-      <div style="margin-top: 30px;">
+      <div style="margin-top: 30px;" class="faceoff-game">
         <app-faceoff-overview-table
           @animatedItem
           [index]="0"
