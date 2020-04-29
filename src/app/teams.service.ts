@@ -14,8 +14,8 @@ export class TeamsService {
     this.url = this.testUrl;
   }
 
-  getTeamById(teamId: string, tournamentId: string): Observable<any> {
-    const url = this.url + `/teams/?teamId=${teamId}&tournamentId=${tournamentId}`;
+  getTeamById(teamId: string): Observable<any> {
+    const url = this.url + `/teams/?teamId=${teamId}`;
     return this.http.get(url);
   }
 }

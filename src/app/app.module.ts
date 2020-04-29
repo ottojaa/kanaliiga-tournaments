@@ -61,6 +61,7 @@ import { TeamsListComponent } from './components/teams-list/teams-list.component
 import { AdminPanelComponent } from './components/admin-panel/admin-panel.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { FaceoffOverviewTableComponent } from './components/faceoff-stats/faceoff-overview-table/faceoff-overview-table.component';
+import { TeamComponent } from './components/team/team.component';
 
 @NgModule({
   declarations: [
@@ -83,6 +84,7 @@ import { FaceoffOverviewTableComponent } from './components/faceoff-stats/faceof
     TeamsListComponent,
     AdminPanelComponent,
     FaceoffOverviewTableComponent,
+    TeamComponent,
   ],
   imports: [
     BrowserModule,

@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { StagesComponent } from './components/tournaments-listing/stages/stages.component';
 import { FaceoffStatsComponent } from './components/faceoff-stats/faceoff-stats.component';
 import { AdminPanelComponent } from './components/admin-panel/admin-panel.component';
+import { TeamComponent } from './components/team/team.component';
 
 const routes: Routes = [
   { path: 'tabs', component: TabsComponent },
@@ -25,6 +26,7 @@ const routes: Routes = [
   { path: 'tournaments/:id/stages', component: StagesComponent, data: { breadcrumb: 'Stages' } },
   { path: 'home', component: AppComponent },
   { path: 'admin', component: AdminPanelComponent },
+  { path: 'team/:id', component: TeamComponent },
   /* { path: '**', component: PageNotFoundComponent } */
 ];
 

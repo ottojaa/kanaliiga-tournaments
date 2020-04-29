@@ -268,11 +268,9 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  openTeamPage(participant: any) {
-    const part = participant.id;
-    this.teamService.getTeamById(part, this.tournamentId).subscribe(data => {
-      console.log(data);
-    });
+  openTeamPage(team: any) {
+    const url = `/team/${team.id}`;
+    this.router.navigate([url]);
   }
 
   changeTableType(type: string): void {

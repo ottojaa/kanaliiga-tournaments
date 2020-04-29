@@ -99,6 +99,7 @@ export class DragAndDropComponent implements OnInit {
     const faceOff = {
       matchId: this.matchId,
       stageId: this.stageId,
+      tournamentId: this.tournamentId,
       participants: this.participants,
       date: matches[0].date,
       matches: matches,

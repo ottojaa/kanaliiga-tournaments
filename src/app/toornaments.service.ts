@@ -101,6 +101,21 @@ export class ToornamentsService {
     return this.http.get(url, requestOptions);
   }
 
+  getParticipant(participantId: string, tournamentId: string): any {
+    const headerDict = {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+      Range: 'participants=0-49',
+    };
+
+    const requestOptions = {
+      headers: new HttpHeaders(headerDict),
+    };
+
+    const url = environment.apiUrl + '/viewer/v2/tournaments/' + tournamentId + '/participants/' + participantId;
+    return this.http.get(url, requestOptions);
+  }
+
   getMoreInformation(tournamentId: string): any {
     const headerDict = {
       'Content-Type': 'application/json',
