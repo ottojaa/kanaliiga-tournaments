@@ -27,24 +27,20 @@ export class TournamentsComponent implements OnInit {
   getMoreInformation(tournaments: Tournament[]): any {
     const arr = [];
     tournaments.map(tournament => tournament.id).forEach(id => arr.push(this.tournamentService.getMoreInformation(id)));
-    forkJoin(arr)
-      .pipe(take(1))
-      .subscribe((data: any) => {
-        for (let i = 0; i < data.length; i++) {
-          this.additionalInformation.push(data[i]);
-        }
-      });
+    forkJoin(arr).subscribe((data: any) => {
+      for (let i = 0; i < data.length; i++) {
+        this.additionalInformation.push(data[i]);
+      }
+    });
   }
 
   getParticipants(tournaments: Tournament[]): any {
     const arr = [];
     tournaments.map(tournament => tournament.id).forEach(id => arr.push(this.tournamentService.getParticipants(id)));
-    forkJoin(arr)
-      .pipe(take(1))
-      .subscribe(data => {
-        for (let i = 0; i < data.length; i++) {
-          this.participants.push(data[i]);
-        }
-      });
+    forkJoin(arr).subscribe(data => {
+      for (let i = 0; i < data.length; i++) {
+        this.participants.push(data[i]);
+      }
+    });
   }
 }
