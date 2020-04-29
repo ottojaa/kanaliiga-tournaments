@@ -86,6 +86,20 @@ export class ToornamentsService {
     return this.http.get(url, requestOptions);
   }
 
+  getTournamentStage(stageId: string, tournamentId: string): any {
+    const headerDict = {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    };
+
+    const requestOptions = {
+      headers: new HttpHeaders(headerDict),
+    };
+
+    const url = environment.apiUrl + '/viewer/v2/tournaments/' + tournamentId + '/stages/' + stageId;
+    return this.http.get(url, requestOptions);
+  }
+
   getParticipants(tournamentId: string): any {
     const headerDict = {
       'Content-Type': 'application/json',
@@ -101,7 +115,7 @@ export class ToornamentsService {
     return this.http.get(url, requestOptions);
   }
 
-  getParticipant(participantId: string, tournamentId: string): any {
+  getParticipant(participantId: string, tournamentId: string): Observable<any> {
     const headerDict = {
       'Content-Type': 'application/json',
       Accept: 'application/json',

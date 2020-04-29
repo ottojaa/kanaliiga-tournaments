@@ -1,0 +1,57 @@
+.container {
+    margin-top: 50px;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+mat-card {
+    width: 80%;
+}
+
+a:link {
+    text-decoration: none;
+}
+
+.stats {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.number {
+    padding: 0 10px 0px 10px;
+}
+.winner {
+    color: green;
+}
+.loser {
+    color: red;
+}
+
+.item {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    align-items: center;
+    width: 25%;
+}
+
+.normal {
+    font-weight: 100;
+    color: #0288d1;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.hide {
+    visibility: hidden;
+}
+
+.show {
+    visibility: visible;
+}
