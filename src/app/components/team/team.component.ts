@@ -6,7 +6,6 @@ import { switchMap, tap, map, takeUntil, share } from 'rxjs/operators';
 import { of, Observable, forkJoin, Subject } from 'rxjs';
 import { Location } from '@angular/common';
 import { Animations } from 'src/app/utilities/animations';
-import { isEmpty } from 'lodash';
 
 @Component({
   selector: 'app-team',
@@ -20,6 +19,27 @@ export class TeamComponent implements OnInit, OnDestroy {
   teamInformation$: Observable<any>;
   teamStats: any;
 
+  ranks = [
+    'B1',
+    'B2',
+    'B3',
+    'S1',
+    'S2',
+    'S3',
+    'G1',
+    'G2',
+    'G3',
+    'P1',
+    'P2',
+    'P3',
+    'D1',
+    'D2',
+    'D3',
+    'C1',
+    'C2',
+    'C3',
+    'GC',
+  ];
   loading = true;
   noData = false;
   destroy$ = new Subject();
@@ -40,6 +60,7 @@ export class TeamComponent implements OnInit, OnDestroy {
         this.noData = Object.values(data).every(el => !el);
       })
     );
+    this.teamInformation$.subscribe(data => console.log(data));
   }
 
   getTeamInformation(): Observable<any> {
@@ -102,6 +123,15 @@ export class TeamComponent implements OnInit, OnDestroy {
 
   goBack(): void {
     this._location.back();
+  }
+
+  validateSteamId(id: string): boolean {
+    const pattern = /^[0-9]{17}$/;
+    return pattern.test(id);
+  }
+
+  validateRank(rank: string): boolean {
+    return this.ranks.includes(rank);
   }
 
   ngOnDestroy(): void {

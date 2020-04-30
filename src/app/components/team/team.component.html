@@ -7,7 +7,7 @@
       >
     </mat-card-header>
     <ng-container *ngIf="teamInformation$ | async as team">
-      <ng-container *ngIf="!noData">
+      <ng-container *ngIf="!noData; else showNoData">
         <mat-list>
           <section fxLayout="column" fxLayoutAlign="center center" class="mat-typography" style="text-align: left">
             <h3 class="mat-display-1" style="margin: 20px;">{{ team.teamInfo.name }}</h3>
@@ -16,19 +16,19 @@
           <mat-list>
             <mat-list-item>
               <h3 class="number normal">{{ teamStats.faceoffWins }}</h3>
-              <div class="mat-body-3">Wins</div>
+              <div class="label mat-body-3">Wins</div>
             </mat-list-item>
-            <mat-list-item class="item">
+            <mat-list-item>
               <h3 class="number normal">{{ teamStats.faceoffLosses }}</h3>
-              <div class="mat-body-3">Losses</div>
+              <div class="label mat-body-3">Losses</div>
             </mat-list-item>
-            <mat-list-item class="item">
+            <mat-list-item>
               <h3 class="number normal">{{ teamStats.gamesPlayed }}</h3>
-              <div class="mat-body-3">Games played</div>
+              <div class="label mat-body-3">Games played</div>
             </mat-list-item>
-            <mat-list-item class="item">
+            <mat-list-item>
               <h3 class="number normal">{{ teamStats.winPercentage }} %</h3>
-              <div class="mat-body-3">Win percentage</div>
+              <div class="label mat-body-3">Win percentage</div>
             </mat-list-item>
           </mat-list>
 
@@ -36,7 +36,7 @@
           <div mat-subheader>Players</div>
           <mat-list-item *ngFor="let player of team.teamInfo.lineup">
             <img
-              *ngIf="player.custom_fields.rank; else showUnranked"
+              *ngIf="validateRank(player.custom_fields.rank); else showUnranked"
               matListAvatar
               src="./assets/rank-icons/{{ player.custom_fields.rank }}.png"
               alt="./assets/rank-icons/unranked-icon.png"
@@ -49,7 +49,7 @@
               />
             </ng-template>
             <div mat-line>{{ player.name }}</div>
-            <ng-container *ngIf="player.custom_fields.steam_id">
+            <ng-container *ngIf="validateSteamId(player.custom_fields.steam_id)">
               <a href="https://steamcommunity.com/profiles/{{ player.custom_fields.steam_id }}" target="_blank"
                 ><img
                   matListAvatar
@@ -64,17 +64,18 @@
           <div mat-subheader>Latest matches</div>
           <mat-list-item *ngFor="let match of team.matches">
             <mat-icon mat-list-icon>history</mat-icon>
+            <div mat-line>{{ match.participants[1].participant[0].name }}</div>
             <div mat-line>{{ match.date | date }}</div>
-            <div mat-line>vs {{ match.participants[1].participant[0].name }}</div>
           </mat-list-item>
         </mat-list>
       </ng-container>
-    </ng-container>
-    <ng-container *ngIf="noData">
-      <div fxLayout="row" fxLayoutAlign="center center">
-        <mat-icon color="warn">warning</mat-icon>
-        <h3 style="margin-left: 10px;">No data found</h3>
-      </div>
+
+      <ng-template #showNoData>
+        <div fxLayout="row" fxLayoutAlign="center center">
+          <mat-icon color="warn">warning</mat-icon>
+          <h3 style="margin-left: 10px;">No data found</h3>
+        </div>
+      </ng-template>
     </ng-container>
   </mat-card>
 </div>

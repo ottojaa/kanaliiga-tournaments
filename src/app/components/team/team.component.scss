@@ -20,7 +20,17 @@ a:link {
 }
 
 .number {
+    width: 5%;
     padding: 0 10px 0px 10px;
+    @media (max-width: 767px) {
+        width: 50%;
+    }
+}
+.label {
+    width: 95%;
+    @media (max-width: 767px) {
+        width: 50%;
+    }
 }
 .winner {
     color: green;
