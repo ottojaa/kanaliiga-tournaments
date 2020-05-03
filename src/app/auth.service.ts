@@ -21,7 +21,16 @@ export class AuthService {
     const user = localStorage.getItem('userData');
     if (user && user !== 'undefined' && typeof user !== null) {
       try {
-        this.currentUserData$.next(JSON.parse(user));
+        const userData = JSON.parse(user);
+        this.checkUserSession(userData.token).subscribe(
+          () => {
+            this.currentUserData$.next(JSON.parse(user));
+          },
+          () => {
+            console.log('Session expired, logging out');
+            this.logout();
+          }
+        );
       } catch (err) {
         console.error('JSON parse failed: ', user);
       }
@@ -31,6 +40,11 @@ export class AuthService {
 
   checkExistingEmail(email: string): Observable<any> {
     const url = this.url + '/auth/validate-email?email=' + email;
+    return this.http.get(url);
+  }
+
+  checkUserSession(token: string): Observable<any> {
+    const url = this.url + '/auth/verify/' + token;
     return this.http.get(url);
   }
 
