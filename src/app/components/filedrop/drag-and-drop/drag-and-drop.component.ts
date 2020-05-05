@@ -54,7 +54,7 @@ export class DragAndDropComponent implements OnInit {
   ) {
     this.progressObs$ = this.progressSub$.asObservable().pipe(
       tap(() => this.bufferSub$.next()),
-      debounceTime(140)
+      debounceTime(200)
     );
   }
 
@@ -387,7 +387,23 @@ export class DragAndDropComponent implements OnInit {
   }
 
   hexToDecimalString(hex: string): any {
-    return parseInt(hex, 16).toString();
+    let i, j, carry;
+    const digits = [0];
+    for (i = 0; i < hex.length; i += 1) {
+      carry = parseInt(hex.charAt(i), 16);
+      for (j = 0; j < digits.length; j += 1) {
+        digits[j] = digits[j] * 16 + carry;
+        // tslint:disable-next-line: no-bitwise
+        carry = (digits[j] / 10) | 0;
+        digits[j] %= 10;
+      }
+      while (carry > 0) {
+        digits.push(carry % 10);
+        // tslint:disable-next-line: no-bitwise
+        carry = (carry / 10) | 0;
+      }
+    }
+    return digits.reverse().join('');
   }
 
   /**

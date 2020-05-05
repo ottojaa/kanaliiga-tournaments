@@ -1,0 +1,50 @@
+<ng-container *ngIf="showContent; else showNoContent">
+  <mat-grid-list cols="9" rowHeight="38px">
+    <mat-grid-tile [colspan]="2" [rowspan]="1" fxLayoutAlign="center center">
+      <mat-button-toggle-group
+        appearance="legacy"
+        (change)="onValueChange($event)"
+        [value]="value"
+        aria-label="Total / average stats toggle"
+      >
+        <mat-button-toggle style="font-size: 13px;" value="average">Average</mat-button-toggle>
+        <mat-button-toggle style="font-size: 13px;" value="total">Total</mat-button-toggle>
+      </mat-button-toggle-group>
+    </mat-grid-tile>
+    <mat-grid-tile [colspan]="6" [rowspan]="1">
+      <mat-form-field class="static-text">
+        <mat-label>Score</mat-label>
+        <input matInput disabled value="{{ getDisplayValue(displayStats.score, 1) }}" />
+      </mat-form-field>
+      <mat-form-field class="static-text">
+        <mat-label>Goals</mat-label>
+        <input matInput disabled value="{{ getDisplayValue(displayStats.goals, 2) }}" />
+      </mat-form-field>
+      <mat-form-field class="static-text">
+        <mat-label>Saves</mat-label>
+        <input matInput disabled value="{{ getDisplayValue(displayStats.saves, 2) }}" />
+      </mat-form-field>
+      <mat-form-field class="static-text">
+        <mat-label>Assists</mat-label>
+        <input matInput disabled value="{{ getDisplayValue(displayStats.assists, 2) }}" />
+      </mat-form-field>
+      <mat-form-field class="static-text">
+        <mat-label>Shot %</mat-label>
+        <input matInput disabled value="{{ getDisplayValue(displayStats.shootingPercentage, 2) }}" />
+      </mat-form-field>
+      <mat-form-field class="static-text">
+        <mat-label>Games</mat-label>
+        <input matInput disabled value="{{ displayStats.count }}" />
+      </mat-form-field>
+    </mat-grid-tile>
+
+    <mat-grid-tile [colspan]="1" [rowspan]="1"> </mat-grid-tile>
+  </mat-grid-list>
+</ng-container>
+
+<ng-template #showNoContent>
+  <div class="center">
+    <mat-icon color="warn" class="icon">warning</mat-icon>
+    <h5>No stats found for this user</h5>
+  </div>
+</ng-template>

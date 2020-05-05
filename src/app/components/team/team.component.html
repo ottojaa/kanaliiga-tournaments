@@ -10,55 +10,84 @@
       <ng-container *ngIf="!noData; else showNoData">
         <mat-list>
           <section fxLayout="column" fxLayoutAlign="center center" class="mat-typography" style="text-align: left">
-            <h3 class="mat-display-1" style="margin: 20px;">{{ team.teamInfo.name }}</h3>
+            <h3 class="mat-display-1" style="padding: 20px; font-weight: 100;">{{ team.teamInfo.name }}</h3>
           </section>
+          <mat-grid-list cols="4" rowHeight="60px">
+            <mat-grid-tile [colspan]="1" [rowspan]="1">
+              <mat-form-field class="static-text">
+                <mat-label>Wins</mat-label>
+                <input matInput disabled value="{{ teamStats.faceoffWins }}" />
+              </mat-form-field>
+            </mat-grid-tile>
+            <mat-grid-tile [colspan]="1" [rowspan]="1">
+              <mat-form-field class="static-text">
+                <mat-label>Losses</mat-label>
+                <input matInput disabled value="{{ teamStats.faceoffLosses }}" />
+              </mat-form-field>
+            </mat-grid-tile>
+            <mat-grid-tile [colspan]="1" [rowspan]="1">
+              <mat-form-field class="static-text">
+                <mat-label>Faceoffs played</mat-label>
+                <input matInput disabled value="{{ teamStats.gamesPlayed }}" />
+              </mat-form-field>
+            </mat-grid-tile>
+            <mat-grid-tile [colspan]="1" [rowspan]="1">
+              <mat-form-field class="static-text">
+                <mat-label>Win %</mat-label>
+                <input matInput disabled value="{{ teamStats.winPercentage }} %" />
+              </mat-form-field>
+            </mat-grid-tile>
+          </mat-grid-list>
 
-          <mat-list>
-            <mat-list-item>
-              <h3 class="number normal">{{ teamStats.faceoffWins }}</h3>
-              <div class="label mat-body-3">Wins</div>
-            </mat-list-item>
-            <mat-list-item>
-              <h3 class="number normal">{{ teamStats.faceoffLosses }}</h3>
-              <div class="label mat-body-3">Losses</div>
-            </mat-list-item>
-            <mat-list-item>
-              <h3 class="number normal">{{ teamStats.gamesPlayed }}</h3>
-              <div class="label mat-body-3">Games played</div>
-            </mat-list-item>
-            <mat-list-item>
-              <h3 class="number normal">{{ teamStats.winPercentage }} %</h3>
-              <div class="label mat-body-3">Win percentage</div>
-            </mat-list-item>
-          </mat-list>
-
-          <mat-divider></mat-divider>
           <div mat-subheader>Players</div>
-          <mat-list-item *ngFor="let player of team.teamInfo.lineup">
-            <img
-              *ngIf="validateRank(player.custom_fields.rank); else showUnranked"
-              matListAvatar
-              src="./assets/rank-icons/{{ player.custom_fields.rank }}.png"
-              alt="./assets/rank-icons/unranked-icon.png"
-            />
-            <ng-template #showUnranked>
-              <img
-                matListAvatar
-                src="./assets/rank-icons/unranked-icon.png"
-                alt="./assets/rank-icons/unranked-icon.png"
-              />
-            </ng-template>
-            <div mat-line>{{ player.name }}</div>
-            <ng-container *ngIf="validateSteamId(player.custom_fields.steam_id)">
-              <a href="https://steamcommunity.com/profiles/{{ player.custom_fields.steam_id }}" target="_blank"
-                ><img
-                  matListAvatar
-                  style="height: 25px; width: 25px;"
-                  src="./assets/steam.png"
-                  alt="./assets/rank-icons/unranked-icon.png"
-              /></a>
-            </ng-container>
-          </mat-list-item>
+          <ng-container *ngFor="let player of team.teamInfo.lineup">
+            <div class="line">
+              <hr class="between" />
+            </div>
+            <mat-list-item>
+              <div class="row">
+                <div class="col">
+                  <div style="width: 6%; min-width: 50px;">
+                    <img
+                      class="rank-image"
+                      *ngIf="validateRank(player.custom_fields.rank); else showUnranked"
+                      matListAvatar
+                      src="./assets/rank-icons/{{ player.custom_fields.rank }}.png"
+                      alt="./assets/rank-icons/unranked-icon.png"
+                    />
+                    <ng-template #showUnranked>
+                      <img
+                        matListAvatar
+                        src="./assets/rank-icons/unranked-icon.png"
+                        alt="./assets/rank-icons/unranked-icon.png"
+                      />
+                    </ng-template>
+                  </div>
+                  <div style="width: 91%" mat-line>
+                    <p class="player-name">{{ player.name }}</p>
+                  </div>
+                  <div style="width: 3%">
+                    <ng-container *ngIf="validateSteamId(player.custom_fields.steam_id)">
+                      <a href="https://steamcommunity.com/profiles/{{ player.custom_fields.steam_id }}" target="_blank"
+                        ><img
+                          matListAvatar
+                          style="height: 25px; width: 25px;"
+                          src="./assets/steam.png"
+                          alt="./assets/rank-icons/unranked-icon.png"
+                      /></a>
+                    </ng-container>
+                  </div>
+                </div>
+              </div>
+            </mat-list-item>
+            <mat-list-item style="margin: 15px 0 25px 0;">
+              <app-stats-grid-list
+                [playerId]="player.custom_fields.steam_id"
+                [stats]="getPlayerStats(player.custom_fields.steam_id, team.teamStats)"
+                style="width: 100%;"
+              ></app-stats-grid-list>
+            </mat-list-item>
+          </ng-container>
           <mat-divider></mat-divider>
 
           <div mat-subheader>Latest matches</div>

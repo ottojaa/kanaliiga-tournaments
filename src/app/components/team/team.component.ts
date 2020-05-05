@@ -2,10 +2,11 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { TeamsService } from 'src/app/teams.service';
 import { ActivatedRoute } from '@angular/router';
 import { ToornamentsService } from 'src/app/toornaments.service';
-import { switchMap, tap, map, takeUntil, share } from 'rxjs/operators';
+import { switchMap, tap, map, takeUntil } from 'rxjs/operators';
 import { of, Observable, forkJoin, Subject } from 'rxjs';
 import { Location } from '@angular/common';
 import { Animations } from 'src/app/utilities/animations';
+import { isEmpty } from 'lodash';
 
 @Component({
   selector: 'app-team',
@@ -60,28 +61,43 @@ export class TeamComponent implements OnInit, OnDestroy {
         this.noData = Object.values(data).every(el => !el);
       })
     );
-    this.teamInformation$.subscribe(data => console.log(data));
   }
 
   getTeamInformation(): Observable<any> {
     return this.teamService.getTeamById(this.teamId).pipe(
       switchMap(response => {
-        const matches = response.data['Team'];
-        if (matches && matches.length) {
-          this.createAverageStats(matches);
-          const tournamentId = matches[0].tournamentId;
-          const stageId = matches[0].stageId;
+        const { teamStats, playerStats } = response.data;
+        if (teamStats && teamStats.length) {
+          this.createAverageStats(teamStats);
+          const tournamentId = teamStats[0].tournamentId;
+          const stageId = teamStats[0].stageId;
           return forkJoin([
-            of(matches).pipe(tap(data => (this.teamStats = this.createAverageStats(data)))),
+            of(teamStats).pipe(tap(data => (this.teamStats = this.createAverageStats(data)))),
+            of(playerStats),
             this.toornamentService.getParticipant(this.teamId, tournamentId),
             this.toornamentService.getTournamentStage(stageId, tournamentId),
           ]);
         }
         return of([]);
       }),
-      map(data => ({ matches: data[0], teamInfo: data[1], stageInfo: data[2] })),
+      map(data => ({
+        matches: data[0],
+        teamStats: data[1],
+        teamInfo: data[2],
+        stageInfo: data[3],
+      })),
       tap(() => (this.loading = false))
     );
+  }
+
+  getPlayerStats(playerId: string, stats: any): any {
+    if (!isEmpty(stats) && playerId) {
+      return {
+        total: stats['total'].filter(stat => stat.onlineId.substring(0, 15) === playerId.substring(0, 15)),
+        average: stats['average'].filter(stat => stat.onlineId.substring(0, 15) === playerId.substring(0, 15)),
+      };
+    }
+    return null;
   }
 
   createAverageStats(matches: any): any {
@@ -90,6 +106,8 @@ export class TeamComponent implements OnInit, OnDestroy {
       faceoffLosses: 0,
       gamesWon: 0,
       gamesLost: 0,
+      cols: 1,
+      rows: 1,
       gamesPlayed: 0,
       winPercentage: '',
     };

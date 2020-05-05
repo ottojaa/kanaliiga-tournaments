@@ -18,6 +18,7 @@ import {
   MatFormFieldModule,
   MatRadioModule,
   MatPaginatorModule,
+  MatButtonToggleModule,
 } from '@angular/material';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -62,6 +63,7 @@ import { AdminPanelComponent } from './components/admin-panel/admin-panel.compon
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { FaceoffOverviewTableComponent } from './components/faceoff-stats/faceoff-overview-table/faceoff-overview-table.component';
 import { TeamComponent } from './components/team/team.component';
+import { StatsGridListComponent } from './components/team/stats-grid-list/stats-grid-list.component';
 
 @NgModule({
   declarations: [
@@ -85,6 +87,7 @@ import { TeamComponent } from './components/team/team.component';
     AdminPanelComponent,
     FaceoffOverviewTableComponent,
     TeamComponent,
+    StatsGridListComponent,
   ],
   imports: [
     BrowserModule,
@@ -111,6 +114,9 @@ import { TeamComponent } from './components/team/team.component';
     MatProgressSpinnerModule,
     MatExpansionModule,
     MatTooltipModule,
+    MatButtonToggleModule,
+    MatGridListModule,
+    MatInputModule,
     MatRadioModule,
     MatGridListModule,
     MatListModule,
