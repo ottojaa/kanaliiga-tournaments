@@ -90,12 +90,39 @@
           </ng-container>
           <mat-divider></mat-divider>
 
-          <div mat-subheader>Latest matches</div>
-          <mat-list-item *ngFor="let match of team.matches">
-            <mat-icon mat-list-icon>history</mat-icon>
-            <div mat-line>{{ match.participants[1].participant[0].name }}</div>
-            <div mat-line>{{ match.date | date }}</div>
-          </mat-list-item>
+          <div mat-subheader style="margin-top: 60px;">Latest matches</div>
+          <ng-container *ngFor="let match of team.matches">
+            <div class="match-score">
+              <div
+                class="team-name"
+                [ngClass]="match.participants[0].result === 'win' ? 'winner-column' : 'loser-column'"
+              >
+                {{ match.participants[0].participant[0].name }}
+              </div>
+              <div class="team-score">
+                <p [ngClass]="match.participants[0].result === 'win' ? 'winner' : 'loser'">
+                  {{ match.participants[0].score || 0 }}
+                </p>
+                <p style="margin: 0 10px">-</p>
+                <p [ngClass]="match.participants[1].result === 'win' ? 'winner' : 'loser'">
+                  {{ match.participants[1].score || 0 }}
+                </p>
+              </div>
+
+              <div
+                class="team-name"
+                [ngClass]="match.participants[1].result === 'win' ? 'winner-column' : 'loser-column'"
+              >
+                {{ match.participants[1].participant[0].name }}
+              </div>
+              <div class="match-date">
+                <p class="date">{{ match.date | date }}</p>
+              </div>
+              <div class="match-link">
+                <p class="router-link" (click)="goToFaceoff(match)">Go to match page</p>
+              </div>
+            </div>
+          </ng-container>
         </mat-list>
       </ng-container>
 

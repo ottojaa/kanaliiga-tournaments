@@ -1,9 +1,8 @@
 .static-text {
   text-align: center;
   :disabled {
-    font-weight: 600;
-    font-size: 13px;
-    color: #ff5623;
+    font-size: 16px;
+    color: #0188d2;
   }
 
   ::ng-deep .mat-form-field-underline {

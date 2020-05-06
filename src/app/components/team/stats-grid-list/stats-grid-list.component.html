@@ -1,5 +1,5 @@
 <ng-container *ngIf="showContent; else showNoContent">
-  <mat-grid-list cols="9" rowHeight="38px">
+  <mat-grid-list cols="15" rowHeight="38px">
     <mat-grid-tile [colspan]="2" [rowspan]="1" fxLayoutAlign="center center">
       <mat-button-toggle-group
         appearance="legacy"
@@ -11,7 +11,7 @@
         <mat-button-toggle style="font-size: 13px;" value="total">Total</mat-button-toggle>
       </mat-button-toggle-group>
     </mat-grid-tile>
-    <mat-grid-tile [colspan]="6" [rowspan]="1">
+    <mat-grid-tile [colspan]="12" [rowspan]="1">
       <mat-form-field class="static-text">
         <mat-label>Score</mat-label>
         <input matInput disabled value="{{ getDisplayValue(displayStats.score, 1) }}" />

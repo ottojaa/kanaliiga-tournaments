@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { TeamsService } from 'src/app/teams.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ToornamentsService } from 'src/app/toornaments.service';
 import { switchMap, tap, map, takeUntil } from 'rxjs/operators';
 import { of, Observable, forkJoin, Subject } from 'rxjs';
@@ -49,6 +49,7 @@ export class TeamComponent implements OnInit, OnDestroy {
     private teamService: TeamsService,
     private activatedRoute: ActivatedRoute,
     private toornamentService: ToornamentsService,
+    private router: Router,
     private _location: Location
   ) {
     this.teamId = this.activatedRoute.params['_value']['id'];
@@ -150,6 +151,12 @@ export class TeamComponent implements OnInit, OnDestroy {
 
   validateRank(rank: string): boolean {
     return this.ranks.includes(rank);
+  }
+
+  goToFaceoff(match: any): void {
+    const { matchId, tournamentId, stageId } = match;
+    const url = `/tournaments/${tournamentId}/stages/${stageId}/faceoff/`;
+    this.router.navigate([url, matchId]);
   }
 
   ngOnDestroy(): void {
