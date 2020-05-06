@@ -8,11 +8,16 @@
         <p class="name team" [ngClass]="teamScore[0].result === 'win' ? 'win' : 'lose'">
           {{ teamScore[0].name }}
         </p>
-        <p class="name score">
-          {{ teamScore[0].score }}
+        <div class="name score">
+          <p [ngClass]="teamScore[0].result === 'win' ? 'winner' : 'loser'">
+            {{ teamScore[0].score }}
+          </p>
           -
-          {{ teamScore[1].score }}
-        </p>
+          <p [ngClass]="teamScore[1].result === 'win' ? 'winner' : 'loser'">
+            {{ teamScore[1].score }}
+          </p>
+        </div>
+
         <p class="name team" [ngClass]="teamScore[1].result === 'win' ? 'win' : 'lose'">
           {{ teamScore[1].name }}
         </p>

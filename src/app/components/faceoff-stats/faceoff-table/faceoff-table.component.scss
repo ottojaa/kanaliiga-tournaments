@@ -29,7 +29,8 @@ table {
   letter-spacing: 1px;
   font-weight: 400;
   font-size: 20px;
-  width: 20%;
+  width: 10%;
+  justify-content: space-around;
 }
 
 p {
@@ -51,7 +52,7 @@ p {
   justify-content: center;
   align-items: center;
   color: white;
-  background: #ff5623;
+  background: #0188d2;
   width: 20%;
 }
 
@@ -59,7 +60,6 @@ p {
   width: 80%;
   display: flex;
   flex-direction: row;
-  border-bottom: 1px solid #ff5523;
 }
 
 .loser {

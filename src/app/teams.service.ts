@@ -11,7 +11,7 @@ export class TeamsService {
   url: string;
 
   constructor(private http: HttpClient) {
-    this.url = this.testUrl;
+    this.url = this.baseUrl;
   }
 
   getTeamById(teamId: string): Observable<any> {
