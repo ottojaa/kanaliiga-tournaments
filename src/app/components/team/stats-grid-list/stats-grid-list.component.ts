@@ -10,7 +10,7 @@ export class StatsGridListComponent implements OnInit {
   @Input() stats: any;
   @Input() playerId: string;
   value = 'average';
-  displayStats = [];
+  displayStats = {};
   showContent = false;
   constructor() {}
 
