@@ -1,6 +1,6 @@
 <ng-container *ngIf="showContent; else showNoContent">
-  <mat-grid-list cols="15" rowHeight="38px">
-    <mat-grid-tile [colspan]="2" [rowspan]="1" fxLayoutAlign="center center">
+  <mat-grid-list cols="17" rowHeight="38px">
+    <mat-grid-tile [colspan]="4" [rowspan]="1" fxLayoutAlign="start center">
       <mat-button-toggle-group
         appearance="legacy"
         (change)="onValueChange($event)"
@@ -11,7 +11,7 @@
         <mat-button-toggle style="font-size: 13px;" value="total">Total</mat-button-toggle>
       </mat-button-toggle-group>
     </mat-grid-tile>
-    <mat-grid-tile [colspan]="12" [rowspan]="1">
+    <mat-grid-tile [colspan]="10" [rowspan]="1">
       <mat-form-field class="static-text">
         <mat-label>Score</mat-label>
         <input matInput disabled value="{{ getDisplayValue(displayStats.score, 1) }}" />
@@ -29,6 +29,10 @@
         <input matInput disabled value="{{ getDisplayValue(displayStats.assists, 2) }}" />
       </mat-form-field>
       <mat-form-field class="static-text">
+        <mat-label>Shots</mat-label>
+        <input matInput disabled value="{{ getDisplayValue(displayStats.shots, 2) }}" />
+      </mat-form-field>
+      <mat-form-field class="static-text">
         <mat-label>Shot %</mat-label>
         <input matInput disabled value="{{ getDisplayValue(displayStats.shootingPercentage, 2) }}" />
       </mat-form-field>
@@ -38,7 +42,7 @@
       </mat-form-field>
     </mat-grid-tile>
 
-    <mat-grid-tile [colspan]="1" [rowspan]="1"> </mat-grid-tile>
+    <mat-grid-tile [colspan]="3" [rowspan]="1"> </mat-grid-tile>
   </mat-grid-list>
 </ng-container>
 

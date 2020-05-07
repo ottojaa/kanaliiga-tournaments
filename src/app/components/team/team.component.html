@@ -6,7 +6,7 @@
         ><mat-icon style="margin-right: 10px;">arrow_back</mat-icon>Go back</mat-card-subtitle
       >
     </mat-card-header>
-    <ng-container *ngIf="teamInformation$ | async as team">
+    <div *ngIf="teamInformation$ | async as team" @animatedItem>
       <ng-container *ngIf="!noData; else showNoData">
         <mat-list>
           <section fxLayout="column" fxLayoutAlign="center center" class="mat-typography" style="text-align: left">
@@ -110,7 +110,7 @@
               </div>
 
               <div
-                class="team-name"
+                class="team-name second"
                 [ngClass]="match.participants[1].result === 'win' ? 'winner-column' : 'loser-column'"
               >
                 {{ match.participants[1].participant[0].name }}
@@ -132,6 +132,6 @@
           <h3 style="margin-left: 10px;">No data found</h3>
         </div>
       </ng-template>
-    </ng-container>
+    </div>
   </mat-card>
 </div>
