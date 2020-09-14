@@ -12,6 +12,7 @@ table {
 }
 .name {
   margin: 20px 5px;
+  color: white;
   font-size: 14px;
   text-align: center;
   display: flex;
@@ -52,7 +53,7 @@ p {
   justify-content: center;
   align-items: center;
   color: white;
-  background: #0188d2;
+  background: #ff5623;
   width: 20%;
 }
 
@@ -60,6 +61,7 @@ p {
   width: 80%;
   display: flex;
   flex-direction: row;
+  background: #424242;
 }
 
 .loser {

@@ -10,10 +10,10 @@
   </section>
   <mat-divider></mat-divider>
   <mat-list role="list">
-    <div *ngIf="!(stages$ | async); else stageList">
+    <div *ngIf="!(stages$ | async)">
       <mat-progress-bar mode="indeterminate" color="accent"></mat-progress-bar>
     </div>
-    <ng-template #stageList>
+    <ng-container *ngIf="(stages$ | async)?.length; else showNoStages">
       <mat-list-item *ngFor="let stage of stages$ | async; let i = index" role="listitem" @animatedItem>
         <img
           matListAvatar
@@ -31,7 +31,6 @@
           >Go to stage</a
         >
       </mat-list-item>
-    </ng-template>
 
     <div class="parent" *ngIf="stageFaceoffs$ | async" @animatedItem>
       <section class="mat-typography" style="padding-top: 60px; text-align: left">
@@ -95,5 +94,15 @@
         </mat-tab>
       </mat-tab-group>
     </div>
+
+  </ng-container>
+    <ng-template #showNoStages>
+      <ng-container *ngIf="(stages$ | async) && !(stages$ | async)?.length">
+      <div class="center" @animatedItem>
+        <mat-icon color="warn" class="icon">warning</mat-icon>
+        <h4>No content found! Has the tournament started?</h4>
+      </div>
+    </ng-container>
+    </ng-template>
   </mat-list>
 </mat-card>

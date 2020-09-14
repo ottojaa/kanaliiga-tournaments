@@ -10,6 +10,7 @@ export class FaceoffOverviewTableComponent implements OnInit {
   @Input() match;
   @Input() index: number;
   @Input() participant;
+  @Input() participantTwo;
   @Input() date;
   displayedMatchColumns: string[] = [
     'name',

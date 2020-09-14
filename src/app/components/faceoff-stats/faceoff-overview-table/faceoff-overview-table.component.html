@@ -5,16 +5,33 @@
         <p class="banner">Final Results</p>
       </div>
     </div>
-    <div class="container">
+    <div *ngIf="index === 0; else showDivider"class="container">
       <div class="match-score">
-        <p class="name team">
-          {{ participant.participant[0].name }}
-        </p>
-        <p class="name score" [ngClass]="participant.result === 'win' ? 'winner' : 'loser'">
-          {{ participant.score }}
-        </p>
+        <div class="name-col one">
+          <p class="name team">
+            {{ participant.participant[0].name }}
+          </p>
+        </div>
+        <div class="score-col">
+          <p class="name score" [ngClass]="participant.result === 'win' ? 'winner' : 'loser'">
+            {{ participant.score }}
+          </p>
+          <p class="name team">-</p>
+          <p class="name score" [ngClass]="participantTwo?.result === 'win' ? 'winner' : 'loser'">
+            {{ participantTwo?.score }}
+          </p>
+        </div>
+        <div class="name-col two">
+          <p class="name team">
+            {{ participantTwo?.participant[0].name }}
+          </p>
+        </div>
       </div>
     </div>
+
+    <ng-template #showDivider>
+      <div style="margin: 20px 0 20px 0;"><mat-divider></mat-divider></div>
+    </ng-template>
   </caption>
   <ng-container matColumnDef="index">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>

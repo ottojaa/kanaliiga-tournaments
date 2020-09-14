@@ -12,7 +12,8 @@
           <section fxLayout="column" fxLayoutAlign="center center" class="mat-typography" style="text-align: left">
             <h3 class="mat-display-1" style="padding: 20px; font-weight: 100;">{{ team.teamInfo.name }}</h3>
           </section>
-          <mat-grid-list cols="4" rowHeight="60px">
+          <mat-grid-list cols="8" rowHeight="60px">
+            <mat-grid-tile [colspan]="2" [rowspan]="2"></mat-grid-tile>
             <mat-grid-tile [colspan]="1" [rowspan]="1">
               <mat-form-field class="static-text">
                 <mat-label>Wins</mat-label>

@@ -7,8 +7,9 @@
 }
 
 .container {
-    background: white;
+    background: #424242;
     color: white;
+    border-bottom: 5px solid #ff7600;
     display: flex;
     justify-content: flex-start;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
@@ -42,7 +43,7 @@
 }
 
 .match-score {
-    color: black;
+    color: white;
     width: 100%;
     display: flex;
     flex-direction: row;
@@ -56,6 +57,26 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.score-col {
+    width: 20%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.name-col {
+    width: 40%;
+    display: flex;
+}
+
+.one {
+    flex-direction: row-reverse;
+}
+
+.two {
+    flex-direction: row;
 }
 
 .team {

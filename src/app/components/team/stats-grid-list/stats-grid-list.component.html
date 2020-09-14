@@ -11,7 +11,7 @@
         <mat-button-toggle style="font-size: 13px;" value="total">Total</mat-button-toggle>
       </mat-button-toggle-group>
     </mat-grid-tile>
-    <mat-grid-tile [colspan]="10" [rowspan]="1">
+    <mat-grid-tile [colspan]="8" [rowspan]="1">
       <mat-form-field class="static-text">
         <mat-label>Score</mat-label>
         <input matInput disabled value="{{ getDisplayValue(displayStats.score, 1) }}" />
@@ -41,8 +41,6 @@
         <input matInput disabled value="{{ displayStats.count }}" />
       </mat-form-field>
     </mat-grid-tile>
-
-    <mat-grid-tile [colspan]="3" [rowspan]="1"> </mat-grid-tile>
   </mat-grid-list>
 </ng-container>
 

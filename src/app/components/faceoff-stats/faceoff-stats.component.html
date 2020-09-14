@@ -16,11 +16,12 @@
 <mat-tab-group mat-align-tabs="center" dynamicHeight animationDuration="400ms">
   <mat-tab label="Overview">
     <ng-container *ngIf="overviewScores">
-      <div style="margin-top: 30px;" class="faceoff-game">
+      <div style="margin-top: 50px;" class="faceoff-game">
         <app-faceoff-overview-table
           @animatedItem
           [index]="0"
           [participant]="overviewScores.participantOne"
+          [participantTwo]="overviewScores.participantTwo"
           [date]="date"
           [match]="overviewScores.teamOne"
         ></app-faceoff-overview-table>

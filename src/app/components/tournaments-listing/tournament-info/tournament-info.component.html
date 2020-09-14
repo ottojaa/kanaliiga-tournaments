@@ -38,7 +38,7 @@
         <h3 class="mat-display-1" style="margin: 20px;">Team standings</h3>
       </section>
 
-      <ng-container *ngIf="(teamStats$ | async).length; else noTeamStats">
+      <ng-container *ngIf="(teamStats$ | async)?.length; else noTeamStats">
         <app-teams-list @animatedItem [teams]="teamStats$"></app-teams-list>
       </ng-container>
       <ng-template #noTeamStats>
