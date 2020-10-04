@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
 import { MatTableDataSource } from '@angular/material';
 import { Observable } from 'rxjs';
 import { Animations } from 'src/app/utilities/animations';
@@ -11,6 +11,7 @@ import { Animations } from 'src/app/utilities/animations';
 })
 export class TeamsListComponent implements OnInit {
   @Input() teams: Observable<any>;
+  @Output() teamClicked = new EventEmitter<string>();
   displayedColumns: string[] = [
     'index',
     'name',

@@ -16,13 +16,15 @@ import {
   map,
   catchError,
   tap,
+  finalize,
 } from 'rxjs/operators';
+import { Location } from '@angular/common';
 import { FiledropComponent } from '../../filedrop/filedrop.component';
 import { FaceoffService } from 'src/app/faceoff.service';
 import { AuthService } from 'src/app/auth.service';
-import { TeamsService } from 'src/app/teams.service';
 import { Player } from 'src/app/interfaces/faceoff';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, get } from 'lodash';
+import { MatSnackBar } from '@angular/material';
 
 @Component({
   selector: 'app-tournament',
@@ -46,6 +48,7 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
   faceoffs = [];
   teams = [];
   selectedStage: any;
+  selectedTournament: any;
   selectedGroup = '';
   tableType = 'average';
   stageId: string;
@@ -69,10 +72,12 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
   filteredTeams$: Observable<any>;
   filters$: Observable<any>;
   teamStats$: Observable<any>;
+  tournaments$: Observable<any>;
   stages$: Observable<any>;
   roundLabels$: Observable<any>;
   toggleAll$: Observable<any>;
   playerStats$: Observable<Player[]>;
+  loadingSub$ = new Subject();
 
   public state$: BehaviorSubject<any> = new BehaviorSubject(this.initialState);
   public updateState$: Subject<{ [key: string]: any }> = new Subject();
@@ -82,8 +87,9 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private tournamentService: ToornamentsService,
     private faceoffService: FaceoffService,
+    private snackbar: MatSnackBar,
     private authService: AuthService,
-    private teamService: TeamsService,
+    private location: Location,
     private router: Router
   ) {
     this.tournamentId = this.activatedRoute.params['_value']['id'];
@@ -91,17 +97,17 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.loading = true;
     this.selectedStage = this.stageId;
+    this.selectedTournament = this.tournamentId;
     this.getRoundLabels();
     this.initStateObservers();
 
     this.handleStateUpdate()
       .pipe(takeUntil(this.destroy$))
       .subscribe(state => {
-        this.loading = false;
         this.state$.next(state);
       });
+
     this.getParticipants()
       .pipe(takeUntil(this.destroy$))
       .subscribe(data => {
@@ -137,11 +143,14 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
   initStateObservers(): void {
     this.teamStats$ = this.getStatePart('teamStats');
     this.stages$ = this.getStatePart('stageData');
+    this.tournaments$ = this.getStatePart('tournaments');
     this.filters$ = this.getStatePart('filters').pipe(
       tap(filters => (this.toggleAll = filters.every(el => el.checked)))
     );
     this.filteredTeams$ = this.getFilteredTeams();
-    this.playerStats$ = this.getStatePart('playerStats').pipe(map(x => x[this.tableType]));
+    this.playerStats$ = this.getStatePart('playerStats').pipe(
+      filter((x) => !!x),
+      map(x => x[this.tableType]));
     this.toggleAll$ = this.filters$.pipe(map(filters => filters.every(el => (el.checked = true))));
   }
 
@@ -167,6 +176,7 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
       this.getGroups(),
       this.getStageData(),
       this.getFaceoffs(),
+      this.getTournaments()
     ];
 
     return merge(...observables).pipe(flatMap(this.getNewState()));
@@ -182,6 +192,15 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
 
   getCurrentTableType(): Observable<any> {
     return this.getStatePart('playerStats').pipe(map(x => x[this.tableType]));
+  }
+
+  getTournaments(): Observable<any> {
+    return this.tournamentService.getPlaylistData().pipe(
+      catchError(err => {
+      console.log(err);
+      return of([]);
+    }),
+    map(tournaments => ({ tournaments })));
   }
 
   getStatePart(partName: string): Observable<any[]> {
@@ -368,7 +387,7 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
   filterByTeams(data: any): any {
     const groups = data[0];
     const filters = data[1];
-    if (!groups && !filters) {
+    if (!groups) {
       return of([]);
     }
     const filterIds = filters.map(el => {
@@ -429,31 +448,50 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onStageChange(event: any): void {
     // Reset current group choices and get new groups
-    this.loading = !this.loading;
+    this.loadingSub$.next(true);
     this.stageId = event.value;
     this.selectedGroup = '';
     this.groups = [];
     const toUpdate$ = [this.getPlayerStats(), this.getTeamStats(), this.getGroups(), this.getFaceoffIds()];
-    forkJoin(toUpdate$).subscribe(data => {
+    forkJoin(toUpdate$).pipe(take(1), finalize(() => this.loadingSub$.next(false))).subscribe(data => {
       for (let i = 0; i < data.length; i++) {
         switch (i) {
           case 0:
-            this.updateState$.next({ playerStats: data[0]['playerStats'] });
+            this.updateState$.next({ playerStats: get(data, '[0][playerStats]') });
             break;
           case 1:
-            this.updateState$.next({ teamStats: data[1]['teamStats'] });
+            this.updateState$.next({ teamStats: get(data, '[1][teamStats]', []) });
             break;
           case 2:
-            this.updateState$.next({ groups: data[2]['groups'] });
+            this.updateState$.next({ groups: get(data, '[2][groups]', []) });
             break;
           case 3:
-            this.updateState$.next({ faceoffIds: data[3]['faceoffIds'] });
+            this.updateState$.next({ faceoffIds: get(data, '[3][faceoffIds]', []) });
             break;
           default:
             break;
         }
       }
-      this.loading = false;
+    });
+  }
+
+  onTournamentChange(event: any): void {
+    this.loading = true;
+    this.selectedGroup = '';
+    this.groups = [];
+    this.loadingSub$.next(true);
+    this.tournamentService.getTournamentStages(event.value)
+    .pipe(take(1), finalize(() => this.loadingSub$.next(false)))
+    .subscribe((data) => {
+      if (data && data.length) {
+        this.tournamentId = event.value;
+        this.stageId = data[0].id;
+        const url = `tournaments/${this.tournamentId}/stages/${this.stageId}/matches`;
+        this.router.navigateByUrl('/', {skipLocationChange: true}).then(() =>
+          this.router.navigate([url]));
+      } else {
+        this.snackbar.open('No stages available for requested tournament', 'close', { duration: 3000 });
+      }
     });
   }
 

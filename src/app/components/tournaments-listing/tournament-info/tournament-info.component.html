@@ -9,8 +9,16 @@
       </button>
       <div class="button-container" fxLayoutAlign="center center">
         <mat-form-field style="margin-left: 10px; min-width: 200px;" class="dropdown">
+          <mat-label>Select a tournament</mat-label>
+          <mat-select [(value)]="selectedTournament" [disabled]="loadingSub$ | async" (selectionChange)="onTournamentChange($event)">
+            <mat-option *ngFor="let tournament of tournaments$ | async; let i = index" [value]="tournament.id">{{
+              tournament.name
+            }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field style="margin-left: 10px; min-width: 200px;" class="dropdown">
           <mat-label>Select a stage</mat-label>
-          <mat-select [(value)]="selectedStage" (selectionChange)="onStageChange($event)">
+          <mat-select [(value)]="selectedStage" [disabled]="loadingSub$ | async" (selectionChange)="onStageChange($event)">
             <mat-option *ngFor="let stage of stages$ | async; let i = index" [value]="stage.id">{{
               stage.name
             }}</mat-option>
@@ -18,13 +26,13 @@
         </mat-form-field>
         <mat-form-field style="margin-left: 10px;" class="dropdown" *ngIf="groups && groups.length > 1">
           <mat-label>Select a group</mat-label>
-          <mat-select [(value)]="selectedGroup" (selectionChange)="onGroupChange($event)">
+          <mat-select [(value)]="selectedGroup" [disabled]="loadingSub$ | async" (selectionChange)="onGroupChange($event)">
             <mat-option *ngFor="let group of groups; let i = index" [value]="group"> Group {{ i + 1 }} </mat-option>
           </mat-select>
         </mat-form-field>
       </div>
     </div>
-    <mat-progress-bar *ngIf="loading; else filler" mode="indeterminate" color="accent"> </mat-progress-bar>
+    <mat-progress-bar *ngIf="loadingSub$ | async; else filler" mode="indeterminate" color="accent"> </mat-progress-bar>
     <ng-template #filler>
       <div style="height: 4px"></div>
     </ng-template>
@@ -39,7 +47,7 @@
       </section>
 
       <ng-container *ngIf="(teamStats$ | async)?.length; else noTeamStats">
-        <app-teams-list @animatedItem [teams]="teamStats$"></app-teams-list>
+        <app-teams-list @animatedItem [teams]="teamStats$" (teamClicked)="openTeamPage($event)"></app-teams-list>
       </ng-container>
       <ng-template #noTeamStats>
         <ng-container *ngIf="teamsLoading; else showPlaceholderTeams">
@@ -91,8 +99,8 @@
 
       <div class="group" *ngFor="let group of filteredTeams$ | async; let i = index">
         <div *ngIf="labels && labels.length" class="divider" color="primary">
-          <section class="mat-typography" *ngIf="group[0]">
-            <h2 class="mat-subheading-2" style="margin: 10px;">{{ getRoundLabel(group[0].round_id) }}</h2>
+          <section class="mat-typography" style="white-space: nowrap;" *ngIf="group[0]">
+            <h4 class="mat-subheading-2">{{ getRoundLabel(group[0].round_id) }}</h4>
           </section>
         </div>
         <div class="column" @animatedList>
