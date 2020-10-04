@@ -117,13 +117,12 @@ export class LoginComponent implements OnInit {
   }
 
   discordAuth(): void {
-    this.snackbar.open('Disabled for the time being due to Discord Oauth2-implementation changes.', 'close', { duration: 3000 });
-    /* this.auth
+    this.auth
       .discordAuth()
       .pipe(take(1))
       .subscribe(response => {
         window.location.href = response.data;
-      }); */
+      });
   }
 
   closeDialog(): void {
