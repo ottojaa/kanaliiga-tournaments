@@ -102,6 +102,8 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getRoundLabels();
     this.initStateObservers();
 
+    this.tournamentService.getTournamentRankings(this.stageId, this.tournamentId).subscribe((data) => console.log(data));
+
     this.handleStateUpdate()
       .pipe(takeUntil(this.destroy$))
       .subscribe(state => {
@@ -221,14 +223,30 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
 
   getTeamStats(): Observable<any> {
     this.teamsLoading = true;
-    return this.faceoffService.getTeamStatsForStage(this.stageId).pipe(
+    return this.tournamentService.getTournamentRankings(this.stageId, this.tournamentId).pipe(
       catchError(err => {
         console.log(err);
         return of([]);
       }),
       tap(() => (this.teamsLoading = false)),
-      map(teams => ({ teamStats: teams.data }))
+      map(this.mapTeamStats)
     );
+  }
+
+  mapTeamStats(teams: any): any {
+    const teamStats = teams.map((team) => {
+      return {
+        scoreFor: team.properties.score_for,
+        scoreAgainst: team.properties.score_against,
+        played: team.properties.played,
+        wins: team.properties.wins,
+        losses: team.properties.losses,
+        forfeits: team.properties.forfeits,
+        id: team.participant.id,
+        name: team.participant.name
+      };
+    });
+    return { teamStats };
   }
 
   getFaceoffIds(): Observable<any> {

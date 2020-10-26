@@ -8,7 +8,6 @@ import { isEmpty } from 'lodash';
 })
 export class StatsGridListComponent implements OnInit {
   @Input() stats: any;
-  @Input() playerId: string;
   value = 'average';
   displayStats: any;
   showContent = false;

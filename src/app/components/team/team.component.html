@@ -68,12 +68,12 @@
                     <p class="player-name">{{ player.name }}</p>
                   </div>
                   <div style="width: 3%">
-                    <ng-container *ngIf="validateSteamId(player.custom_fields.steam_id)">
-                      <a href="https://steamcommunity.com/profiles/{{ player.custom_fields.steam_id }}" target="_blank"
+                    <ng-container *ngIf="player.custom_fields.rl_tracker_link">
+                      <a href="{{ player.custom_fields.rl_tracker_link }}" target="_blank"
                         ><img
                           matListAvatar
-                          style="height: 25px; width: 25px;"
-                          src="./assets/steam.png"
+                          style="height: 35px; width: 35px;"
+                          src="./assets/TRN.jpg"
                           alt="./assets/rank-icons/unranked-icon.png"
                       /></a>
                     </ng-container>
@@ -83,8 +83,7 @@
             </mat-list-item>
             <mat-list-item style="margin: 15px 0 25px 0;">
               <app-stats-grid-list
-                [playerId]="player.custom_fields.steam_id"
-                [stats]="getPlayerStats(player.custom_fields.steam_id, team.teamStats)"
+                [stats]="getPlayerStats(player.custom_fields.rl_tracker_link, team.teamStats)"
                 style="width: 100%;"
               ></app-stats-grid-list>
             </mat-list-item>

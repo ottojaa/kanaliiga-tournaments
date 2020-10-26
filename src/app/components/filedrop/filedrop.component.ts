@@ -56,6 +56,7 @@ export class FiledropComponent implements AfterViewInit {
 
   // Fires whenever files are dropped to the dropzone. Accumulate dropped files to the datasource
   public dropped(files: NgxFileDropEntry[]) {
+    this.matchNumber = 0;
     this.files = files;
     files.forEach(droppedFile => {
       if (droppedFile.fileEntry.isFile) {
@@ -105,7 +106,7 @@ export class FiledropComponent implements AfterViewInit {
   openDialog(): void {
     // Replay file "validation"
     const allReplays = this.dataSource.every(file => file.name.split('.').pop() === 'replay');
-    if (this.dataSource.length <= this.matchNumber && allReplays) {
+    if (this.dataSource.length === this.matchNumber && allReplays) {
       const dialogRef = this.dialog.open(DragAndDropComponent, {
         width: '500px',
         height: '150px',
@@ -127,12 +128,18 @@ export class FiledropComponent implements AfterViewInit {
         }
       });
     } else {
-      const message = allReplays
-        ? this.matchNumber
-          ? 'Too many files! Maximum amount allowed: ' + this.matchNumber
-          : 'Toornament.com data not found for this match'
-        : 'Not all of the files were .replay-files';
-      this._snackBar.open(message, 'close', { duration: 3000 });
+      if (this.dataSource.length <= this.matchNumber) {
+        this._snackBar.open(`Amount of replay files must be the same as the match count of toornament!
+         ${this.matchNumber} replay files required.
+        `, 'close', { duration: 5000 });
+      } else {
+        const message = allReplays
+          ? this.matchNumber
+            ? 'Too many files! Maximum amount allowed: ' + this.matchNumber
+            : 'Toornament.com data not found for this match'
+          : 'Not all of the files were .replay-files';
+        this._snackBar.open(message, 'close', { duration: 5000 });
+      }
     }
   }
 

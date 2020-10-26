@@ -100,6 +100,21 @@ export class ToornamentsService {
     return this.http.get(url, requestOptions);
   }
 
+  getTournamentRankings(stageId: string, tournamentId: string): any {
+    const headerDict = {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+      Range: 'items=0-49'
+    };
+
+    const requestOptions = {
+      headers: new HttpHeaders(headerDict),
+    };
+
+    const url = environment.apiUrl + '/viewer/v2/tournaments/' + tournamentId + '/stages/' + stageId + '/ranking-items';
+    return this.http.get(url, requestOptions);
+  }
+
   getParticipants(tournamentId: string): any {
     const headerDict = {
       'Content-Type': 'application/json',
