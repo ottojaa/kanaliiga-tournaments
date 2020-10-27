@@ -229,19 +229,6 @@ export class DragAndDropComponent implements OnInit {
     return this.participants[0].participant.name + '-' + this.participants[1].participant.name;
   }
 
-  readArrayBuffer(file): Promise<any> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onerror = reject;
-      reader.onload = e => {
-        const event: any = e.target;
-        const buffer = Buffer.from(event.result);
-        resolve(buffer);
-      };
-      reader.readAsArrayBuffer(file);
-    });
-  }
-
   onNoClick(): void {
     this.dialogRef.close();
   }

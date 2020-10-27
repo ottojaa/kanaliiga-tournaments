@@ -6,7 +6,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DragAndDropComponent } from './drag-and-drop/drag-and-drop.component';
 import { FaceoffService } from 'src/app/faceoff.service';
-import { take } from 'rxjs/operators';
+import { take, finalize } from 'rxjs/operators';
 import { ConfirmDialogModel, ConfirmDialogComponent } from 'src/app/common/confirm-dialog/confirm-dialog.component';
 
 /**
@@ -32,6 +32,7 @@ export class FiledropComponent implements AfterViewInit {
   // Without this, expansion panels will start in the opened state in it doesn't look kosher
   animationsDisabled = true;
   tournamentId: string;
+  loading = false;
 
   // How many matches were there? Used for validation
   matchNumber = 0;
@@ -80,6 +81,51 @@ export class FiledropComponent implements AfterViewInit {
   goToFaceoff(matchId: string): void {
     const url = `/tournaments/${this.tournamentId}/stages/${this.stageId}/faceoff/`;
     this.router.navigate([url, matchId]);
+  }
+
+  getReplays(matchId: string): any {
+    this.loading = true;
+    this.faceoffService.getReplaysForMatch(matchId)
+    .pipe(finalize(() => this.loading = false))
+    .subscribe((res) => {
+      if (res && res.data && res.data.files) {
+        const { matchName } = res.data;
+        const matchNumber = res.data.files.length;
+        this.confirmDownload(matchNumber, matchName, res.data.files);
+      } else {
+        this._snackBar.open('No replays found for this faceoff', 'close', { duration: 5000 });
+      }
+    });
+  }
+
+  confirmDownload(matchAmount: string, matchName: string, files: any): void {
+    const message = `${matchAmount} replays found!`;
+    const description = 'Proceed to download?';
+
+    const dialogData = new ConfirmDialogModel(message, description);
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      data: dialogData,
+    });
+
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      if (dialogResult) {
+        this.downloadReplays(matchName, files);
+      }
+    });
+  }
+
+  downloadReplays(matchName: string, files: any): void {
+    for (const [index, file] of files.entries()) {
+      const buffer = Buffer.from((file.data));
+      const blob = new Blob([buffer], { type: 'application/binary' });
+      const fileURL = URL.createObjectURL(blob);
+      const fileLink = document.createElement('a');
+      fileLink.href = fileURL;
+      fileLink.download = `${index + 1}_${matchName}.replay`;
+      fileLink.click();
+    }
   }
 
   canSeeDeleteButton(): boolean {

@@ -89,7 +89,6 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
     private faceoffService: FaceoffService,
     private snackbar: MatSnackBar,
     private authService: AuthService,
-    private location: Location,
     private router: Router
   ) {
     this.tournamentId = this.activatedRoute.params['_value']['id'];
@@ -101,8 +100,6 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
     this.selectedTournament = this.tournamentId;
     this.getRoundLabels();
     this.initStateObservers();
-
-    this.tournamentService.getTournamentRankings(this.stageId, this.tournamentId).subscribe((data) => console.log(data));
 
     this.handleStateUpdate()
       .pipe(takeUntil(this.destroy$))

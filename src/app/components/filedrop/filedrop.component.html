@@ -1,3 +1,4 @@
+
 <mat-expansion-panel [expanded]="expanded" [@.disabled]="animationsDisabled">
   <mat-expansion-panel-header style="display: none" [collapsedHeight]="'0px'">
     <mat-panel-description> </mat-panel-description>
@@ -41,6 +42,10 @@
         <mat-icon>not_interested</mat-icon>
       </button>
 
+      <button *ngIf="dataExists" (click)="getReplays(matchId)"mat-icon-button matTooltip="Download replays">
+        <mat-icon>cloud_download</mat-icon>
+      </button>
+
       <button *ngIf="dataExists" (click)="goToFaceoff(matchId)" mat-icon-button matTooltip="View faceoff stats">
         <mat-icon>arrow_forward</mat-icon>
       </button>
@@ -71,4 +76,5 @@
       <button color="warn" mat-flat-button (click)="openDialog()" [disabled]="">Upload replays</button>
     </div>
   </div>
+  <mat-progress-bar [ngClass]="loading ? 'show' : 'hide'" mode="indeterminate" color="accent"></mat-progress-bar>
 </mat-expansion-panel>

@@ -147,12 +147,13 @@
 
             <mat-card-actions align="end" class="actions">
               <button mat-icon-button (click)="onToggleExpand(match.id)">
-                <mat-icon
-                  matTooltip="Match statistics up to date"
-                  class="replay-found"
-                  *ngIf="checkExistingData(match.id); else noData"
-                  >done</mat-icon
-                >
+                <ng-container *ngIf="checkExistingData(match.id); else noData">
+                  <mat-icon
+                    matTooltip="Match statistics up to date"
+                    class="replay-found">
+                    done
+                  </mat-icon>
+                </ng-container>
                 <ng-template #noData>
                   <mat-icon>keyboard_arrow_down</mat-icon>
                 </ng-template>

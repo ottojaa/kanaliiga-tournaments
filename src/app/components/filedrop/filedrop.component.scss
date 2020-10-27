@@ -11,6 +11,14 @@
   height: 50px;
 }
 
+.hide {
+  visibility: hidden;
+}
+
+.show {
+  visibility: visible;
+}
+
 .button {
   margin-top: 20px;
   display: flex;
