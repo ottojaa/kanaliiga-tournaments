@@ -93,13 +93,15 @@ export class TeamComponent implements OnInit, OnDestroy {
 
   getPlayerStats(rl_tracker_id: string, stats: any): any {
     if (!isEmpty(stats) && rl_tracker_id) {
-      console.log(rl_tracker_id);
-      const id = this.playerIdParser(rl_tracker_id);
-      console.log(id);
-      return {
-        total: stats['total'].filter(stat => stat.onlineId.substring(0, 15) === id.substring(0, 15)),
-        average: stats['average'].filter(stat => stat.onlineId.substring(0, 15) === id.substring(0, 15)),
-      };
+      try {
+        const id = this.playerIdParser(rl_tracker_id);
+        return {
+          total: stats['total'].filter(stat => stat.onlineId.substring(0, 15) === id.substring(0, 15)),
+          average: stats['average'].filter(stat => stat.onlineId.substring(0, 15) === id.substring(0, 15)),
+        };
+      } catch (err) {
+        console.log(err);
+      }
     }
     return null;
   }
