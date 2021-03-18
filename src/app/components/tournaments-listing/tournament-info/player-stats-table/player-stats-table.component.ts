@@ -13,7 +13,6 @@ import { takeUntil } from 'rxjs/operators';
 })
 export class PlayerStatsTableComponent implements OnInit, OnDestroy {
   @Input() source: Observable<any>;
-  @Input() teamScore;
   tableType: 'average' | 'total' = 'average';
   total = [];
   pageIndex = 0;
@@ -65,7 +64,7 @@ export class PlayerStatsTableComponent implements OnInit, OnDestroy {
     });
   }
 
-  onPageChange(event: any): void {
+  onPageChange(event: { pageIndex: number; pageSize: number }): void {
     this.pageIndex = event.pageIndex * event.pageSize;
   }
 

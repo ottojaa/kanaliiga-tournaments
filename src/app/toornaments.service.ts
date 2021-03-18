@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../environments/environment';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Participant, TeamRanking } from './interfaces/tournament';
+import { TeamRanking, Group, Stage, TeamParticipant, Tournament } from './interfaces/tournament';
 
 
 
@@ -14,7 +14,7 @@ export class ToornamentsService {
 
   constructor(private http: HttpClient) {}
 
-  getPlaylistData(): Observable<any> {
+  getPlaylistData(): Observable<Tournament[]> {
     const headerDict = {
       'Content-Type': 'application/json',
       Accept: 'application/json',
@@ -27,10 +27,10 @@ export class ToornamentsService {
 
     const url =
       environment.apiUrl + '/viewer/v2/playlists/' + environment.playlist + '/tournaments?sort=scheduled_desc';
-    return this.http.get(url, requestOptions);
+    return this.http.get<Tournament[]>(url, requestOptions);
   }
 
-  getTournamentMatches(tournamentId: string): any {
+  getTournamentMatches(tournamentId: string): Observable<Group[]> {
     const headerDict = {
       'Content-Type': 'application/json',
       Accept: 'application/json',
@@ -42,7 +42,7 @@ export class ToornamentsService {
     };
 
     const url = environment.apiUrl + '/viewer/v2/tournaments/' + tournamentId + '/matches';
-    return this.http.get(url, requestOptions);
+    return this.http.get<Group[]>(url, requestOptions);
   }
 
   getTournamentRounds(tournamentId: string): any {
@@ -75,7 +75,7 @@ export class ToornamentsService {
     return this.http.get(url, requestOptions);
   }
 
-  getTournamentStages(tournamentId: string): any {
+  getTournamentStages(tournamentId: string): Observable<Stage[]> {
     const headerDict = {
       'Content-Type': 'application/json',
       Accept: 'application/json',
@@ -86,7 +86,7 @@ export class ToornamentsService {
     };
 
     const url = environment.apiUrl + '/viewer/v2/tournaments/' + tournamentId + '/stages';
-    return this.http.get(url, requestOptions);
+    return this.http.get<Stage[]>(url, requestOptions);
   }
 
   getTournamentStage(stageId: string, tournamentId: string): any {
@@ -118,7 +118,7 @@ export class ToornamentsService {
     return this.http.get<TeamRanking[]>(url, requestOptions);
   }
 
-  getParticipants(tournamentId: string): Observable<Participant[]> {
+  getParticipants(tournamentId: string): Observable<TeamParticipant[]> {
     const headerDict = {
       'Content-Type': 'application/json',
       Accept: 'application/json',
@@ -130,10 +130,10 @@ export class ToornamentsService {
     };
 
     const url = environment.apiUrl + '/viewer/v2/tournaments/' + tournamentId + '/participants';
-    return this.http.get<Participant[]>(url, requestOptions);
+    return this.http.get<TeamParticipant[]>(url, requestOptions);
   }
 
-  getParticipant(participantId: string, tournamentId: string): Observable<Participant> {
+  getParticipant(participantId: string, tournamentId: string): Observable<TeamParticipant> {
     const headerDict = {
       'Content-Type': 'application/json',
       Accept: 'application/json',
@@ -145,7 +145,7 @@ export class ToornamentsService {
     };
 
     const url = environment.apiUrl + '/viewer/v2/tournaments/' + tournamentId + '/participants/' + participantId;
-    return this.http.get<Participant>(url, requestOptions);
+    return this.http.get<TeamParticipant>(url, requestOptions);
   }
 
   getMoreInformation(tournamentId: string): any {

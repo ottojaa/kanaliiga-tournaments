@@ -42,12 +42,10 @@ export interface Participant {
   rank: number | null;
   result: 'win' | 'loss';
   score: number;
-  participant: [
-    {
-      id: string;
-      name: string;
-    }
-  ];
+  participant: {
+    id: string;
+    name: string;
+  };
 }
 export interface PlayerOverviewRepresentation {
   team: number;

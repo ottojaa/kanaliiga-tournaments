@@ -1,3 +1,6 @@
+import { PlayerStats } from '../faceoff.service';
+import { Participant } from './faceoff';
+
 export interface Tournament {
   id: string;
   discipline: string;
@@ -25,7 +28,7 @@ export interface Tournament {
   registration_closing_datetime: string;
 }
 
-export interface Participant {
+export interface TeamParticipant {
   id: string;
   name: string;
   custom_fields: {
@@ -52,7 +55,7 @@ export interface Lineup {
 export interface TeamRanking {
   group_id: string;
   id: string;
-  participant: Participant;
+  participant: TeamParticipant;
   points: number;
   position: number;
   properties: {
@@ -74,6 +77,43 @@ export interface TeamTableProperties {
   wins: number;
   losses: number;
   forfeits: number;
+  id: string;
+  name: string;
+}
+
+export interface State {
+  teamStats: TeamRanking[];
+  playerStats: PlayerStats[];
+  groups: Group[][];
+  faceoffIds: string[];
+  filters: Filter[];
+  stageData: any[];
+  tournaments: any[];
+}
+
+export interface Filter {
+  id: string;
+  name: string;
+  checked: boolean;
+}
+
+export interface Group {
+  id: string;
+  round_id: string;
+  group_id: string;
+  played_at: string;
+  status: string;
+  number: number;
+  stage_id: string;
+  opponents: Participant[];
+}
+
+export interface Stage {
+  id: string;
+  name: string;
+}
+
+export interface Tournament {
   id: string;
   name: string;
 }
