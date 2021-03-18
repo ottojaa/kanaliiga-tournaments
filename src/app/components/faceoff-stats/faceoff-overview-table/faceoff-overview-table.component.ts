@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { MatTableDataSource, MatSort } from '@angular/material';
+import { TeamOverview, PlayerOverviewsPerTeam } from 'src/app/interfaces/faceoff';
 
 @Component({
   selector: 'app-faceoff-overview-table',
@@ -7,11 +8,10 @@ import { MatTableDataSource, MatSort } from '@angular/material';
   styleUrls: ['./faceoff-overview-table.component.scss'],
 })
 export class FaceoffOverviewTableComponent implements OnInit {
-  @Input() match;
+  @Input() match: PlayerOverviewsPerTeam;
   @Input() index: number;
-  @Input() participant;
-  @Input() participantTwo;
-  @Input() date;
+  @Input() date: string;
+
   displayedMatchColumns: string[] = [
     'name',
     'teamName',
@@ -22,7 +22,7 @@ export class FaceoffOverviewTableComponent implements OnInit {
     'shootingPercentage',
     'score',
   ];
-  dataSource = new MatTableDataSource(this.match);
+  dataSource = new MatTableDataSource();
   private sort: MatSort;
 
   @ViewChild(MatSort) set matSort(ms: MatSort) {
@@ -34,6 +34,6 @@ export class FaceoffOverviewTableComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {
-    this.dataSource.data = this.match;
+    this.dataSource.data = this.index === 0 ? this.match.teamOne.players : this.match.teamTwo.players;
   }
 }

@@ -9,21 +9,21 @@
       <div class="match-score">
         <div class="name-col one">
           <p class="name team">
-            {{ participant.participant[0].name }}
+            {{ match?.teamOne.participant.teamName }}
           </p>
         </div>
         <div class="score-col">
-          <p class="name score" [ngClass]="participant.result === 'win' ? 'winner' : 'loser'">
-            {{ participant.score }}
+          <p class="name score" [ngClass]="match?.teamOne.participant.result === 'win' ? 'winner' : 'loser'">
+            {{ match?.teamOne.participant.score }}
           </p>
           <p class="name team">-</p>
-          <p class="name score" [ngClass]="participantTwo?.result === 'win' ? 'winner' : 'loser'">
-            {{ participantTwo?.score }}
+          <p class="name score" [ngClass]="match?.teamTwo.participant.result === 'win' ? 'winner' : 'loser'">
+            {{ match?.teamTwo.participant.score }}
           </p>
         </div>
         <div class="name-col two">
           <p class="name team">
-            {{ participantTwo?.participant[0].name }}
+            {{ match?.teamTwo.participant.teamName }}
           </p>
         </div>
       </div>

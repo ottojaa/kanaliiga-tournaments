@@ -3,6 +3,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Faceoff } from './interfaces/faceoff';
 import { Observable } from 'rxjs';
 
+export interface FaceoffResponse { data: Faceoff; }
+
 @Injectable({
   providedIn: 'root',
 })
@@ -62,8 +64,8 @@ export class FaceoffService {
     return this.http.get(url);
   }
 
-  getFaceoff(id: string): Observable<any> {
+  getFaceoff(id: string): Observable<FaceoffResponse> {
     const url = this.url + '/faceoff/' + id;
-    return this.http.get(url);
+    return this.http.get<FaceoffResponse>(url);
   }
 }

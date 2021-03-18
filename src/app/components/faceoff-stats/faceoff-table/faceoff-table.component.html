@@ -5,21 +5,21 @@
         <p class="title">{{ index + 1 }}</p>
       </div>
       <div class="match-score">
-        <p class="name team" [ngClass]="teamScore[0].result === 'win' ? 'win' : 'lose'">
-          {{ teamScore[0].name }}
+        <p class="name team" [ngClass]="match?.teamOne?.result === 'win' ? 'win' : 'lose'">
+          {{ match?.teamOne?.name }}
         </p>
         <div class="name score">
-          <p [ngClass]="teamScore[0].result === 'win' ? 'winner' : 'loser'">
-            {{ teamScore[0].score }}
+          <p [ngClass]="match?.teamOne.result === 'win' ? 'winner' : 'loser'">
+            {{ match?.teamOne?.score }}
           </p>
           <p class="name">-</p>
-          <p [ngClass]="teamScore[1].result === 'win' ? 'winner' : 'loser'">
-            {{ teamScore[1].score }}
+          <p [ngClass]="match?.teamTwo.result === 'win' ? 'winner' : 'loser'">
+            {{ match?.teamTwo.score }}
           </p>
         </div>
 
-        <p class="name team" [ngClass]="teamScore[1].result === 'win' ? 'win' : 'lose'">
-          {{ teamScore[1].name }}
+        <p class="name team" [ngClass]="match?.teamTwo.result === 'win' ? 'win' : 'lose'">
+          {{ match?.teamTwo.name }}
         </p>
       </div>
     </div>

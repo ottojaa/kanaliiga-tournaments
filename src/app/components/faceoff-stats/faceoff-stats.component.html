@@ -3,11 +3,11 @@
 <!-------------------------->
 
 <div class="buttons" fxLayout="row">
-  <button mat-button (click)="navigateBack('stages')">
+  <button mat-button (click)="navigateTo('stages')">
     <mat-icon>keyboard_arrow_left</mat-icon>
     Stages
   </button>
-  <button mat-button (click)="navigateBack('matches')">
+  <button mat-button (click)="navigateTo('matches')">
     <mat-icon>keyboard_arrow_left</mat-icon>
     Matches
   </button>
@@ -20,17 +20,14 @@
         <app-faceoff-overview-table
           @animatedItem
           [index]="0"
-          [participant]="overviewScores.participantOne"
-          [participantTwo]="overviewScores.participantTwo"
           [date]="date"
-          [match]="overviewScores.teamOne"
+          [match]="overviewScores"
         ></app-faceoff-overview-table>
         <app-faceoff-overview-table
           @animatedItem
           [index]="1"
-          [participant]="overviewScores.participantTwo"
           [date]="date"
-          [match]="overviewScores.teamTwo"
+          [match]="overviewScores"
         >
         </app-faceoff-overview-table>
       </div>
@@ -39,7 +36,7 @@
   </mat-tab>
   <mat-tab *ngFor="let match of dataSource; let i = index" label="Game {{ i + 1 }}">
     <div class="faceoff-game">
-      <app-faceoff-table @animatedItem [match]="match" [teamScore]="teamScores[i]" [index]="i"></app-faceoff-table>
+      <app-faceoff-table @animatedItem [match]="match" [index]="i"></app-faceoff-table>
     </div>
   </mat-tab>
 </mat-tab-group>

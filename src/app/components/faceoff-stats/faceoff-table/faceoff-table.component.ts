@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, ViewChild, AfterViewInit } from '@angular/core';
 import { Animations } from 'src/app/utilities/animations';
 import { MatTableDataSource, MatSort } from '@angular/material';
+import { MatchStatistics, PlayerListForEachMatch, PlayerList } from 'src/app/interfaces/faceoff';
 
 @Component({
   selector: 'app-faceoff-table',
@@ -9,9 +10,9 @@ import { MatTableDataSource, MatSort } from '@angular/material';
   animations: [Animations.enterAnimation(), Animations.listAnimations()],
 })
 export class FaceoffTableComponent implements OnInit {
-  @Input() match;
+  @Input() match: MatchStatistics;
   @Input() index: number;
-  @Input() teamScore;
+
   displayedMatchColumns: string[] = [
     'index',
     'name',
@@ -23,7 +24,7 @@ export class FaceoffTableComponent implements OnInit {
     'shootingPercentage',
     'score',
   ];
-  dataSource = new MatTableDataSource(this.match);
+  dataSource = new MatTableDataSource();
   private sort: MatSort;
 
   @ViewChild(MatSort) set matSort(ms: MatSort) {
@@ -35,7 +36,7 @@ export class FaceoffTableComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {
-    this.dataSource.data = this.match;
+    this.dataSource.data = this.match.players;
   }
 
   getShotPercentage(shootingPercentage: number): string {

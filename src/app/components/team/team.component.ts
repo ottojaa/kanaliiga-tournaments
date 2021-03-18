@@ -43,6 +43,8 @@ export class TeamComponent implements OnInit, OnDestroy {
   ];
   loading = true;
   noData = false;
+  stageId: string;
+  tournamentId: string;
   destroy$ = new Subject();
 
   constructor(
@@ -70,13 +72,13 @@ export class TeamComponent implements OnInit, OnDestroy {
         const { teamStats, playerStats } = response.data;
         if (teamStats && teamStats.length) {
           this.createAverageStats(teamStats);
-          const tournamentId = teamStats[0].tournamentId;
-          const stageId = teamStats[0].stageId;
+          this.tournamentId = teamStats[0].tournamentId;
+          this.stageId = teamStats[0].stageId;
           return forkJoin([
             of(teamStats).pipe(tap(data => (this.teamStats = this.createAverageStats(data)))),
             of(playerStats),
-            this.toornamentService.getParticipant(this.teamId, tournamentId),
-            this.toornamentService.getTournamentStage(stageId, tournamentId),
+            this.toornamentService.getParticipant(this.teamId, this.tournamentId),
+            this.toornamentService.getTournamentStage(this.stageId, this.tournamentId),
           ]);
         }
         return of([]);
@@ -151,7 +153,8 @@ export class TeamComponent implements OnInit, OnDestroy {
   }
 
   goBack(): void {
-    this._location.back();
+    const url = `/tournaments/${this.tournamentId}/stages/${this.stageId}/matches`;
+    this.router.navigateByUrl(url);
   }
 
   validateSteamId(id: string): boolean {
