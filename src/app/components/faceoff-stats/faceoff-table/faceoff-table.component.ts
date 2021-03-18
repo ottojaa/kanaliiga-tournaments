@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ViewChild, AfterViewInit } from '@angular/core';
 import { Animations } from 'src/app/utilities/animations';
 import { MatTableDataSource, MatSort } from '@angular/material';
-import { MatchStatistics, PlayerListForEachMatch, PlayerList } from 'src/app/interfaces/faceoff';
+import { MatchStatistics } from 'src/app/interfaces/faceoff';
 
 @Component({
   selector: 'app-faceoff-table',

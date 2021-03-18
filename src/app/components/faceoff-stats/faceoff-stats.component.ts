@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Animations } from 'src/app/utilities/animations';
 import { Team, Player, Faceoff, Participant,
-  MatchStatistics, PlayerOverviewsPerTeam, PlayerList,
+  MatchStatistics, PlayerOverviewsPerTeam,
   PlayerOverviewRepresentation, ParticipantInformation } from 'src/app/interfaces/faceoff';
 import { FaceoffService } from 'src/app/faceoff.service';
 import { finalize, map } from 'rxjs/operators';
@@ -80,14 +80,14 @@ export class FaceoffStatsComponent implements OnInit {
       const propsToPick = ['name', 'result', 'score', 'teamId'];
       const teamOne: Partial<Team> = pick(team[0], propsToPick);
       const teamTwo: Partial<Team> = pick(team[1], propsToPick);
-      const players = team.reduce((acc, curr) => acc.concat(curr.players), <PlayerList>[]);
+      const players = team.reduce((acc, curr) => acc.concat(curr.players), <Player[]>[]);
 
       return { teamOne, teamTwo, players };
     });
   }
 
   // Total of each player's performance in the faceoff: goals per game, shots per game, shooting percentage etc
-  getOverviewsPerTeam(totalPlayerScores: PlayerList, participants: Participant[]): PlayerOverviewsPerTeam {
+  getOverviewsPerTeam(totalPlayerScores: Player[], participants: Participant[]): PlayerOverviewsPerTeam {
     const playerOverviewStats = totalPlayerScores.map((player) => this.getPlayerOverviewRepresentation(player));
 
     const teamOnePlayers = playerOverviewStats.filter((player) => player.team === 0);
@@ -110,9 +110,9 @@ export class FaceoffStatsComponent implements OnInit {
   }
 
   // Reduces an array of team arrays to a single list including all of the players and their total stats
-  getTotalPlayerScoreList(teams:  Team[][]): PlayerList {
+  getTotalPlayerScoreList(teams:  Team[][]): Player[] {
     return teams.reduce((acc, curr) => {
-      const teamMembers = curr.reduce((x, y) => x.concat(y.players), <PlayerList>[]);
+      const teamMembers = curr.reduce((x, y) => x.concat(y.players), <Player[]>[]);
       for (const member of teamMembers) {
         const match = acc.find((player) => player.name === member.name);
         if (match) {
@@ -126,7 +126,7 @@ export class FaceoffStatsComponent implements OnInit {
       }
       return acc;
 
-    }, <PlayerList>[]);
+    }, <Player[]>[]);
   }
 
   getUpdatedPlayerStatistics(originalData: Player, newData: Player): Player {
@@ -142,14 +142,22 @@ export class FaceoffStatsComponent implements OnInit {
 
   getPlayerOverviewRepresentation(player: Player): PlayerOverviewRepresentation {
     const getAverage = (stat: number, gamesPlayed: number) => (stat / gamesPlayed).toFixed(1).toString();
-    const formatShootingPercentage = (shootingPercentage: number) => shootingPercentage.toFixed(1).toString() + '%';
+    const getShootingPercentage = () => {
+      const { shots, goals } = player;
+      if (shots && goals) {
+        return ((goals / shots) * 100).toFixed(1).toString() + '%';
+      } if (goals && !shots) {
+        return '100%';
+      }
+      return '0%';
+    };
 
     const playerInfo: any = omit(player, this.statProperties);
     const playerOverview: PlayerOverviewRepresentation = { ...playerInfo };
 
     for (const property of this.statProperties) {
       playerOverview[property] = getAverage(player[property], player.gamesPlayed);
-      playerOverview.shootingPercentage = formatShootingPercentage(player.shootingPercentage);
+      playerOverview.shootingPercentage = getShootingPercentage();
     }
 
     return playerOverview;

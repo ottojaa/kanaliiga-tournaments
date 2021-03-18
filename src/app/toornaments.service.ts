@@ -2,6 +2,9 @@ import { Injectable } from '@angular/core';
 import { environment } from '../environments/environment';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Participant, TeamRanking } from './interfaces/tournament';
+
+
 
 @Injectable({
   providedIn: 'root',
@@ -100,7 +103,7 @@ export class ToornamentsService {
     return this.http.get(url, requestOptions);
   }
 
-  getTournamentRankings(stageId: string, tournamentId: string): any {
+  getTournamentRankings(stageId: string, tournamentId: string): Observable<TeamRanking[]> {
     const headerDict = {
       'Content-Type': 'application/json',
       Accept: 'application/json',
@@ -112,10 +115,10 @@ export class ToornamentsService {
     };
 
     const url = environment.apiUrl + '/viewer/v2/tournaments/' + tournamentId + '/stages/' + stageId + '/ranking-items';
-    return this.http.get(url, requestOptions);
+    return this.http.get<TeamRanking[]>(url, requestOptions);
   }
 
-  getParticipants(tournamentId: string): any {
+  getParticipants(tournamentId: string): Observable<Participant[]> {
     const headerDict = {
       'Content-Type': 'application/json',
       Accept: 'application/json',
@@ -127,10 +130,10 @@ export class ToornamentsService {
     };
 
     const url = environment.apiUrl + '/viewer/v2/tournaments/' + tournamentId + '/participants';
-    return this.http.get(url, requestOptions);
+    return this.http.get<Participant[]>(url, requestOptions);
   }
 
-  getParticipant(participantId: string, tournamentId: string): Observable<any> {
+  getParticipant(participantId: string, tournamentId: string): Observable<Participant> {
     const headerDict = {
       'Content-Type': 'application/json',
       Accept: 'application/json',
@@ -142,7 +145,7 @@ export class ToornamentsService {
     };
 
     const url = environment.apiUrl + '/viewer/v2/tournaments/' + tournamentId + '/participants/' + participantId;
-    return this.http.get(url, requestOptions);
+    return this.http.get<Participant>(url, requestOptions);
   }
 
   getMoreInformation(tournamentId: string): any {

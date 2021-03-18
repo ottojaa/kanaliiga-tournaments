@@ -62,7 +62,6 @@ export interface PlayerOverviewRepresentation {
 
 export type ParticipantInformation = Omit<Participant, 'participant' | 'position' | 'number' | 'forfeit' | 'rank'> & { teamName: string };
 export type PlayerListForEachMatch = Player[][];
-export type PlayerList = Player[];
 export interface TeamOverview { players: PlayerOverviewRepresentation[]; participant: ParticipantInformation; }
 export interface PlayerOverviewsPerTeam { teamOne: TeamOverview; teamTwo: TeamOverview; players: PlayerOverviewRepresentation[]; }
-export interface MatchStatistics  { teamOne: Partial<Team>; teamTwo: Partial<Team>; players: PlayerList; }
+export interface MatchStatistics  { teamOne: Partial<Team>; teamTwo: Partial<Team>; players: Player[]; }

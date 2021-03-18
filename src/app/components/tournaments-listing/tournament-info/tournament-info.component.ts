@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ViewChildren, QueryList } from '@angular/core';
 import { Animations } from 'src/app/utilities/animations';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, from, Subject, BehaviorSubject, of, merge, forkJoin, combineLatest } from 'rxjs';
+import { Observable, from, Subject, BehaviorSubject, of, merge, forkJoin, combineLatest, EMPTY } from 'rxjs';
 import { ToornamentsService } from 'src/app/toornaments.service';
 import {
   groupBy,
@@ -18,13 +18,29 @@ import {
   tap,
   finalize,
 } from 'rxjs/operators';
-import { Location } from '@angular/common';
 import { FiledropComponent } from '../../filedrop/filedrop.component';
 import { FaceoffService } from 'src/app/faceoff.service';
 import { AuthService } from 'src/app/auth.service';
 import { Player } from 'src/app/interfaces/faceoff';
 import { cloneDeep, get } from 'lodash';
 import { MatSnackBar } from '@angular/material';
+import { Lineup, TeamRanking, TeamTableProperties } from 'src/app/interfaces/tournament';
+
+interface State {
+  teamStats: any[];
+  playerStats: any[];
+  groups: any[];
+  faceoffIds: string[];
+  filters: Filter[];
+  stageData: any[];
+  tournaments: any[];
+}
+
+interface Filter {
+  id: string;
+  name: string;
+  checked: boolean;
+}
 
 @Component({
   selector: 'app-tournament',
@@ -65,6 +81,8 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
     groups: [],
     faceoffIds: [],
     filters: [],
+    stageData: [],
+    tournaments: []
   };
 
   toggleAll = false;
@@ -79,7 +97,7 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
   playerStats$: Observable<Player[]>;
   loadingSub$ = new Subject();
 
-  public state$: BehaviorSubject<any> = new BehaviorSubject(this.initialState);
+  public state$: BehaviorSubject<State> = new BehaviorSubject(this.initialState);
   public updateState$: Subject<{ [key: string]: any }> = new Subject();
   public loading$ = new Subject<boolean>();
 
@@ -118,15 +136,28 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.tournamentService
       .getParticipants(this.tournamentId)
       .pipe(
-        map((participants: any) =>
-          participants.flatMap(participant => this.createLineupArrayEntity(participant.lineup))
+        map((participants) =>
+          participants.map(participant => this.mapPlayerSteamIds(participant.lineup))
         )
       );
   }
 
-  createLineupArrayEntity(lineup: any): any {
+  mapPlayerSteamIds(lineup: Lineup[]): { name: string, steam_id: string }[] {
     return lineup.map(player => {
-      const steam_id = player.custom_fields.steam_id;
+      const getSteamIdFromTrackerlink = (link: string) => {
+        const urlParts = link.split('/');
+        if (urlParts.includes('rocketleague.tracker.network') && urlParts.length >= 7) {
+          return urlParts[6];
+        }
+
+        return null;
+      };
+
+      // Unfortunately different players have been added differently to the application forms in kanaliiga, hence this
+      const steam_id = player.custom_fields.steam_id
+        ? player.custom_fields.steam_id
+        : getSteamIdFromTrackerlink(player.custom_fields.rl_tracker_link);
+
       const pattern = /^[0-9]{17}$/;
       const steam_id_valid = pattern.test(steam_id);
       return {
@@ -137,7 +168,7 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   /**
-   * Each of these observables' values update whenever their respective state changes.
+   * Each of these observables' values update whenever their respective state is updated
    */
   initStateObservers(): void {
     this.teamStats$ = this.getStatePart('teamStats');
@@ -166,7 +197,7 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
     setTimeout(() => (this.disableAnimation = false), 500);
   }
 
-  handleStateUpdate(): Observable<any> {
+  handleStateUpdate(): Observable<State> {
     const observables = [
       this.updateState$,
       this.getTeamStats(),
@@ -174,23 +205,18 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
       this.getFaceoffIds(),
       this.getGroups(),
       this.getStageData(),
-      this.getFaceoffs(),
       this.getTournaments()
     ];
 
     return merge(...observables).pipe(flatMap(this.getNewState()));
   }
 
-  getNewState(): (obj: { [key: string]: any }) => Observable<any> {
+  getNewState(): (obj: { [key: string]: any }) => Observable<State> {
     return obj =>
       this.state$.pipe(
         take(1),
-        map((state): any => ({ ...state, ...obj }))
+        map((state): State => ({ ...state, ...obj }))
       );
-  }
-
-  getCurrentTableType(): Observable<any> {
-    return this.getStatePart('playerStats').pipe(map(x => x[this.tableType]));
   }
 
   getTournaments(): Observable<any> {
@@ -202,8 +228,8 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
     map(tournaments => ({ tournaments })));
   }
 
-  getStatePart(partName: string): Observable<any[]> {
-    return this.state$.pipe(map(state => state[partName]));
+  getStatePart<T extends keyof State>(key: T): Observable<State[T]> {
+    return this.state$.pipe(map(state => state[key]));
   }
 
   getPlayerStats(): Observable<any> {
@@ -211,26 +237,26 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.faceoffService.getPlayerStats(this.stageId).pipe(
       catchError(err => {
         console.log(err);
-        return of([]);
+        return EMPTY;
       }),
       tap(() => (this.playersLoading = false)),
       map(players => ({ playerStats: players.data }))
     );
   }
 
-  getTeamStats(): Observable<any> {
+  getTeamStats(): Observable<{ teamStats: TeamTableProperties[] }> {
     this.teamsLoading = true;
     return this.tournamentService.getTournamentRankings(this.stageId, this.tournamentId).pipe(
       catchError(err => {
         console.log(err);
-        return of([]);
+        return EMPTY;
       }),
       tap(() => (this.teamsLoading = false)),
       map(this.mapTeamStats)
     );
   }
 
-  mapTeamStats(teams: any): any {
+  mapTeamStats(teams: TeamRanking[]): { teamStats: TeamTableProperties[] } {
     const teamStats = teams.map((team) => {
       return {
         scoreFor: team.properties.score_for,
@@ -246,21 +272,11 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
     return { teamStats };
   }
 
-  getFaceoffIds(): Observable<any> {
+  getFaceoffIds(): Observable<{ faceoffIds: string[] }> {
     return this.faceoffService.getFaceoffIds(this.stageId).pipe(
       catchError(err => {
         console.log(err);
-        return of([]);
-      }),
-      map(faceoffs => ({ faceoffIds: faceoffs.data }))
-    );
-  }
-
-  getFaceoffs(): Observable<any> {
-    return this.faceoffService.getFaceoffIds(this.stageId).pipe(
-      catchError(err => {
-        console.log(err);
-        return of([]);
+        return EMPTY;
       }),
       map(faceoffs => ({ faceoffIds: faceoffs.data }))
     );
@@ -336,6 +352,7 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   getGroups(): Observable<any> {
     return this.tournamentService.getTournamentMatches(this.tournamentId).pipe(
+      tap((data) => console.log(data)),
       flatMap((x: any) => from(x)),
       filter((x: any) => x.stage_id === this.stageId),
       switchMap((group: any[]) => {
@@ -396,7 +413,7 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
         checked: true,
       };
     });
-    this.updateState$.next({ filters: filters });
+    this.updateState$.next({ filters });
   }
 
   filterByTeams(data: any): any {

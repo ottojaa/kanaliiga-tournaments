@@ -373,7 +373,7 @@ export class DragAndDropComponent implements OnInit {
     return this.findElementWithNamePartial('Platform', stat).value2;
   }
 
-  hexToDecimalString(hex: string): any {
+  hexToDecimalString(hex: string): string {
     let i, j, carry;
     const digits = [0];
     for (i = 0; i < hex.length; i += 1) {

@@ -1,9 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Faceoff } from './interfaces/faceoff';
+import { Faceoff, Player } from './interfaces/faceoff';
 import { Observable } from 'rxjs';
 
 export interface FaceoffResponse { data: Faceoff; }
+
+export interface PlayerStats {
+  total: Player[];
+  average: Player[];
+}
+
+export interface PlayerStatsResponse { data: PlayerStats; }
 
 @Injectable({
   providedIn: 'root',
@@ -34,14 +41,14 @@ export class FaceoffService {
     return this.http.delete(url);
   }
 
-  getFaceoffIds(stageId: string): Observable<string[] | any> {
+  getFaceoffIds(stageId: string): Observable<{ data: string[]}> {
     const url = this.url + '/faceoff?stageId=' + stageId;
-    return this.http.get(url);
+    return this.http.get<{ data: string[]}>(url);
   }
 
-  getPlayerStats(stageId: string): Observable<any> {
+  getPlayerStats(stageId: string): Observable<PlayerStatsResponse> {
     const url = this.url + '/faceoff/player-stats?stageId=' + stageId;
-    return this.http.get(url);
+    return this.http.get<PlayerStatsResponse>(url);
   }
 
   parseReplays(file: any, matchId: string, tournamentId): Observable<any> {
