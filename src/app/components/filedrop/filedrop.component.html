@@ -38,17 +38,31 @@
       <button *ngIf="canSeeDeleteButton()" mat-icon-button (click)="confirmDelete()" matTooltip="Delete this faceoff">
         <mat-icon>delete</mat-icon>
       </button>
-      <button *ngIf="!dataExists" class="warning-red" mat-icon-button matTooltip="No data found for this match yet">
-        <mat-icon>not_interested</mat-icon>
-      </button>
 
-      <button *ngIf="dataExists" (click)="getReplays(matchId)"mat-icon-button matTooltip="Download replays">
-        <mat-icon>cloud_download</mat-icon>
-      </button>
+      <ng-container *ngIf="!dataExists; else showDownloadButtons">
 
-      <button *ngIf="dataExists" (click)="goToFaceoff(matchId)" mat-icon-button matTooltip="View faceoff stats">
-        <mat-icon>arrow_forward</mat-icon>
-      </button>
+        <ng-container *ngIf="hasAdminOrMaintainerRights; else showNoRightsText">
+          <button class="warning-red" mat-icon-button matTooltip="No data has been uploaded for this match yet">
+            <mat-icon>not_interested</mat-icon>
+          </button>
+        </ng-container>
+
+        <ng-template #showNoRightsText>
+          <p class="no-upload-rights-text">
+            You don't currently have rights to upload replays, ask for them on Kanaliiga discord!
+          </p>
+        </ng-template>
+      </ng-container>
+
+      <ng-template #showDownloadButtons>
+        <button *ngIf="dataExists" (click)="getReplays(matchId)"mat-icon-button matTooltip="Download replays">
+          <mat-icon>cloud_download</mat-icon>
+        </button>
+  
+        <button *ngIf="dataExists" (click)="goToFaceoff(matchId)" mat-icon-button matTooltip="View faceoff stats">
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </ng-template>
     </div>
     <div *ngIf="dataSource.length" id="data-table">
       <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 data-table">

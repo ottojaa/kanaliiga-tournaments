@@ -39,6 +39,9 @@ export class FiledropComponent implements AfterViewInit {
   expanded = false;
   dataSource = [];
 
+  displayedColumns: string[] = ['name', 'delete'];
+  public files: NgxFileDropEntry[] = [];
+
   constructor(
     public dialog: MatDialog,
     private router: Router,
@@ -52,8 +55,9 @@ export class FiledropComponent implements AfterViewInit {
     }
   }
 
-  displayedColumns: string[] = ['name', 'delete'];
-  public files: NgxFileDropEntry[] = [];
+  get hasAdminOrMaintainerRights(): boolean {
+    return this.user?.role === 'ADMIN' || this.user?.role === 'MAINTAINER';
+  }
 
   // Fires whenever files are dropped to the dropzone. Accumulate dropped files to the datasource
   public dropped(files: NgxFileDropEntry[]) {
@@ -129,7 +133,7 @@ export class FiledropComponent implements AfterViewInit {
   }
 
   canSeeDeleteButton(): boolean {
-    return this.dataExists && this.user && (this.user.role === 'ADMIN' || this.user.role === 'MAINTAINER');
+    return this.dataExists && this.hasAdminOrMaintainerRights;
   }
 
   confirmDelete(): void {

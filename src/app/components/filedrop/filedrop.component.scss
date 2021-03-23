@@ -41,6 +41,11 @@
 .actions {
   display: flex;
   justify-content: space-evenly;
+  text-align: center;
+}
+
+.no-upload-rights-text {
+  max-width: 200px;
 }
 
 .mat-dialog-actions {
