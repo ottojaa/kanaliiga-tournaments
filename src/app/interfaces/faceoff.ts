@@ -23,6 +23,7 @@ export interface Team {
 
 export interface Player {
   id: string;
+  onlineId: string;
   team: number;
   name: string;
   score: number;
@@ -49,6 +50,7 @@ export interface Participant {
 }
 export interface PlayerOverviewRepresentation {
   team: number;
+  onlineId: string;
   teamName: string;
   name: string;
   score: string;

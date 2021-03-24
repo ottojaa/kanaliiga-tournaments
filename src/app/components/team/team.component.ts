@@ -7,6 +7,16 @@ import { of, Observable, forkJoin, Subject } from 'rxjs';
 import { Location } from '@angular/common';
 import { Animations } from 'src/app/utilities/animations';
 import { isEmpty } from 'lodash';
+import { Player, Faceoff, Match } from 'src/app/interfaces/faceoff';
+import { FaceoffResult, RLPlayer, Stats, TeamInformation } from 'src/app/interfaces/teams';
+import { Participants } from 'src/app/interfaces/participants';
+
+interface TeamInformationContainer {
+  matches: Faceoff;
+  stageInfo: { id: string };
+  teamInfo: Participants;
+  teamStats: Stats;
+}
 
 @Component({
   selector: 'app-team',
@@ -16,9 +26,8 @@ import { isEmpty } from 'lodash';
 })
 export class TeamComponent implements OnInit, OnDestroy {
   teamId: string;
-  container$: Observable<any>;
-  teamInformation$: Observable<any>;
-  teamStats: any;
+  teamInformation$: Observable<TeamInformationContainer>;
+  teamStats: FaceoffResult;
 
   ranks = [
     'B1',
@@ -52,7 +61,6 @@ export class TeamComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private toornamentService: ToornamentsService,
     private router: Router,
-    private _location: Location
   ) {
     this.teamId = this.activatedRoute.params['_value']['id'];
   }
@@ -60,13 +68,11 @@ export class TeamComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.teamInformation$ = this.getTeamInformation().pipe(
       takeUntil(this.destroy$),
-      tap(data => {
-        this.noData = Object.values(data).every(el => !el);
-      })
+      tap(data => { this.noData = Object.values(data).every(el => !el); })
     );
   }
 
-  getTeamInformation(): Observable<any> {
+  getTeamInformation(): Observable<TeamInformationContainer> {
     return this.teamService.getTeamById(this.teamId).pipe(
       switchMap(response => {
         const { teamStats, playerStats } = response.data;
@@ -74,6 +80,7 @@ export class TeamComponent implements OnInit, OnDestroy {
           this.createAverageStats(teamStats);
           this.tournamentId = teamStats[0].tournamentId;
           this.stageId = teamStats[0].stageId;
+
           return forkJoin([
             of(teamStats).pipe(tap(data => (this.teamStats = this.createAverageStats(data)))),
             of(playerStats),
@@ -83,23 +90,41 @@ export class TeamComponent implements OnInit, OnDestroy {
         }
         return of([]);
       }),
-      map(data => ({
-        matches: data[0],
-        teamStats: data[1],
-        teamInfo: data[2],
-        stageInfo: data[3],
-      })),
-      tap(() => (this.loading = false))
+      map(([matches, teamStats, teamInfo, stageInfo]) => (<TeamInformationContainer>{ matches, teamStats, teamInfo, stageInfo })),
+      tap(() => this.loading = false )
     );
   }
 
-  getPlayerStats(rl_tracker_id: string, stats: any): any {
-    if (!isEmpty(stats) && rl_tracker_id) {
+  /**
+   * Filters total and average stats by either the player's steam_id (if present), or player's name
+   */
+  getPlayerStats(player: RLPlayer, stats: Stats): Stats | null {
+    if (!isEmpty(stats) && player) {
       try {
-        const id = this.playerIdParser(rl_tracker_id);
+        const getSteamIdFromTrackerlink = (link: string) => {
+          const urlParts = link.split('/');
+          if (urlParts.includes('rocketleague.tracker.network') && urlParts.length >= 7) {
+            return urlParts[6];
+          }
+
+          return null;
+        };
+
+        const filterStatsByOnlineIdOrName = (playerEntity: RLPlayer, stat: Player) => {
+          const steam_id = getSteamIdFromTrackerlink(playerEntity.custom_fields?.rl_tracker_link);
+          const pattern = /^[0-9]{17}$/;
+          const steam_id_valid = pattern.test(steam_id);
+
+          if (steam_id_valid) {
+            // The binary parser unfortunately is not 100% accurate when it comes to steam_id, so we need to omit the 2 last digits
+            return stat.onlineId.substring(0, 15) === steam_id.substring(0, 15);
+          }
+          // fallback in case user does not have steam_id
+          return stat.name === playerEntity.name;
+        };
         return {
-          total: stats['total'].filter(stat => stat.onlineId.substring(0, 15) === id.substring(0, 15)),
-          average: stats['average'].filter(stat => stat.onlineId.substring(0, 15) === id.substring(0, 15)),
+          total: stats['total'].filter(stat => filterStatsByOnlineIdOrName(player, stat)),
+          average: stats['average'].filter(stat => filterStatsByOnlineIdOrName(player, stat)),
         };
       } catch (err) {
         console.log(err);
@@ -108,12 +133,7 @@ export class TeamComponent implements OnInit, OnDestroy {
     return null;
   }
 
-  playerIdParser(id: string): string {
-    const test = id.split('/');
-    return test[test.length - 2];
-  }
-
-  createAverageStats(matches: any): any {
+  createAverageStats(matches: Faceoff[]): FaceoffResult {
     const result = {
       faceoffWins: 0,
       faceoffLosses: 0,
@@ -124,6 +144,7 @@ export class TeamComponent implements OnInit, OnDestroy {
       gamesPlayed: 0,
       winPercentage: '',
     };
+
     if (matches && matches.length) {
       matches.forEach(match => {
         match.participants.forEach(participant => {
@@ -157,17 +178,12 @@ export class TeamComponent implements OnInit, OnDestroy {
     this.router.navigateByUrl(url);
   }
 
-  validateSteamId(id: string): boolean {
-    const pattern = /^[0-9]{17}$/;
-    return pattern.test(id);
-  }
-
   validateRank(rank: string): boolean {
     return this.ranks.includes(rank);
   }
 
-  goToFaceoff(match: any): void {
-    const { matchId, tournamentId, stageId } = match;
+  goToFaceoff(faceoff: Faceoff): void {
+    const { matchId, tournamentId, stageId } = faceoff;
     const url = `/tournaments/${tournamentId}/stages/${stageId}/faceoff/`;
     this.router.navigate([url, matchId]);
   }

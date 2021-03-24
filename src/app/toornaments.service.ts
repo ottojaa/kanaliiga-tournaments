@@ -89,7 +89,7 @@ export class ToornamentsService {
     return this.http.get<Stage[]>(url, requestOptions);
   }
 
-  getTournamentStage(stageId: string, tournamentId: string): any {
+  getTournamentStage(stageId: string, tournamentId: string): Observable<{ id: string }> {
     const headerDict = {
       'Content-Type': 'application/json',
       Accept: 'application/json',
@@ -100,7 +100,7 @@ export class ToornamentsService {
     };
 
     const url = environment.apiUrl + '/viewer/v2/tournaments/' + tournamentId + '/stages/' + stageId;
-    return this.http.get(url, requestOptions);
+    return this.http.get<{ id: string }>(url, requestOptions);
   }
 
   getTournamentRankings(stageId: string, tournamentId: string): Observable<TeamRanking[]> {

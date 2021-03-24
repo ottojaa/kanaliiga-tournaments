@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { TeamInformation } from '../app/interfaces/teams';
 
+type TeamInformationResponse = { data: TeamInformation };
 @Injectable({
   providedIn: 'root',
 })
@@ -14,8 +16,8 @@ export class TeamsService {
     this.url = this.baseUrl;
   }
 
-  getTeamById(teamId: string): Observable<any> {
+  getTeamById(teamId: string): Observable<TeamInformationResponse> {
     const url = this.url + `/teams/?teamId=${teamId}`;
-    return this.http.get(url);
+    return this.http.get<TeamInformationResponse>(url);
   }
 }
