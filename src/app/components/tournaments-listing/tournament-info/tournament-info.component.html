@@ -71,30 +71,26 @@
     <div class="row" style="margin-top: 30px;">
       <section
         class="mat-typography"
-        style="width: 100%; margin-bottom: 15px;"
+        style="width: 100%; margin-bottom: 30px;"
         fxLayout="column"
         fxLayoutAlign="center center"
       >
         <section class="mat-typography" style="padding-top: 30px; text-align: left">
           <h3 class="mat-display-1" style="margin: 20px;">Match schedule</h3>
         </section>
-        <div class="filters">
-          <mat-slide-toggle
-            style="font-weight: bold; font-size: 16px;"
-            [color]="'warn'"
-            (change)="toggleAllFilters($event)"
-            [checked]="toggleAll"
-          >
-            All
-          </mat-slide-toggle>
-          <mat-slide-toggle
-            *ngFor="let filter of filters$ | async; let i = index"
-            (change)="onFilterChange($event, filter)"
-            [color]="'warn'"
-            [checked]="filter.checked"
-            >{{ filter.name }}</mat-slide-toggle
-          >
-        </div>
+        <ng-container *ngIf="filters$ | async as filters">
+          <ng-container *ngIf="filters?.length">
+            <div class="filters">
+              <mat-slide-toggle
+                *ngFor="let filter of filters"
+                (change)="onFilterChange($event, filter)"
+                [color]="'warn'"
+                [checked]="filter.checked"
+                >{{ filter.name }}</mat-slide-toggle>
+                <button mat-button class="reset-button" (click)="onResetFilters()">Reset</button>
+            </div>
+          </ng-container>
+        </ng-container>
       </section>
 
       <div class="group" *ngFor="let group of filteredTeams$ | async; let i = index">

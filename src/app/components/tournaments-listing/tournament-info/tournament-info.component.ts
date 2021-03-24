@@ -73,7 +73,6 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
   teamStats$: Observable<TeamRanking[]>;
   tournaments$: Observable<Tournament[]>;
   stages$: Observable<Stage[]>;
-  toggleAll$: Observable<boolean>;
   playerStats$: Observable<Player[]>;
   loadingSub$ = new Subject();
 
@@ -155,13 +154,11 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
     this.teamStats$ = this.getStatePart('teamStats');
     this.stages$ = this.getStatePart('stageData');
     this.tournaments$ = this.getStatePart('tournaments');
-    this.filters$ = this.getStatePart('filters')
-      .pipe(tap((filters: Filter[]) => (this.toggleAll = filters.every(el => el.checked))));
+    this.filters$ = this.getStatePart('filters');
     this.filteredTeams$ = this.getFilteredTeams();
     this.playerStats$ = this.getStatePart('playerStats').pipe(
       filter((x) => !!x),
       map(x => x[this.tableType]));
-    this.toggleAll$ = this.filters$.pipe(map(filters => filters.every(el => (el.checked = true))));
   }
 
   getFilteredTeams(): Observable<Group[][]> {
@@ -386,18 +383,23 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
       return {
         id: team.id,
         name: team.name,
-        checked: true,
+        checked: false,
       };
     });
     this.updateState$.next({ filters });
   }
 
   filterByTeams(groups: Group[][], filters: Filter[]): Group[][] {
-    if (!groups) {
+    if (!groups.length) {
       return [];
     }
+
+    const noFilterSelected = filters.every((filterSelection) => filterSelection.checked === false);
+    if (noFilterSelected) {
+      return groups;
+    }
     const filterIds = filters.map(el => {
-      if (el.checked) {
+      if (el.checked && el.id) {
         return el.id;
       }
     });
@@ -439,14 +441,14 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
     this.updateState$.next({ filters: filtersCopy });
   }
 
-  toggleAllFilters(event: { checked: boolean }): void {
+  onResetFilters(): void {
     this.getStatePart('filters')
       .pipe(take(1))
       .subscribe(filters => {
         filters = filters.map(el => {
           return {
             ...el,
-            checked: event.checked,
+            checked: false
           };
         });
         this.updateState$.next({ filters });

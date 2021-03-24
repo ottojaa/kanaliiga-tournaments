@@ -186,7 +186,7 @@ export class FiledropComponent implements AfterViewInit {
         const message = allReplays
           ? this.matchNumber
             ? 'Too many files! Maximum amount allowed: ' + this.matchNumber
-            : 'Toornament.com data not found for this match'
+            : `Toornament.com data not found for this match! Add your team's faceoff results to toornament.com before proceeding.`
           : 'Not all of the files were .replay-files';
         this._snackBar.open(message, 'close', { duration: 5000 });
       }
