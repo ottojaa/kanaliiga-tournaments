@@ -77,7 +77,6 @@ export class TeamComponent implements OnInit, OnDestroy {
       switchMap(response => {
         const { teamStats, playerStats } = response.data;
         if (teamStats && teamStats.length) {
-          this.createAverageStats(teamStats);
           this.tournamentId = teamStats[0].tournamentId;
           this.stageId = teamStats[0].stageId;
 
@@ -120,7 +119,7 @@ export class TeamComponent implements OnInit, OnDestroy {
             return stat.onlineId.substring(0, 15) === steam_id.substring(0, 15);
           }
           // fallback in case user does not have steam_id
-          return stat.name === playerEntity.name;
+          return stat.name === playerEntity.name || stat.name === playerEntity.custom_fields?.in_game_nimimerkki;
         };
         return {
           total: stats['total'].filter(stat => filterStatsByOnlineIdOrName(player, stat)),

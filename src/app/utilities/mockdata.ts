@@ -221,7 +221,7 @@ export class MockData {
     ];
   }
 
-  public static getParticipants(): Participants[] {
+  public static getParticipants(): any[] {
     return [
       {
         id: '375143143408309123',

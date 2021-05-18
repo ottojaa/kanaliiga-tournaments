@@ -65,7 +65,14 @@
                     </ng-template>
                   </div>
                   <div style="width: 91%" mat-line>
-                    <p class="player-name">{{ player.name }}</p>
+                    <ng-container *ngIf="player.custom_fields?.in_game_nimimerkki as playerIGN; else showToornamentName">
+                      <p class="player-name">{{ playerIGN }}</p>
+                    </ng-container>
+
+                    <ng-template #showToornamentName>
+                      <p class="player-name">{{ player.name }}</p>
+                    </ng-template>
+                   
                   </div>
                   <div style="width: 3%">
                     <ng-container *ngIf="player.custom_fields.rl_tracker_link">
