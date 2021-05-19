@@ -119,7 +119,10 @@ export class TeamComponent implements OnInit, OnDestroy {
             return stat.onlineId.substring(0, 15) === steam_id.substring(0, 15);
           }
           // fallback in case user does not have steam_id
-          return stat.name === playerEntity.name || stat.name === playerEntity.custom_fields?.in_game_nimimerkki;
+          return stat.name?.toLowerCase() === playerEntity.name?.toLowerCase() 
+          || stat.name?.toLowerCase() === playerEntity.custom_fields?.in_game_nimimerkki.toLowerCase()
+          || stat.name?.toLowerCase().includes(playerEntity.name?.toLowerCase())
+          || stat.name?.toLowerCase().includes(playerEntity.custom_fields?.in_game_nimimerkki.toLowerCase())
         };
         return {
           total: stats['total'].filter(stat => filterStatsByOnlineIdOrName(player, stat)),
