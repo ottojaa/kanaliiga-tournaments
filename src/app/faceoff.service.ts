@@ -3,14 +3,18 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Faceoff, Player } from './interfaces/faceoff';
 import { Observable } from 'rxjs';
 
-export interface FaceoffResponse { data: Faceoff; }
+export interface FaceoffResponse {
+  data: Faceoff;
+}
 
 export interface PlayerStats {
   total: Player[];
   average: Player[];
 }
 
-export interface PlayerStatsResponse { data: PlayerStats; }
+export interface PlayerStatsResponse {
+  data: PlayerStats;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -41,9 +45,9 @@ export class FaceoffService {
     return this.http.delete(url);
   }
 
-  getFaceoffIds(stageId: string): Observable<{ data: string[]}> {
+  getFaceoffIds(stageId: string): Observable<{ data: string[] }> {
     const url = this.url + '/faceoff?stageId=' + stageId;
-    return this.http.get<{ data: string[]}>(url);
+    return this.http.get<{ data: string[] }>(url);
   }
 
   getPlayerStats(stageId: string): Observable<PlayerStatsResponse> {

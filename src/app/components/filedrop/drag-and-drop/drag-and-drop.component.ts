@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { Subject, forkJoin, Observable, BehaviorSubject, of } from 'rxjs';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, uniq } from 'lodash';
 import * as moment from 'moment';
 import { MatDialogRef, MAT_DIALOG_DATA, MatSnackBar } from '@angular/material';
 import { take, tap, debounceTime, switchMap, catchError } from 'rxjs/operators';
@@ -147,6 +147,27 @@ export class DragAndDropComponent implements OnInit {
       curr = arr[i];
     }
 
+    const getTeamMembers = () => {
+      const comparator = [result];
+      faceOff.matches.forEach(match => {
+        match.teams.forEach(team => {
+          const winningTeamIdx = team.players.findIndex(player => comparator.includes(player.name));
+          if (winningTeamIdx > -1) {
+            const teamMembers = team.players.reduce((acc, curr) => {
+              if (curr.name !== result) {
+                acc.push(curr.name);
+              }
+              return acc;
+            }, []);
+            comparator.push(...teamMembers);
+          }
+        });
+      });
+      return uniq(comparator);
+    };
+
+    const winningTeamMembers = result ? getTeamMembers() : null;
+
     const teamNameAssign = (index: number, participantIndex: number, teams: any) => {
       const teamsCopy = cloneDeep(teams);
       teamsCopy[index].name = this.participants[participantIndex].participant.name;
@@ -163,7 +184,7 @@ export class DragAndDropComponent implements OnInit {
     faceOff.matches.forEach(match => {
       match.teams.forEach((team, index) => {
         for (let i = 0; i < team.players.length; i++) {
-          if (team.players[i].name === result) {
+          if (winningTeamMembers.includes(team.players[i].name)) {
             match.teams = [...teamNameAssign(index, teamIndex, match.teams)];
             index === 1
               ? (match.teams =
