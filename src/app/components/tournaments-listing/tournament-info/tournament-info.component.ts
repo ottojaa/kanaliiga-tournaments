@@ -24,10 +24,22 @@ import { AuthService } from 'src/app/auth.service';
 import { Player } from 'src/app/interfaces/faceoff';
 import { cloneDeep, get } from 'lodash';
 import { MatSnackBar } from '@angular/material';
-import { Lineup, TeamRanking, TeamTableProperties, State, Group, Filter, Stage, Tournament } from 'src/app/interfaces/tournament';
+import {
+  Lineup,
+  TeamRanking,
+  TeamTableProperties,
+  State,
+  Group,
+  Filter,
+  Stage,
+  Tournament,
+} from 'src/app/interfaces/tournament';
 
 type TableType = 'average' | 'total';
-interface PlayerSteamID { name: string; steam_id: string; }
+interface PlayerSteamID {
+  name: string;
+  steam_id: string;
+}
 
 @Component({
   selector: 'app-tournament',
@@ -63,7 +75,7 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
     faceoffIds: [],
     filters: [],
     stageData: [],
-    tournaments: []
+    tournaments: [],
   };
 
   toggleAll = false;
@@ -114,14 +126,10 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
   getParticipants(): Observable<PlayerSteamID[][]> {
     return this.tournamentService
       .getParticipants(this.tournamentId)
-      .pipe(
-        map((participants) =>
-          participants.map(participant => this.mapPlayerSteamIds(participant.lineup))
-        )
-      );
+      .pipe(map(participants => participants.map(participant => this.mapPlayerSteamIds(participant.lineup))));
   }
 
-  mapPlayerSteamIds(lineup: Lineup[]): { name: string, steam_id: string }[] {
+  mapPlayerSteamIds(lineup: Lineup[]): { name: string; steam_id: string }[] {
     return lineup.map(player => {
       const getSteamIdFromTrackerlink = (link: string) => {
         const urlParts = link.split('/');
@@ -157,8 +165,9 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
     this.filters$ = this.getStatePart('filters');
     this.filteredTeams$ = this.getFilteredTeams();
     this.playerStats$ = this.getStatePart('playerStats').pipe(
-      filter((x) => !!x),
-      map(x => x[this.tableType]));
+      filter(x => !!x),
+      map(x => x[this.tableType])
+    );
   }
 
   getFilteredTeams(): Observable<Group[][]> {
@@ -183,7 +192,7 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
       this.getFaceoffIds(),
       this.getGroups(),
       this.getStageData(),
-      this.getTournaments()
+      this.getTournaments(),
     ];
 
     return merge(...observables).pipe(flatMap(this.getNewState()));
@@ -200,10 +209,11 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
   getTournaments(): Observable<{ tournaments: Tournament[] }> {
     return this.tournamentService.getPlaylistData().pipe(
       catchError(err => {
-      console.log(err);
-      return of([]);
-    }),
-    map(tournaments => ({ tournaments })));
+        console.log(err);
+        return of([]);
+      }),
+      map(tournaments => ({ tournaments }))
+    );
   }
 
   getStatePart<T extends keyof State>(key: T): Observable<State[T]> {
@@ -235,7 +245,7 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   mapTeamStats(teams: TeamRanking[]): { teamStats: TeamTableProperties[] } {
-    const teamStats = teams.map((team) => {
+    const teamStats = teams.map(team => {
       return {
         scoreFor: team.properties.score_for,
         scoreAgainst: team.properties.score_against,
@@ -244,7 +254,7 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
         losses: team.properties.losses,
         forfeits: team.properties.forfeits,
         id: team.participant.id,
-        name: team.participant.name
+        name: team.participant.name,
       };
     });
     return { teamStats };
@@ -327,18 +337,18 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
    * Gets the tournament matches, filters by current stage id, then groups them by their round_id.
    * Every different group will be added to the groups array, with which the user can filter the groups by.
    * Emits an array of matches that belong to the user's currently selected group.
+   *
    */
-  getGroups(): Observable<{ groups: Group[][]} > {
-    return this.tournamentService.getTournamentMatches(this.tournamentId).pipe(
-      flatMap((groups) => from(groups)),
-      filter((group) => group.stage_id === this.stageId),
-      switchMap((group) => {
+  getGroups(): Observable<{ groups: Group[][] }> {
+    return this.tournamentService.getTournamentMatches(this.tournamentId, this.stageId).pipe(
+      flatMap(groups => from(groups)),
+      switchMap(group => {
         this.setGroupSelectableOptions(group);
         return of(group);
       }),
-      filter((group) => group.group_id === this.selectedGroup),
-      groupBy((group) => group.round_id),
-      mergeMap((group) => group.pipe(reduce((acc, cur) => [...acc, cur], <Group[]>[]))),
+      filter(group => group.group_id === this.selectedGroup),
+      groupBy(group => group.round_id),
+      mergeMap(group => group.pipe(reduce((acc, cur) => [...acc, cur], <Group[]>[]))),
       toArray(),
       tap(groups => this.setTeamFilters(groups)),
       map(groups => ({ groups }))
@@ -394,7 +404,7 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
       return [];
     }
 
-    const noFilterSelected = filters.every((filterSelection) => filterSelection.checked === false);
+    const noFilterSelected = filters.every(filterSelection => filterSelection.checked === false);
     if (noFilterSelected) {
       return groups;
     }
@@ -448,7 +458,7 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
         filters = filters.map(el => {
           return {
             ...el,
-            checked: false
+            checked: false,
           };
         });
         this.updateState$.next({ filters });
@@ -462,17 +472,24 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
     this.selectedGroup = '';
     this.groups = [];
 
+    const url = `tournaments/${this.tournamentId}/stages/${this.stageId}/matches`;
+    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => this.router.navigate([url]));
+
     const toUpdate$ = [this.getPlayerStats(), this.getTeamStats(), this.getGroups(), this.getFaceoffIds()];
     forkJoin(toUpdate$)
       .pipe(
         take(1),
-        finalize(() =>  this.loadingSub$.next(false))
-      ).subscribe(([playerStats, teamStats, groups, faceoffIds]) => {
-        const payload = { ...playerStats, ...teamStats, ...groups, ...faceoffIds };
-        this.updateState$.next(payload);
-      }, err => {
-        console.error('onStageChange failed: ', err);
-      });
+        finalize(() => this.loadingSub$.next(false))
+      )
+      .subscribe(
+        ([playerStats, teamStats, groups, faceoffIds]) => {
+          const payload = { ...playerStats, ...teamStats, ...groups, ...faceoffIds };
+          this.updateState$.next(payload);
+        },
+        err => {
+          console.error('onStageChange failed: ', err);
+        }
+      );
   }
 
   onTournamentChange(event: any): void {
@@ -480,19 +497,22 @@ export class TournamentComponent implements OnInit, AfterViewInit, OnDestroy {
     this.selectedGroup = '';
     this.groups = [];
     this.loadingSub$.next(true);
-    this.tournamentService.getTournamentStages(event.value)
-    .pipe(take(1), finalize(() => this.loadingSub$.next(false)))
-    .subscribe((data) => {
-      if (data && data.length) {
-        this.tournamentId = event.value;
-        this.stageId = data[0].id;
-        const url = `tournaments/${this.tournamentId}/stages/${this.stageId}/matches`;
-        this.router.navigateByUrl('/', {skipLocationChange: true}).then(() =>
-          this.router.navigate([url]));
-      } else {
-        this.snackbar.open('No stages available for requested tournament', 'close', { duration: 3000 });
-      }
-    });
+    this.tournamentService
+      .getTournamentStages(event.value)
+      .pipe(
+        take(1),
+        finalize(() => this.loadingSub$.next(false))
+      )
+      .subscribe(data => {
+        if (data && data.length) {
+          this.tournamentId = event.value;
+          this.stageId = data[0].id;
+          const url = `tournaments/${this.tournamentId}/stages/${this.stageId}/matches`;
+          this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => this.router.navigate([url]));
+        } else {
+          this.snackbar.open('No stages available for requested tournament', 'close', { duration: 3000 });
+        }
+      });
   }
 
   /**

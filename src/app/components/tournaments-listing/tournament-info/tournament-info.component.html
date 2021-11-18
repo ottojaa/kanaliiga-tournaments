@@ -10,15 +10,23 @@
       <div class="button-container" fxLayoutAlign="center center">
         <mat-form-field style="margin-left: 10px; min-width: 200px;" class="dropdown">
           <mat-label>Select a tournament</mat-label>
-          <mat-select [(value)]="selectedTournament" [disabled]="loadingSub$ | async" (selectionChange)="onTournamentChange($event)">
+          <mat-select
+            [(value)]="selectedTournament"
+            [disabled]="loadingSub$ | async"
+            (selectionChange)="onTournamentChange($event)"
+          >
             <mat-option *ngFor="let tournament of tournaments$ | async; let i = index" [value]="tournament.id">{{
               tournament.name
             }}</mat-option>
-            </mat-select>
+          </mat-select>
         </mat-form-field>
         <mat-form-field style="margin-left: 10px; min-width: 200px;" class="dropdown">
           <mat-label>Select a stage</mat-label>
-          <mat-select [(value)]="selectedStage" [disabled]="loadingSub$ | async" (selectionChange)="onStageChange($event)">
+          <mat-select
+            [(value)]="selectedStage"
+            [disabled]="loadingSub$ | async"
+            (selectionChange)="onStageChange($event)"
+          >
             <mat-option *ngFor="let stage of stages$ | async; let i = index" [value]="stage.id">{{
               stage.name
             }}</mat-option>
@@ -26,7 +34,11 @@
         </mat-form-field>
         <mat-form-field style="margin-left: 10px;" class="dropdown" *ngIf="groups && groups.length > 1">
           <mat-label>Select a group</mat-label>
-          <mat-select [(value)]="selectedGroup" [disabled]="loadingSub$ | async" (selectionChange)="onGroupChange($event)">
+          <mat-select
+            [(value)]="selectedGroup"
+            [disabled]="loadingSub$ | async"
+            (selectionChange)="onGroupChange($event)"
+          >
             <mat-option *ngFor="let group of groups; let i = index" [value]="group"> Group {{ i + 1 }} </mat-option>
           </mat-select>
         </mat-form-field>
@@ -60,8 +72,9 @@
           <section class="mat-typography no-content-center">
             <mat-icon color="accent" style="transform: scale(2.0); margin-bottom: 10px;">warning</mat-icon>
             <h4>No content found!</h4>
-            <p>
-              Team statistics will appear here once replays have been submitted from matches.
+            <p style="text-align: center">
+              Team statistics will appear here once replays have been submitted from matches. Due to technical
+              limitations, team statistics will also not be shown for playoffs.
             </p>
           </section>
         </ng-template>
@@ -86,8 +99,9 @@
                 (change)="onFilterChange($event, filter)"
                 [color]="'warn'"
                 [checked]="filter.checked"
-                >{{ filter.name }}</mat-slide-toggle>
-                <button mat-button class="reset-button" (click)="onResetFilters()">Reset</button>
+                >{{ filter.name }}</mat-slide-toggle
+              >
+              <button mat-button class="reset-button" (click)="onResetFilters()">Reset</button>
             </div>
           </ng-container>
         </ng-container>
@@ -144,9 +158,7 @@
             <mat-card-actions align="end" class="actions">
               <button mat-icon-button (click)="onToggleExpand(match.id)">
                 <ng-container *ngIf="checkExistingData(match.id); else noData">
-                  <mat-icon
-                    matTooltip="Match statistics up to date"
-                    class="replay-found">
+                  <mat-icon matTooltip="Match statistics up to date" class="replay-found">
                     done
                   </mat-icon>
                 </ng-container>

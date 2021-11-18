@@ -4,8 +4,6 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { TeamRanking, Group, Stage, TeamParticipant, Tournament } from './interfaces/tournament';
 
-
-
 @Injectable({
   providedIn: 'root',
 })
@@ -30,7 +28,7 @@ export class ToornamentsService {
     return this.http.get<Tournament[]>(url, requestOptions);
   }
 
-  getTournamentMatches(tournamentId: string): Observable<Group[]> {
+  getTournamentMatches(tournamentId: string, stageId: string): Observable<Group[]> {
     const headerDict = {
       'Content-Type': 'application/json',
       Accept: 'application/json',
@@ -41,7 +39,7 @@ export class ToornamentsService {
       headers: new HttpHeaders(headerDict),
     };
 
-    const url = environment.apiUrl + '/viewer/v2/tournaments/' + tournamentId + '/matches';
+    const url = environment.apiUrl + `/viewer/v2/tournaments/${tournamentId}/matches?stage_ids=${stageId}`;
     return this.http.get<Group[]>(url, requestOptions);
   }
 
@@ -107,7 +105,7 @@ export class ToornamentsService {
     const headerDict = {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      Range: 'items=0-49'
+      Range: 'items=0-49',
     };
 
     const requestOptions = {
